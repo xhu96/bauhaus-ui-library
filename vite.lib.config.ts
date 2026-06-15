@@ -8,7 +8,17 @@ import { resolve } from 'node:path'
 export default defineConfig({
   plugins: [
     react(),
-    dts({ include: ['src'], exclude: ['src/main.tsx', 'src/App.tsx', '**/*.stories.tsx'] }),
+    dts({
+      include: ['src'],
+      exclude: [
+        'src/main.tsx',
+        'src/App.tsx',
+        '**/*.stories.tsx',
+        '**/*.test.ts',
+        '**/*.test.tsx',
+        'src/test/**',
+      ],
+    }),
   ],
   resolve: {
     alias: {
