@@ -24,8 +24,8 @@ const statusTint: Record<Status, string> = {
 const statusIconColor: Record<Status, string> = {
   info: 'text-bblue',
   success: 'text-bblue',
-  warning: 'text-byellow-dark',
-  danger: 'text-bred',
+  warning: 'text-byellow-ink',
+  danger: 'text-bred-ink',
 }
 
 const statusIcon: Record<Status, ReactNode> = {

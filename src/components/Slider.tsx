@@ -29,7 +29,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   return (
     <div
       className={cn(
-        'flex w-full items-center border-3 border-ink bg-surface px-3 py-2.5',
+        'flex w-full items-center border-3 border-ink bg-surface px-3 py-2',
         disabled && 'cursor-not-allowed opacity-50',
         className,
       )}
@@ -41,7 +41,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
         aria-describedby={semantics.describedBy}
         aria-required={ariaRequired}
         aria-invalid={ariaInvalid ?? (semantics.invalid || undefined)}
-        className="h-2 w-full cursor-pointer disabled:cursor-not-allowed"
+        className="h-11 w-full cursor-pointer disabled:cursor-not-allowed"
         style={{ accentColor: hex[color], ...style }}
         {...props}
       />

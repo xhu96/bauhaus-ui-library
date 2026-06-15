@@ -6,7 +6,7 @@ export type Size = 'sm' | 'md' | 'lg'
 /** Maps a BauhausColor to its solid Tailwind background + the text color that sits on it.
  *  `coal`/`paper` are used (not white/ink) so text stays legible in dark mode. */
 export const solidColor: Record<BauhausColor, string> = {
-  red: 'bg-bred text-white',
+  red: 'bg-bred-dark text-white',
   blue: 'bg-bblue text-white',
   yellow: 'bg-byellow text-coal',
   ink: 'bg-ink text-paper',
@@ -30,9 +30,9 @@ export const solidHover: Record<BauhausColor, string> = {
 
 /** Foreground/accent text color per palette name. */
 export const textColor: Record<BauhausColor, string> = {
-  red: 'text-bred',
+  red: 'text-bred-ink',
   blue: 'text-bblue',
-  yellow: 'text-byellow-dark',
+  yellow: 'text-byellow-ink',
   ink: 'text-ink',
 }
 

@@ -42,7 +42,7 @@ export function FormField({
           >
             {label}
             {required && (
-              <span className="ml-1 text-bred" aria-hidden>
+              <span className="ml-1 text-bred-ink" aria-hidden>
                 *
               </span>
             )}
@@ -50,7 +50,7 @@ export function FormField({
         )}
         {children}
         {error ? (
-          <p id={errorId} className="text-sm font-medium text-bred">
+          <p id={errorId} className="text-sm font-medium text-bred-ink">
             {error}
           </p>
         ) : hint ? (

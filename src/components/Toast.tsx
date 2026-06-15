@@ -36,8 +36,8 @@ const ToastContext = createContext<ToastContextValue | null>(null)
 const statusIconColor: Record<ToastStatus, string> = {
   info: 'text-bblue',
   success: 'text-bblue',
-  warning: 'text-byellow-dark',
-  danger: 'text-bred',
+  warning: 'text-byellow-ink',
+  danger: 'text-bred-ink',
 }
 
 const statusIcons: Record<ToastStatus, typeof Info> = {
@@ -120,7 +120,7 @@ function ToastViewport({
       role="status"
       aria-live="polite"
       className={cn(
-        'pointer-events-none fixed right-4 z-[60] flex w-full max-w-sm flex-col gap-3',
+        'pointer-events-none fixed left-4 right-4 z-[60] flex w-auto flex-col gap-3 sm:left-auto sm:w-full sm:max-w-sm',
         position === 'top-right' ? 'top-4' : 'bottom-4',
       )}
     >
@@ -150,7 +150,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
         type="button"
         onClick={() => onDismiss(toast.id)}
         aria-label="Close"
-        className="press -mr-1 -mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
+        className="press -mr-1 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
       >
         <X className="h-3.5 w-3.5" aria-hidden />
       </button>
