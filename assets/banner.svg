@@ -1,0 +1,51 @@
+<svg viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-labelledby="t d" xmlns="http://www.w3.org/2000/svg" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title id="t">Bauhaus UI</title>
+  <desc id="d">A bold, geometric React component library inspired by the Bauhaus movement.</desc>
+
+  <rect x="0" y="0" width="1200" height="360" fill="#F3EFE6"/>
+  <rect x="6" y="6" width="1188" height="348" fill="none" stroke="#1C1C1C" stroke-width="8"/>
+
+  <!-- Wordmark + tagline -->
+  <rect x="70" y="80" width="40" height="40" fill="#1C1C1C"/>
+  <circle cx="142" cy="100" r="20" fill="#E63329"/>
+  <polygon points="192,77 214,121 170,121" fill="#21409A"/>
+
+  <text x="68" y="208" font-size="82" font-weight="800" letter-spacing="-2" fill="#1C1C1C">BAUHAUS <tspan fill="#E63329">UI</tspan></text>
+  <text x="72" y="252" font-size="27" font-weight="500" fill="#3A3A38">29 geometric React components.</text>
+  <text x="72" y="296" font-size="17" font-weight="700" letter-spacing="3" fill="#6B6A66">MIT · TYPESCRIPT · TAILWIND · STORYBOOK</text>
+
+  <!-- Geometric collage (8 modular tiles) -->
+  <g>
+    <rect x="672" y="66" width="116" height="116" fill="#FFFFFF"/>
+    <rect x="788" y="66" width="116" height="116" fill="#FFFFFF"/>
+    <rect x="904" y="66" width="116" height="116" fill="#FFFFFF"/>
+    <rect x="1020" y="66" width="116" height="116" fill="#FFFFFF"/>
+    <rect x="672" y="182" width="116" height="116" fill="#FFFFFF"/>
+    <rect x="788" y="182" width="116" height="116" fill="#FFFFFF"/>
+    <rect x="904" y="182" width="116" height="116" fill="#FFFFFF"/>
+    <rect x="1020" y="182" width="116" height="116" fill="#FFFFFF"/>
+
+    <circle cx="730" cy="124" r="52" fill="#21409A"/>
+    <path d="M904 90 A92 92 0 0 0 812 182 L904 182 Z" fill="#E63329"/>
+    <polygon points="962,82 920,166 1004,166" fill="#F4C20D"/>
+    <circle cx="1078" cy="124" r="40" fill="none" stroke="#1C1C1C" stroke-width="16"/>
+
+    <path d="M684 282 A46 46 0 0 1 776 282 Z" fill="#E63329"/>
+    <g fill="#1C1C1C">
+      <circle cx="816" cy="210" r="7"/><circle cx="846" cy="210" r="7"/><circle cx="876" cy="210" r="7"/>
+      <circle cx="816" cy="240" r="7"/><circle cx="846" cy="240" r="7"/><circle cx="876" cy="240" r="7"/>
+      <circle cx="816" cy="270" r="7"/><circle cx="846" cy="270" r="7"/><circle cx="876" cy="270" r="7"/>
+    </g>
+    <polygon points="904,182 1020,182 904,298" fill="#21409A"/>
+    <path d="M1020 206 A92 92 0 0 0 1112 298 L1020 298 Z" fill="#F4C20D"/>
+
+    <rect x="672" y="66" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+    <rect x="788" y="66" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+    <rect x="904" y="66" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+    <rect x="1020" y="66" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+    <rect x="672" y="182" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+    <rect x="788" y="182" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+    <rect x="904" y="182" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+    <rect x="1020" y="182" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
+  </g>
+</svg>

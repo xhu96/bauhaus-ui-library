@@ -1,0 +1,56 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold tracking-tight;
+  }
+
+  /* Focus ring: geometric, high-contrast, matches the Bauhaus look. */
+  :where(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid rgb(var(--bui-blue));
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Hard offset shadow that flips into the ink color on hover/active. */
+  .press {
+    @apply transition-all duration-100 ease-out;
+  }
+  .press-hard {
+    @apply shadow-hard hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-hard-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+  }
+
+  /* Bauhaus dot-grid background. */
+  .bg-dotgrid {
+    background-image: radial-gradient(rgb(var(--bui-ink)) 1.5px, transparent 1.5px);
+    background-size: 18px 18px;
+  }
+
+  /* Diagonal stripe fill. */
+  .bg-stripes {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgb(var(--bui-ink)) 0,
+      rgb(var(--bui-ink)) 3px,
+      transparent 3px,
+      transparent 10px
+    );
+  }
+}

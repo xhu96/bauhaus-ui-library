@@ -1,0 +1,26 @@
+/* Bauhaus UI design tokens.
+   Surfaces and ink are stored as space-separated RGB channels so Tailwind can apply
+   alpha (e.g. bg-ink/10) and so a single `.dark` class re-themes the whole library.
+   The primary triad is fixed in both themes. */
+:root {
+  --bui-paper: 243 239 230; /* #F3EFE6 page */
+  --bui-paper-dark: 231 225 211; /* #E7E1D3 */
+  --bui-surface: 255 255 255; /* card / control surface */
+  --bui-ink: 28 28 28; /* #1C1C1C text, borders, shadows */
+  --bui-ink-soft: 58 58 56; /* #3A3A38 */
+  --bui-ink-muted: 107 106 102; /* #6B6A66 */
+
+  /* Primary triad (fixed, exposed for convenience). */
+  --bui-red: 230 51 41; /* #E63329 */
+  --bui-blue: 33 64 154; /* #21409A */
+  --bui-yellow: 244 194 13; /* #F4C20D */
+}
+
+.dark {
+  --bui-paper: 22 20 18; /* near-black warm */
+  --bui-paper-dark: 47 43 38;
+  --bui-surface: 38 35 31; /* raised dark surface */
+  --bui-ink: 243 239 230; /* light cream becomes the "ink" */
+  --bui-ink-soft: 214 209 198;
+  --bui-ink-muted: 158 153 143;
+}

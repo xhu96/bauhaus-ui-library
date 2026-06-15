@@ -1,0 +1,80 @@
+{
+  "name": "bauhaus-ui-library",
+  "version": "0.1.0",
+  "description": "A bold, geometric React component library inspired by the Bauhaus movement.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "ui",
+    "component-library",
+    "bauhaus",
+    "tailwind",
+    "design-system",
+    "dark-mode"
+  ],
+  "author": "Xhulio Lavdari",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xhu96/bauhaus-ui-library.git"
+  },
+  "homepage": "https://xhu96.github.io/bauhaus-ui-library/",
+  "bugs": {
+    "url": "https://github.com/xhu96/bauhaus-ui-library/issues"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/bauhaus-ui.umd.cjs",
+  "module": "./dist/bauhaus-ui.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/bauhaus-ui.js",
+      "require": "./dist/bauhaus-ui.umd.cjs"
+    },
+    "./styles.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:lib": "tsc --noEmit && vite build --config vite.lib.config.ts",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "prepublishOnly": "npm run build:lib"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.408.0",
+    "tailwind-merge": "^2.4.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^8.6.18",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/react": "^8.6.18",
+    "@storybook/react-vite": "^8.6.18",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "storybook": "^8.6.18",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.4",
+    "vite-plugin-dts": "^3.9.1"
+  }
+}
