@@ -2,6 +2,7 @@ import { forwardRef, type SelectHTMLAttributes, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Size } from '@/lib/types'
+import { useFormFieldSemantics } from './FormFieldContext'
 
 export interface SelectOption {
   label: string
@@ -32,15 +33,30 @@ const chevronPos: Record<Size, string> = {
  * or `children` to populate the list.
  */
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { selectSize = 'md', error = false, options, className, disabled, children, ...props },
+  {
+    selectSize = 'md',
+    error = false,
+    options,
+    className,
+    disabled,
+    children,
+    'aria-describedby': ariaDescribedBy,
+    'aria-invalid': ariaInvalid,
+    'aria-required': ariaRequired,
+    ...props
+  },
   ref,
 ) {
+  const semantics = useFormFieldSemantics(ariaDescribedBy)
+
   return (
     <div className="relative inline-flex w-full items-center">
       <select
         ref={ref}
         disabled={disabled}
-        aria-invalid={error || undefined}
+        aria-describedby={semantics.describedBy}
+        aria-required={ariaRequired ?? (semantics.required || undefined)}
+        aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
         className={cn(
           'w-full appearance-none border-3 bg-surface font-sans text-ink',
           'disabled:cursor-not-allowed disabled:opacity-50',

@@ -1,5 +1,6 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useId } from 'react'
 import { cn } from '@/lib/utils'
+import { FormFieldContext } from './FormFieldContext'
 
 export interface FormFieldProps {
   label?: string
@@ -24,27 +25,40 @@ export function FormField({
   className,
   children,
 }: FormFieldProps) {
+  const supportId = useId()
+  const errorId = error ? `${supportId}-error` : undefined
+  const hintId = hint && !error ? `${supportId}-hint` : undefined
+  const describedBy = errorId ?? hintId
+
   return (
-    <div className={cn('flex flex-col gap-1.5', className)}>
-      {label && (
-        <label
-          htmlFor={htmlFor}
-          className="font-display text-sm font-semibold uppercase tracking-wide text-ink"
-        >
-          {label}
-          {required && (
-            <span className="ml-1 text-bred" aria-hidden>
-              *
-            </span>
-          )}
-        </label>
-      )}
-      {children}
-      {error ? (
-        <p className="text-sm font-medium text-bred">{error}</p>
-      ) : hint ? (
-        <p className="text-sm text-ink-muted">{hint}</p>
-      ) : null}
-    </div>
+    <FormFieldContext.Provider
+      value={{ describedBy, invalid: Boolean(error), required }}
+    >
+      <div className={cn('flex flex-col gap-1.5', className)}>
+        {label && (
+          <label
+            htmlFor={htmlFor}
+            className="font-display text-sm font-semibold uppercase tracking-wide text-ink"
+          >
+            {label}
+            {required && (
+              <span className="ml-1 text-bred" aria-hidden>
+                *
+              </span>
+            )}
+          </label>
+        )}
+        {children}
+        {error ? (
+          <p id={errorId} className="text-sm font-medium text-bred">
+            {error}
+          </p>
+        ) : hint ? (
+          <p id={hintId} className="text-sm text-ink-muted">
+            {hint}
+          </p>
+        ) : null}
+      </div>
+    </FormFieldContext.Provider>
   )
 }

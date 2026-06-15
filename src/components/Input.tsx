@@ -1,6 +1,7 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { type Size } from '@/lib/types'
+import { useFormFieldSemantics } from './FormFieldContext'
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   inputSize?: Size
@@ -32,9 +33,22 @@ const iconBox: Record<Size, string> = {
  * error state. Bauhaus styling: 3px ink border, sharp corners.
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { inputSize = 'md', error = false, leftIcon, rightIcon, className, disabled, ...props },
+  {
+    inputSize = 'md',
+    error = false,
+    leftIcon,
+    rightIcon,
+    className,
+    disabled,
+    'aria-describedby': ariaDescribedBy,
+    'aria-invalid': ariaInvalid,
+    'aria-required': ariaRequired,
+    ...props
+  },
   ref,
 ) {
+  const semantics = useFormFieldSemantics(ariaDescribedBy)
+
   return (
     <div className="relative inline-flex w-full items-center">
       {leftIcon && (
@@ -52,7 +66,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <input
         ref={ref}
         disabled={disabled}
-        aria-invalid={error || undefined}
+        aria-describedby={semantics.describedBy}
+        aria-required={ariaRequired ?? (semantics.required || undefined)}
+        aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
         className={cn(
           'w-full border-3 bg-surface font-sans text-ink placeholder:text-ink-muted',
           'disabled:cursor-not-allowed disabled:opacity-50',
