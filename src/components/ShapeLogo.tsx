@@ -15,6 +15,7 @@ const DEFAULT_MARK: { kind: ShapeKind; color: BauhausColor }[] = [
   { kind: 'square', color: 'ink' },
   { kind: 'circle', color: 'red' },
   { kind: 'triangle', color: 'blue' },
+  { kind: 'diamond', color: 'yellow' },
 ]
 
 // Optical kerning: shapes whose mass recedes from a vertical edge (a triangle's
