@@ -70,12 +70,16 @@ export function Pagination({
   const items = buildItems(page, count, siblingCount)
   const atStart = page <= 1
   const atEnd = page >= count
+  const mobileEssential = (item: number) => item === 1 || item === page || item === count
 
   const squareBase =
     'press inline-flex h-10 w-10 shrink-0 items-center justify-center border-3 border-ink bg-surface font-display text-sm font-semibold text-ink'
 
   return (
-    <nav aria-label="Pagination" className={cn('flex items-center gap-2', className)}>
+    <nav
+      aria-label="Pagination"
+      className={cn('bui-pagination flex max-w-full items-center justify-center gap-2', className)}
+    >
       <button
         type="button"
         aria-label="Go to previous page"
@@ -95,6 +99,7 @@ export function Pagination({
             <span
               key={`ellipsis-${i}`}
               aria-hidden
+              data-mobile-hidden="true"
               className="inline-flex h-10 w-10 items-center justify-center font-display text-sm font-semibold text-ink-muted"
             >
               &hellip;
@@ -109,6 +114,7 @@ export function Pagination({
             type="button"
             aria-label={`Go to page ${item}`}
             aria-current={isActive ? 'page' : undefined}
+            data-mobile-hidden={mobileEssential(item) ? undefined : 'true'}
             onClick={() => onPageChange(item)}
             className={cn(
               squareBase,

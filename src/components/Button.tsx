@@ -20,16 +20,16 @@ const sizes: Record<Size, string> = {
 }
 
 const outlineColor: Record<BauhausColor, string> = {
-  red: 'text-bred hover:bg-bred hover:text-white',
+  red: 'text-bred-ink hover:bg-bred-dark hover:text-white',
   blue: 'text-bblue hover:bg-bblue hover:text-white',
-  yellow: 'text-byellow-dark hover:bg-byellow hover:text-coal',
+  yellow: 'text-byellow-ink hover:bg-byellow hover:text-coal',
   ink: 'text-ink hover:bg-ink hover:text-paper',
 }
 
 const ghostColor: Record<BauhausColor, string> = {
-  red: 'text-bred hover:bg-bred/10',
+  red: 'text-bred-ink hover:bg-bred/10',
   blue: 'text-bblue hover:bg-bblue/10',
-  yellow: 'text-byellow-dark hover:bg-byellow/20',
+  yellow: 'text-byellow-ink hover:bg-byellow/20',
   ink: 'text-ink hover:bg-ink/10',
 }
 

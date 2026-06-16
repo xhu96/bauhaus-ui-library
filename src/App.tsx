@@ -2,6 +2,8 @@ import { useState, type ReactNode } from 'react'
 import {
   ArrowRight,
   Check,
+  Copy,
+  ExternalLink,
   Github,
   Heart,
   Mail,
@@ -63,6 +65,7 @@ import {
   type BauhausColor,
 } from './index'
 import { type ShapeKind } from './components/Shape'
+import { copyText } from './lib/clipboard'
 
 const accentBg: Record<BauhausColor, string> = {
   red: 'bg-bred',
@@ -72,6 +75,8 @@ const accentBg: Record<BauhausColor, string> = {
 }
 
 const REPO_URL = 'https://github.com/xhu96/bauhaus-ui-library'
+const STORYBOOK_URL = 'https://xhu96.github.io/bauhaus-ui-library/storybook/'
+const INSTALL_COMMAND = 'npm install bauhaus-ui-library'
 
 const PALETTE: { name: string; hex: string; color: BauhausColor }[] = [
   { name: 'Red', hex: '#E63329', color: 'red' },
@@ -141,22 +146,28 @@ function Showcase() {
 
   const openRepo = () => window.open(REPO_URL, '_blank', 'noopener,noreferrer')
   const goToComponents = () => document.getElementById('foundations')?.scrollIntoView({ behavior: 'smooth' })
+  const copyInstallCommand = async () => {
+    try {
+      await copyText(INSTALL_COMMAND)
+      toast({ title: 'Install command copied', description: INSTALL_COMMAND, status: 'success' })
+    } catch {
+      toast({ title: 'Copy failed', description: 'Select the command and copy it manually.', status: 'danger' })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-paper">
       {/* ── Navbar ───────────────────────────────────────────── */}
-      <Navbar sticky>
+      <Navbar sticky className="gap-2 px-4 sm:gap-6 sm:px-5">
         <NavbarBrand className="shrink-0">
-          <ShapeLogo label="Bauhaus UI" />
+          <ShapeLogo label="Bauhaus UI" className="[&>span:last-child]:hidden sm:[&>span:last-child]:inline" />
         </NavbarBrand>
         <NavbarContent justify="center" className="hidden lg:flex">
-          <NavbarLink href="#foundations" active>
-            Components
-          </NavbarLink>
+          <NavbarLink href="#foundations">Components</NavbarLink>
           <NavbarLink href="#overlays">Overlays</NavbarLink>
           <NavbarLink href="#footer">About</NavbarLink>
         </NavbarContent>
-        <NavbarContent justify="end" className="shrink-0">
+        <NavbarContent justify="end" className="shrink-0 gap-1 sm:gap-5">
           <Button
             size="sm"
             color="ink"
@@ -176,7 +187,13 @@ function Showcase() {
           >
             GitHub
           </Button>
-          <Button size="sm" color="red" rightIcon={<ArrowRight className="h-4 w-4" />} onClick={goToComponents}>
+          <Button
+            size="sm"
+            color="red"
+            className="whitespace-nowrap"
+            rightIcon={<ArrowRight className="h-4 w-4" />}
+            onClick={goToComponents}
+          >
             Get started
           </Button>
         </NavbarContent>
@@ -207,6 +224,30 @@ function Showcase() {
               <Button size="lg" variant="outline" color="ink" leftIcon={<Github className="h-5 w-5" />} onClick={openRepo}>
                 View source
               </Button>
+            </div>
+            <div className="mt-5 flex max-w-xl flex-col gap-3 sm:flex-row sm:items-stretch">
+              <div className="flex min-w-0 flex-1 items-center border-3 border-ink bg-surface">
+                <code className="min-w-0 flex-1 overflow-x-auto px-4 py-3 font-mono text-sm text-ink">
+                  {INSTALL_COMMAND}
+                </code>
+                <button
+                  type="button"
+                  onClick={copyInstallCommand}
+                  aria-label="Copy install command"
+                  className="press inline-flex h-11 w-11 shrink-0 items-center justify-center border-l-3 border-ink text-ink hover:bg-ink hover:text-paper"
+                >
+                  <Copy className="h-4 w-4" aria-hidden />
+                </button>
+              </div>
+              <a
+                href={STORYBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="press press-hard inline-flex h-11 items-center justify-center gap-2 border-3 border-ink bg-surface px-4 font-display text-sm font-semibold uppercase tracking-wide text-ink"
+              >
+                Storybook
+                <ExternalLink className="h-4 w-4" aria-hidden />
+              </a>
             </div>
           </div>
           <div className="border-3 border-ink shadow-hard-lg">
@@ -344,7 +385,7 @@ function Showcase() {
               <FormField label="Message" htmlFor="msg">
                 <Textarea id="msg" rows={3} placeholder="Tell us about your project…" />
               </FormField>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 <p className="font-display text-xs font-semibold uppercase tracking-wide text-ink">Interests</p>
                 <Checkbox label="Components" defaultChecked color="red" />
                 <Checkbox label="Templates" color="blue" />
@@ -585,7 +626,7 @@ function Showcase() {
               GitHub
             </a>
             <a
-              href="https://xhu96.github.io/bauhaus-ui-library/storybook/"
+              href={STORYBOOK_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-byellow"
@@ -630,7 +671,7 @@ function Showcase() {
       </Modal>
 
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} side={drawerSide} title="Filters">
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           <Checkbox label="Show solids" defaultChecked color="red" />
           <Checkbox label="Show outlines" defaultChecked color="blue" />
           <Checkbox label="Show ghosts" color="ink" />

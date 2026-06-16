@@ -25,6 +25,7 @@ export default {
           DEFAULT: '#E63329',
           dark: '#B81E16',
           light: '#F5A9A3',
+          ink: 'rgb(var(--bui-red-ink) / <alpha-value>)',
         },
         bblue: {
           DEFAULT: '#21409A',
@@ -35,6 +36,7 @@ export default {
           DEFAULT: '#F4C20D',
           dark: '#C99A00',
           light: '#FBE389',
+          ink: 'rgb(var(--bui-yellow-ink) / <alpha-value>)',
         },
       },
       fontFamily: {
@@ -74,6 +76,10 @@ export default {
           '0%': { opacity: '0', transform: 'translateX(16px)' },
           '100%': { opacity: '1', transform: 'translateX(0)' },
         },
+        'slide-in-left': {
+          '0%': { opacity: '0', transform: 'translateX(-16px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
         'fade-in': {
           from: { opacity: '0' },
           to: { opacity: '1' },
@@ -91,6 +97,7 @@ export default {
         'spin-slow': 'spin-slow 6s linear infinite',
         'pop-in': 'pop-in 0.18s ease-out',
         'slide-in-right': 'slide-in-right 0.22s ease-out',
+        'slide-in-left': 'slide-in-left 0.22s ease-out',
         'fade-in': 'fade-in 0.18s ease-out',
         marquee: 'marquee 18s linear infinite',
         indeterminate: 'indeterminate 1.2s ease-in-out infinite',

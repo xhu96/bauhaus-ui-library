@@ -54,3 +54,24 @@
     );
   }
 }
+
+@media (max-width: 480px) {
+  .bui-pagination {
+    gap: 0.25rem;
+  }
+
+  .bui-pagination [data-mobile-hidden='true'] {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

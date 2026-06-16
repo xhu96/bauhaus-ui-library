@@ -1,7 +1,8 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useDialogBehavior } from './useDialogBehavior'
 
 export interface DrawerProps {
   /** Whether the drawer is visible. */
@@ -12,6 +13,8 @@ export interface DrawerProps {
   side?: 'left' | 'right'
   /** Optional title rendered in a bordered header. */
   title?: string
+  /** Accessible name used when no visible title is rendered. */
+  'aria-label'?: string
   /** Panel width in pixels. Defaults to 360. */
   width?: number
   children?: ReactNode
@@ -26,25 +29,13 @@ export function Drawer({
   onClose,
   side = 'right',
   title,
+  'aria-label': ariaLabel,
   width = 360,
   children,
 }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!open) return
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', onKeyDown)
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    panelRef.current?.focus()
-    return () => {
-      document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = previousOverflow
-    }
-  }, [open, onClose])
+  useDialogBehavior(open, panelRef, onClose)
 
   if (!open) return null
 
@@ -59,12 +50,14 @@ export function Drawer({
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={title ?? ariaLabel}
         tabIndex={-1}
         style={{ width, maxWidth: '100%' }}
         className={cn(
-          'absolute top-0 flex h-full flex-col bg-paper outline-none animate-slide-in-right',
-          side === 'right' ? 'right-0 border-l-3 border-ink' : 'left-0 border-r-3 border-ink',
+          'absolute top-0 flex h-full flex-col bg-paper outline-none',
+          side === 'right'
+            ? 'right-0 border-l-3 border-ink animate-slide-in-right'
+            : 'left-0 border-r-3 border-ink animate-slide-in-left',
         )}
       >
         <div className="flex items-center justify-between gap-3 border-b-3 border-ink p-5">
@@ -77,7 +70,7 @@ export function Drawer({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="press inline-flex h-8 w-8 shrink-0 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
+            className="press inline-flex h-11 w-11 shrink-0 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
           >
             <X className="h-4 w-4" aria-hidden />
           </button>

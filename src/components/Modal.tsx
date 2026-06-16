@@ -1,8 +1,9 @@
-import { useEffect, useRef, type HTMLAttributes, type ReactNode } from 'react'
+import { useRef, type HTMLAttributes, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Size } from '@/lib/types'
+import { useDialogBehavior } from './useDialogBehavior'
 
 export interface ModalProps {
   /** Whether the modal is visible. */
@@ -11,6 +12,8 @@ export interface ModalProps {
   onClose: () => void
   /** Optional title rendered in a bordered header. */
   title?: string
+  /** Accessible name used when no visible title is rendered. */
+  'aria-label'?: string
   /** Controls the panel max-width. */
   size?: Size
   /** Close when the backdrop is clicked. Defaults to true. */
@@ -32,26 +35,14 @@ export function Modal({
   open,
   onClose,
   title,
+  'aria-label': ariaLabel,
   size = 'md',
   closeOnBackdrop = true,
   children,
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!open) return
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', onKeyDown)
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    panelRef.current?.focus()
-    return () => {
-      document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = previousOverflow
-    }
-  }, [open, onClose])
+  useDialogBehavior(open, panelRef, onClose)
 
   if (!open) return null
 
@@ -66,7 +57,7 @@ export function Modal({
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={title ?? ariaLabel}
         tabIndex={-1}
         className={cn(
           'relative w-full border-3 border-ink bg-surface shadow-hard-lg outline-none animate-pop-in',
@@ -77,7 +68,7 @@ export function Modal({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="press absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
+          className="press absolute right-2 top-2 inline-flex h-11 w-11 shrink-0 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
         >
           <X className="h-4 w-4" aria-hidden />
         </button>

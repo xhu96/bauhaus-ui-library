@@ -1,6 +1,7 @@
 import { forwardRef, type InputHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 import { hex, type BauhausColor } from '@/lib/types'
+import { useFormFieldSemantics } from './FormFieldContext'
 
 export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   color?: BauhausColor
@@ -11,13 +12,24 @@ export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
  * palette accent color applied via `accent-color`.
  */
 export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
-  { color = 'red', className, style, disabled, ...props },
+  {
+    color = 'red',
+    className,
+    style,
+    disabled,
+    'aria-describedby': ariaDescribedBy,
+    'aria-invalid': ariaInvalid,
+    'aria-required': ariaRequired,
+    ...props
+  },
   ref,
 ) {
+  const semantics = useFormFieldSemantics(ariaDescribedBy)
+
   return (
     <div
       className={cn(
-        'flex w-full items-center border-3 border-ink bg-surface px-3 py-2.5',
+        'flex w-full items-center border-3 border-ink bg-surface px-3 py-2',
         disabled && 'cursor-not-allowed opacity-50',
         className,
       )}
@@ -26,7 +38,10 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
         ref={ref}
         type="range"
         disabled={disabled}
-        className="h-2 w-full cursor-pointer disabled:cursor-not-allowed"
+        aria-describedby={semantics.describedBy}
+        aria-required={ariaRequired}
+        aria-invalid={ariaInvalid ?? (semantics.invalid || undefined)}
+        className="h-11 w-full cursor-pointer disabled:cursor-not-allowed"
         style={{ accentColor: hex[color], ...style }}
         {...props}
       />
