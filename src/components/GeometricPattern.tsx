@@ -15,6 +15,17 @@ const COLORS: Record<ColorKey, string> = {
 type Motif = 'full' | 'half' | 'quarter' | 'triangle' | 'diagonal' | 'dot' | 'plus' | 'ring' | 'leaf'
 const MOTIFS: Motif[] = ['full', 'half', 'quarter', 'triangle', 'diagonal', 'dot', 'plus', 'ring', 'leaf']
 
+const TILE_EDGE = 4
+const TILE_END = 100 - TILE_EDGE
+const TILE_MID = 50
+const TILE_SPAN = TILE_END - TILE_EDGE
+const TILE_RADIUS = TILE_MID - TILE_EDGE
+const TILE_STROKE_WIDTH = 14
+const TILE_STROKED_RADIUS = TILE_RADIUS - TILE_STROKE_WIDTH / 2
+const TILE_DOT_RADIUS = 18
+const TILE_BAR_WIDTH = 16
+const TILE_BAR_START = TILE_MID - TILE_BAR_WIDTH / 2
+
 export interface GeometricPatternProps extends HTMLAttributes<HTMLDivElement> {
   rows?: number
   cols?: number
@@ -43,31 +54,58 @@ function Tile({ motif, fg, rot }: { motif: Motif; fg: string; rot: number }) {
   const g = (children: React.ReactNode) => <g transform={`rotate(${rot} 50 50)`}>{children}</g>
   switch (motif) {
     case 'full':
-      return <circle cx="50" cy="50" r="46" fill={fg} />
+      return <circle cx={TILE_MID} cy={TILE_MID} r={TILE_RADIUS} fill={fg} />
     case 'dot':
-      return <circle cx="50" cy="50" r="18" fill={fg} />
+      return <circle cx={TILE_MID} cy={TILE_MID} r={TILE_DOT_RADIUS} fill={fg} />
     case 'ring':
-      return <circle cx="50" cy="50" r="38" fill="none" stroke={fg} strokeWidth="14" />
+      return (
+        <circle
+          cx={TILE_MID}
+          cy={TILE_MID}
+          r={TILE_STROKED_RADIUS}
+          fill="none"
+          stroke={fg}
+          strokeWidth={TILE_STROKE_WIDTH}
+        />
+      )
     case 'half':
-      return g(<path d="M4 96 A46 46 0 0 1 96 96 Z" fill={fg} />)
+      return g(
+        <path
+          d={`M${TILE_EDGE} ${TILE_END} A${TILE_RADIUS} ${TILE_RADIUS} 0 0 1 ${TILE_END} ${TILE_END} Z`}
+          fill={fg}
+        />,
+      )
     case 'quarter':
-      return g(<path d="M4 4 A92 92 0 0 1 96 96 L4 96 Z" fill={fg} />)
+      return g(
+        <path
+          d={`M${TILE_EDGE} ${TILE_EDGE} A${TILE_SPAN} ${TILE_SPAN} 0 0 1 ${TILE_END} ${TILE_END} L${TILE_EDGE} ${TILE_END} Z`}
+          fill={fg}
+        />,
+      )
     case 'triangle':
-      return g(<polygon points="4,96 96,96 4,4" fill={fg} />)
+      return g(
+        <polygon points={`${TILE_EDGE},${TILE_END} ${TILE_END},${TILE_END} ${TILE_EDGE},${TILE_EDGE}`} fill={fg} />,
+      )
     case 'diagonal':
-      return g(<polygon points="0,0 100,0 0,100" fill={fg} />)
+      return g(
+        <polygon points={`${TILE_EDGE},${TILE_EDGE} ${TILE_END},${TILE_EDGE} ${TILE_EDGE},${TILE_END}`} fill={fg} />,
+      )
     case 'plus':
       return (
         <g fill={fg}>
-          <rect x="42" y="8" width="16" height="84" />
-          <rect x="8" y="42" width="84" height="16" />
+          <rect x={TILE_BAR_START} y={TILE_EDGE} width={TILE_BAR_WIDTH} height={TILE_SPAN} />
+          <rect x={TILE_EDGE} y={TILE_BAR_START} width={TILE_SPAN} height={TILE_BAR_WIDTH} />
         </g>
       )
     case 'leaf':
       return (
         <g fill={fg}>
-          <path d="M0 0 A100 100 0 0 0 100 100 L0 100 Z" />
-          <path d="M100 100 A100 100 0 0 0 0 0 L100 0 Z" />
+          <path
+            d={`M${TILE_EDGE} ${TILE_EDGE} A${TILE_SPAN} ${TILE_SPAN} 0 0 0 ${TILE_END} ${TILE_END} L${TILE_EDGE} ${TILE_END} Z`}
+          />
+          <path
+            d={`M${TILE_END} ${TILE_END} A${TILE_SPAN} ${TILE_SPAN} 0 0 0 ${TILE_EDGE} ${TILE_EDGE} L${TILE_END} ${TILE_EDGE} Z`}
+          />
         </g>
       )
   }

@@ -32,6 +32,18 @@ const colorClass: Record<BauhausColor, string> = {
   ink: 'text-ink',
 }
 
+const EDGE = 4
+const FAR_EDGE = 100 - EDGE
+const MID = 50
+const FULL_SPAN = FAR_EDGE - EDGE
+const CIRCLE_RADIUS = MID - EDGE
+const STROKE_WIDTH = 14
+const STROKED_RADIUS = CIRCLE_RADIUS - STROKE_WIDTH / 2
+const BAR_WIDTH = 16
+const BAR_START = MID - BAR_WIDTH / 2
+const ARC_CENTER = FAR_EDGE - STROKE_WIDTH / 2
+const ARC_RADIUS = ARC_CENTER - (EDGE + STROKE_WIDTH / 2)
+
 /**
  * A single Bauhaus geometric primitive rendered as crisp SVG. Uses `currentColor`
  * so the `ink` variant adapts to light/dark mode. The building block for logos,
@@ -58,26 +70,72 @@ export function Shape({
       aria-hidden="true"
       {...props}
     >
-      {kind === 'circle' && <circle cx="50" cy="50" r="46" fill={fill} stroke={stroke} strokeWidth={sw} />}
-      {kind === 'square' && <rect x="6" y="6" width="88" height="88" fill={fill} stroke={stroke} strokeWidth={sw} />}
+      {kind === 'circle' && (
+        <circle cx={MID} cy={MID} r={CIRCLE_RADIUS} fill={fill} stroke={stroke} strokeWidth={sw} />
+      )}
+      {kind === 'square' && (
+        <rect x={EDGE} y={EDGE} width={FULL_SPAN} height={FULL_SPAN} fill={fill} stroke={stroke} strokeWidth={sw} />
+      )}
       {kind === 'triangle' && (
-        <polygon points="50,3 98,93 2,93" fill={fill} stroke={stroke} strokeWidth={sw} strokeLinejoin="round" />
+        <polygon
+          points={`${MID},${EDGE} ${FAR_EDGE},${FAR_EDGE} ${EDGE},${FAR_EDGE}`}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={sw}
+          strokeLinejoin="round"
+        />
       )}
       {kind === 'diamond' && (
-        <polygon points="50,4 96,50 50,96 4,50" fill={fill} stroke={stroke} strokeWidth={sw} strokeLinejoin="round" />
+        <polygon
+          points={`${MID},${EDGE} ${FAR_EDGE},${MID} ${MID},${FAR_EDGE} ${EDGE},${MID}`}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={sw}
+          strokeLinejoin="round"
+        />
       )}
       {kind === 'semicircle' && (
-        <path d="M4 50 A46 46 0 0 1 96 50 Z" fill={fill} stroke={stroke} strokeWidth={sw} strokeLinejoin="round" />
+        <path
+          d={`M${EDGE} ${MID} A${CIRCLE_RADIUS} ${CIRCLE_RADIUS} 0 0 1 ${FAR_EDGE} ${MID} Z`}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={sw}
+          strokeLinejoin="round"
+        />
       )}
       {kind === 'quarter' && (
-        <path d="M6 6 L6 94 A88 88 0 0 0 94 6 Z" fill={fill} stroke={stroke} strokeWidth={sw} strokeLinejoin="round" />
+        <path
+          d={`M${EDGE} ${EDGE} L${EDGE} ${FAR_EDGE} A${FULL_SPAN} ${FULL_SPAN} 0 0 0 ${FAR_EDGE} ${EDGE} Z`}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={sw}
+          strokeLinejoin="round"
+        />
       )}
-      {kind === 'arc' && <path d="M8 94 A86 86 0 0 1 94 8" fill="none" stroke="currentColor" strokeWidth={14} />}
-      {kind === 'ring' && <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth={14} />}
+      {kind === 'arc' && (
+        <path
+          d={`M${EDGE + STROKE_WIDTH / 2} ${ARC_CENTER} A${ARC_RADIUS} ${ARC_RADIUS} 0 0 1 ${ARC_CENTER} ${
+            EDGE + STROKE_WIDTH / 2
+          }`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={STROKE_WIDTH}
+        />
+      )}
+      {kind === 'ring' && (
+        <circle
+          cx={MID}
+          cy={MID}
+          r={STROKED_RADIUS}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={STROKE_WIDTH}
+        />
+      )}
       {kind === 'cross' && (
         <g fill="currentColor">
-          <rect x="40" y="6" width="20" height="88" />
-          <rect x="6" y="40" width="88" height="20" />
+          <rect x={BAR_START} y={EDGE} width={BAR_WIDTH} height={FULL_SPAN} />
+          <rect x={EDGE} y={BAR_START} width={FULL_SPAN} height={BAR_WIDTH} />
         </g>
       )}
     </svg>
