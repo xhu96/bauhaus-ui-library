@@ -7,6 +7,15 @@ const meta = {
   title: 'Form/FormField',
   component: FormField,
   tags: ['autodocs'],
+  argTypes: {
+    label: { control: 'text' },
+    hint: { control: 'text' },
+    error: { control: 'text' },
+    required: { control: 'boolean' },
+    htmlFor: { control: 'text' },
+    className: { control: 'text' },
+    children: { control: false },
+  },
   args: {
     label: 'Email',
     hint: "We'll never share your email.",
@@ -83,4 +92,109 @@ function LiveValidation() {
 
 export const LiveValidationExample: Story = {
   render: () => <LiveValidation />,
+}
+
+export const NoLabel: Story = {
+  render: () => {
+    const id = useId()
+    return (
+      <div className="w-80">
+        <FormField hint="No label rendered above this control." htmlFor={id}>
+          <Input id={id} placeholder="Unlabeled field" />
+        </FormField>
+      </div>
+    )
+  },
+}
+
+export const RequiredWithError: Story = {
+  render: () => {
+    const id = useId()
+    return (
+      <div className="w-80">
+        <FormField
+          label="Email"
+          required
+          error="This field is required."
+          htmlFor={id}
+        >
+          <Input id={id} type="email" error placeholder="you@example.com" />
+        </FormField>
+      </div>
+    )
+  },
+}
+
+export const ErrorOverridesHint: Story = {
+  render: () => {
+    const id = useId()
+    return (
+      <div className="w-80">
+        <FormField
+          label="Password"
+          hint="Use 8 or more characters."
+          error="Password is too short."
+          htmlFor={id}
+        >
+          <Input id={id} type="password" error defaultValue="abc" />
+        </FormField>
+      </div>
+    )
+  },
+}
+
+export const LabelOnly: Story = {
+  render: () => {
+    const id = useId()
+    return (
+      <div className="w-80">
+        <FormField label="Username" htmlFor={id}>
+          <Input id={id} placeholder="jane.doe" />
+        </FormField>
+      </div>
+    )
+  },
+}
+
+export const WithCustomClassName: Story = {
+  render: () => {
+    const id = useId()
+    return (
+      <div className="w-80">
+        <FormField
+          label="Notes"
+          hint="Custom className adds extra vertical gap."
+          htmlFor={id}
+          className="gap-4 rounded-base border-2 border-ink bg-surface p-4"
+        >
+          <Input id={id} placeholder="Anything else?" />
+        </FormField>
+      </div>
+    )
+  },
+}
+
+export const StackedForm: Story = {
+  render: () => {
+    const firstId = useId()
+    const lastId = useId()
+    const emailId = useId()
+    return (
+      <form className="flex w-80 flex-col gap-5">
+        <FormField label="First name" required htmlFor={firstId}>
+          <Input id={firstId} placeholder="Jane" />
+        </FormField>
+        <FormField label="Last name" required htmlFor={lastId}>
+          <Input id={lastId} placeholder="Doe" />
+        </FormField>
+        <FormField
+          label="Email"
+          hint="We'll never share your email."
+          htmlFor={emailId}
+        >
+          <Input id={emailId} type="email" placeholder="you@example.com" />
+        </FormField>
+      </form>
+    )
+  },
 }

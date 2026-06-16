@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import { Mail, Search, Lock } from 'lucide-react'
 import { Input } from './Input'
 
@@ -9,6 +10,20 @@ const meta = {
   args: {
     placeholder: 'Type here…',
     inputSize: 'md',
+    error: false,
+    disabled: false,
+    onChange: fn(),
+  },
+  argTypes: {
+    inputSize: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
+    error: { control: 'boolean' },
+    disabled: { control: 'boolean' },
+    placeholder: { control: 'text' },
+    leftIcon: { control: false },
+    rightIcon: { control: false },
   },
 } satisfies Meta<typeof Input>
 
@@ -59,6 +74,44 @@ export const Disabled: Story = {
   render: () => (
     <div className="w-80">
       <Input disabled placeholder="Disabled input" />
+    </div>
+  ),
+}
+
+export const BothIcons: Story = {
+  render: () => (
+    <div className="w-80">
+      <Input
+        leftIcon={<Mail className="h-4 w-4" />}
+        rightIcon={<Search className="h-4 w-4" />}
+        placeholder="Search inbox"
+      />
+    </div>
+  ),
+}
+
+export const IconsAllSizes: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-3">
+      <Input inputSize="sm" leftIcon={<Mail className="h-3.5 w-3.5" />} placeholder="Small" />
+      <Input inputSize="md" leftIcon={<Mail className="h-4 w-4" />} placeholder="Medium" />
+      <Input inputSize="lg" leftIcon={<Mail className="h-5 w-5" />} placeholder="Large" />
+    </div>
+  ),
+}
+
+export const Filled: Story = {
+  render: () => (
+    <div className="w-80">
+      <Input defaultValue="hello@bauhaus.dev" placeholder="Email" />
+    </div>
+  ),
+}
+
+export const DisabledWithIcon: Story = {
+  render: () => (
+    <div className="w-80">
+      <Input disabled leftIcon={<Lock className="h-4 w-4" />} placeholder="Locked field" />
     </div>
   ),
 }

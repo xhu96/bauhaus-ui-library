@@ -5,6 +5,17 @@ const meta = {
   title: 'Display/Spinner',
   component: Spinner,
   tags: ['autodocs'],
+  argTypes: {
+    color: {
+      control: 'select',
+      options: ['red', 'blue', 'yellow', 'ink'],
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
+    label: { control: 'text' },
+  },
   args: {
     size: 'md',
     color: 'ink',
@@ -35,4 +46,12 @@ export const Sizes: Story = {
       <Spinner size="lg" color="blue" />
     </div>
   ),
+}
+
+export const CustomLabel: Story = {
+  args: {
+    label: 'Saving changes…',
+    color: 'blue',
+    size: 'lg',
+  },
 }

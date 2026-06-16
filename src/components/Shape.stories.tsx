@@ -17,6 +17,12 @@ const meta = {
   title: 'Foundations/Shape',
   component: Shape,
   tags: ['autodocs'],
+  argTypes: {
+    kind: { control: 'select', options: ALL_KINDS },
+    color: { control: 'select', options: ['red', 'blue', 'yellow', 'ink'] },
+    size: { control: { type: 'range', min: 16, max: 200, step: 4 } },
+    outline: { control: 'boolean' },
+  },
   args: {
     kind: 'circle',
     color: 'red',
@@ -59,4 +65,42 @@ export const Outline: Story = {
       <Shape kind="diamond" color="yellow" size={64} outline />
     </div>
   ),
+}
+
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-end gap-4">
+      {[24, 40, 64, 96, 128].map((size) => (
+        <Shape key={size} kind="circle" color="blue" size={size} />
+      ))}
+    </div>
+  ),
+}
+
+export const OutlineAllKinds: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-4">
+      {ALL_KINDS.map((kind) => (
+        <Shape key={kind} kind={kind} color="ink" size={64} outline />
+      ))}
+    </div>
+  ),
+}
+
+export const DarkInk: Story = {
+  args: {
+    kind: 'square',
+    color: 'ink',
+    size: 80,
+  },
+  parameters: {
+    backgrounds: { default: 'dark' },
+  },
+  decorators: [
+    (StoryFn) => (
+      <div className="dark bg-surface p-8">
+        <StoryFn />
+      </div>
+    ),
+  ],
 }

@@ -6,6 +6,11 @@ const meta = {
   title: 'Core/Card',
   component: Card,
   tags: ['autodocs'],
+  argTypes: {
+    shadow: { control: 'boolean' },
+    surface: { control: 'select', options: ['paper', 'white'] },
+    accent: { control: 'select', options: ['red', 'blue', 'yellow', 'ink'] },
+  },
   args: {
     shadow: true,
     surface: 'white',
@@ -80,6 +85,42 @@ export const NoShadow: Story = {
         <CardTitle>Flat card</CardTitle>
         <CardDescription>Shadow disabled.</CardDescription>
       </CardBody>
+    </Card>
+  ),
+}
+
+/** Args-driven so the Controls panel drives shadow, surface and accent directly. */
+export const Playground: Story = {
+  args: {
+    accent: 'blue',
+    className: 'w-80 p-5',
+    children: 'Adjust shadow, surface and accent from the Controls panel.',
+  },
+}
+
+/** Exercises accent + paper surface + shadow together, all interacting on one card. */
+export const AccentOnPaper: Story = {
+  args: {
+    accent: 'red',
+    surface: 'paper',
+    shadow: true,
+  },
+  render: (args) => (
+    <Card {...args} className="w-80">
+      <CardHeader>
+        <CardTitle>Accent on paper</CardTitle>
+        <CardDescription>Red top bar over the paper surface, with the hard shadow.</CardDescription>
+      </CardHeader>
+      <CardBody>
+        <p className="text-sm text-ink-soft">
+          The inline-style accent bar, paper background and offset shadow all render together.
+        </p>
+      </CardBody>
+      <CardFooter>
+        <Button size="sm" color="red">
+          Action
+        </Button>
+      </CardFooter>
     </Card>
   ),
 }

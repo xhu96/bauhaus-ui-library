@@ -1,0 +1,64 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Foundations/Design tokens" />
+
+export const Swatch = ({ name, value, border }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+    <span style={{ height: 64, background: value, border: border ? '3px solid #1C1C1C' : 'none' }} />
+    <strong style={{ fontFamily: 'monospace', fontSize: 12 }}>{name}</strong>
+    <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#6B6A66' }}>{value}</span>
+  </div>
+)
+
+export const Grid = ({ children }) => (
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 16, margin: '16px 0' }}>{children}</div>
+)
+
+# Design tokens
+
+The whole system is built from a disciplined palette, two geometric typefaces, and a hard
+offset-shadow scale. Surface and ink tokens are CSS variables that flip under a `.dark` class.
+
+## Primary triad
+
+These three colors carry the Bauhaus identity and stay vivid in both light and dark mode.
+
+<Grid>
+  <Swatch name="bred" value="#E63329" />
+  <Swatch name="bblue" value="#21409A" />
+  <Swatch name="byellow" value="#F4C20D" />
+  <Swatch name="ink" value="#1C1C1C" />
+</Grid>
+
+## Surfaces & ink (theme-aware)
+
+In light mode these are the values below; under `.dark` they invert (paper → near-black,
+ink → cream) while keeping the same token names.
+
+<Grid>
+  <Swatch name="paper" value="#F3EFE6" border />
+  <Swatch name="surface" value="#FFFFFF" border />
+  <Swatch name="ink" value="#1C1C1C" />
+  <Swatch name="ink-soft" value="#3A3A38" />
+  <Swatch name="ink-muted" value="#6B6A66" />
+</Grid>
+
+## Typography
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: 12, margin: '16px 0' }}>
+  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 34, textTransform: 'uppercase', letterSpacing: '-0.02em', color: '#1C1C1C' }}>Display: Space Grotesk</div>
+  <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: 18, color: '#1C1C1C' }}>Body: Archivo. The grid is the silent organizer of every layout.</div>
+  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, color: '#1C1C1C' }}>Mono: Space Mono · 0123456789</div>
+</div>
+
+## Hard shadows
+
+The signature offset shadow. It uses the ink token, so it flips to a light shadow in dark mode.
+
+<div style={{ display: 'flex', gap: 32, margin: '24px 0', flexWrap: 'wrap' }}>
+  <div style={{ width: 90, height: 56, background: '#fff', border: '3px solid #1C1C1C', boxShadow: '2px 2px 0 0 #1C1C1C' }} />
+  <div style={{ width: 90, height: 56, background: '#fff', border: '3px solid #1C1C1C', boxShadow: '4px 4px 0 0 #1C1C1C' }} />
+  <div style={{ width: 90, height: 56, background: '#fff', border: '3px solid #1C1C1C', boxShadow: '6px 6px 0 0 #1C1C1C' }} />
+</div>
+
+`shadow-hard-sm` (2px) · `shadow-hard` (4px) · `shadow-hard-lg` (6px)

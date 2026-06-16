@@ -11,6 +11,11 @@ const meta = {
     color: 'ink',
     size: 'md',
   },
+  argTypes: {
+    variant: { control: 'select', options: ['solid', 'outline'] },
+    color: { control: 'select', options: ['red', 'blue', 'yellow', 'ink'] },
+    size: { control: 'select', options: ['sm', 'md', 'lg'] },
+  },
 } satisfies Meta<typeof Badge>
 
 export default meta
@@ -48,6 +53,25 @@ export const Sizes: Story = {
       <Badge size="sm">Small</Badge>
       <Badge size="md">Medium</Badge>
       <Badge size="lg">Large</Badge>
+    </div>
+  ),
+}
+
+export const OutlineColors: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge variant="outline" color="ink">
+        Ink
+      </Badge>
+      <Badge variant="outline" color="red">
+        Red
+      </Badge>
+      <Badge variant="outline" color="blue">
+        Blue
+      </Badge>
+      <Badge variant="outline" color="yellow">
+        Yellow
+      </Badge>
     </div>
   ),
 }
