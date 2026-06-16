@@ -251,14 +251,25 @@ function Showcase() {
             </div>
           </div>
           <div className="border-3 border-ink shadow-hard-lg">
-            <GeometricPattern rows={4} cols={5} seed={11} />
+            <GeometricPattern
+              rows={4}
+              cols={5}
+              seed={11}
+              palette={['ink', 'blue', 'red', 'blue', 'ink', 'red', 'yellow']}
+            />
           </div>
         </div>
       </header>
 
       <div className="mx-auto w-full max-w-6xl px-6 pb-8">
         <div className="border-3 border-ink">
-          <GeometricPattern rows={1} cols={14} seed={29} bordered />
+          <GeometricPattern
+            rows={1}
+            cols={14}
+            seed={29}
+            bordered
+            palette={['ink', 'blue', 'red', 'blue', 'ink', 'red', 'yellow']}
+          />
         </div>
       </div>
 

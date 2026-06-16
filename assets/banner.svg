@@ -37,7 +37,7 @@
       <circle cx="816" cy="270" r="7"/><circle cx="846" cy="270" r="7"/><circle cx="876" cy="270" r="7"/>
     </g>
     <polygon points="904,182 1020,182 904,298" fill="#21409A"/>
-    <path d="M1020 206 A92 92 0 0 0 1112 298 L1020 298 Z" fill="#F4C20D"/>
+    <path d="M1020 206 A92 92 0 0 0 1112 298 L1020 298 Z" fill="#21409A"/>
 
     <rect x="672" y="66" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
     <rect x="788" y="66" width="116" height="116" fill="none" stroke="#1C1C1C" stroke-opacity="0.16"/>
