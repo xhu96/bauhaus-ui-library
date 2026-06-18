@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="Bauhaus UI: geometric React components" width="100%" />
+  <img src="https://raw.githubusercontent.com/xhu96/bauhaus-ui-library/main/assets/banner.svg" alt="Bauhaus UI: geometric React components" width="100%" />
 </p>
 
 # Bauhaus UI
@@ -9,6 +9,13 @@ colors, hard edges, thick black borders, and a relentless grid. 29 components, f
 accessible, themeable, with a built-in dark mode.
 
 > Form follows function.
+
+<p>
+  <a href="https://www.npmjs.com/package/bauhaus-ui-library"><img src="https://img.shields.io/npm/v/bauhaus-ui-library?color=E63329&labelColor=1C1C1C" alt="npm version" /></a>
+  <a href="https://github.com/xhu96/bauhaus-ui-library/actions/workflows/ci.yml"><img src="https://github.com/xhu96/bauhaus-ui-library/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/npm/l/bauhaus-ui-library?color=21409A&labelColor=1C1C1C" alt="MIT license" /></a>
+  <a href="https://xhu96.github.io/bauhaus-ui-library/"><img src="https://img.shields.io/badge/demo-live-F4C20D?labelColor=1C1C1C" alt="Live demo" /></a>
+</p>
 
 Built with **React + TypeScript + Tailwind CSS + Vite + Storybook**.
 
@@ -38,8 +45,9 @@ Import the stylesheet once at your app root:
 import 'bauhaus-ui-library/styles.css'
 ```
 
-If you use Tailwind, make sure the Bauhaus theme tokens are available by extending your
-config from `tailwind.config.js` (colors, fonts, shadows, animations).
+The bundled `styles.css` is self-contained (it includes the design tokens and every utility the
+components use), so Tailwind is **not required** in your app. If you do use Tailwind and want to
+author your own `bred` / `bblue` markup, copy the token definitions from the Theming section below.
 
 Load the fonts (e.g. in your `index.html`):
 
@@ -79,14 +87,14 @@ Every component shares a small, predictable API:
 
 ## Components
 
-| Group | Components |
-|-------|-----------|
-| **Signature** | `Shape`, `ShapeLogo`, `GeometricPattern` |
-| **Core** | `Button`, `Card` (+ `CardHeader`/`CardTitle`/`CardDescription`/`CardBody`/`CardFooter`) |
-| **Form** | `FormField`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`/`RadioGroup`, `Switch`, `Slider` |
-| **Display & feedback** | `Badge`, `Tag`, `Avatar`, `Alert`, `Progress`, `Spinner`, `Divider`, `Tooltip` |
-| **Navigation** | `Tabs`, `Accordion`, `Navbar`, `Pagination`, `Breadcrumb` |
-| **Overlay** | `Modal`, `Drawer`, `Toast` (`ToastProvider` + `useToast`) |
+| Group                  | Components                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| **Signature**          | `Shape`, `ShapeLogo`, `GeometricPattern`                                                         |
+| **Core**               | `Button`, `Card` (+ `CardHeader`/`CardTitle`/`CardDescription`/`CardBody`/`CardFooter`)          |
+| **Form**               | `FormField`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`/`RadioGroup`, `Switch`, `Slider` |
+| **Display & feedback** | `Badge`, `Tag`, `Avatar`, `Alert`, `Progress`, `Spinner`, `Divider`, `Tooltip`                   |
+| **Navigation**         | `Tabs`, `Accordion`, `Navbar`, `Pagination`, `Breadcrumb`                                        |
+| **Overlay**            | `Modal`, `Drawer`, `Toast` (`ToastProvider` + `useToast`)                                        |
 
 ## Dark mode
 
@@ -103,7 +111,7 @@ both themes.
 ## Theming
 
 Surface and ink tokens are space-separated RGB channels (so Tailwind alpha like `bg-ink/10`
-works). Override them in your own CSS (see `src/styles/tokens.css`):
+works). Override them in your own CSS (these are the same variables `styles.css` already ships):
 
 ```css
 :root {
@@ -118,28 +126,37 @@ works). Override them in your own CSS (see `src/styles/tokens.css`):
 }
 ```
 
-Or extend the Tailwind preset: colors are exposed as `bred`, `bblue`, `byellow` (each with
-`-dark` / `-light` steps), plus `paper`, `surface`, `ink`, the fixed `coal` / `chalk`
-neutrals, `shadow-hard*`, and the geometric keyframes.
+For reference, the Tailwind color names the components use are `bred`, `bblue`, `byellow` (each
+with `-dark` / `-light` / `-ink` steps), plus `paper`, `surface`, `ink`, and the fixed
+`coal` / `chalk` neutrals — all backed by the CSS variables above.
 
 ## Development
 
 ```bash
-npm install        # install dependencies
-npm run dev        # run the showcase site (Vite)
-npm run storybook  # component explorer
-npm run build      # build the showcase
-npm run build:lib  # build the publishable library (dist/)
-npm run typecheck  # tsc --noEmit
+npm install         # install dependencies
+npm run dev         # run the showcase site (Vite)
+npm run storybook   # component explorer
+npm run lint        # ESLint
+npm run format      # Prettier (write)
+npm run typecheck   # tsc --noEmit
+npm test            # Vitest (npm run test:watch to watch)
+npm run build       # build the showcase
+npm run build:lib   # build the publishable library (dist/)
+npm run build-storybook
 ```
 
 ## Design background
 
-This library is a working translation of Bauhaus principles into UI: *form follows function*,
+This library is a working translation of Bauhaus principles into UI: _form follows function_,
 the grid as the silent organizer, the primary triad, and the canonical shape→color mapping
 (circle→blue, square→red, triangle→yellow). It fills a gap: while neo-brutalism has several
 React libraries, no installable Bauhaus component system existed.
 
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md); release notes live in [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
