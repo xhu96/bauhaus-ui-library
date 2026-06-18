@@ -6,6 +6,8 @@ import { resolve } from 'node:path'
 
 // Library build: emits ESM + UMD bundles and type declarations to /dist.
 export default defineConfig({
+  // Don't copy the demo site's public/ assets (e.g. favicon.svg) into the package.
+  publicDir: false,
   plugins: [
     react(),
     dts({

@@ -1,6 +1,6 @@
 {
   "name": "bauhaus-ui-library",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A bold, geometric React component library inspired by the Bauhaus movement.",
   "type": "module",
   "license": "MIT",
