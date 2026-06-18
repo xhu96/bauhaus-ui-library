@@ -1,0 +1,8 @@
+dist
+storybook-static
+node_modules
+coverage
+.worktrees
+package-lock.json
+*.svg
+*.mdx

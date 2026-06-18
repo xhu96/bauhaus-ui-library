@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Live showcase & Storybook
+    url: https://xhu96.github.io/bauhaus-ui-library/
+    about: Browse the components and their states before filing an issue.
