@@ -62,6 +62,9 @@ export default {
         'hard-lg': '6px 6px 0 0 rgb(var(--bui-ink))',
         'hard-red': '4px 4px 0 0 #E63329',
         'hard-blue': '4px 4px 0 0 #21409A',
+        // Fixed ink (never flips) — for framing the fixed-colour graphic blocks.
+        'hard-coal': '4px 4px 0 0 #1C1C1C',
+        'hard-coal-lg': '6px 6px 0 0 #1C1C1C',
       },
       keyframes: {
         'spin-slow': {

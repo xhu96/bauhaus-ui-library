@@ -1,5 +1,5 @@
-// Bauhaus UI — public API.
-// Consumers also import the stylesheet once: `import 'bauhaus-ui/styles.css'`.
+// Bauhaus UI public API.
+// Consumers also import the stylesheet once: `import 'bauhaus-ui-library/styles.css'`.
 import './styles/globals.css'
 
 export * from './lib/utils'

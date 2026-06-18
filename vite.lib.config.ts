@@ -13,11 +13,15 @@ export default defineConfig({
       exclude: [
         'src/main.tsx',
         'src/App.tsx',
+        'src/components/HeroBoard.tsx',
         '**/*.stories.tsx',
         '**/*.test.ts',
         '**/*.test.tsx',
         'src/test/**',
       ],
+      // Bundle the whole public type graph (from src/index.ts) into a single
+      // dist/index.d.ts; drops stray per-file declarations for internal modules.
+      rollupTypes: true,
     }),
   ],
   resolve: {

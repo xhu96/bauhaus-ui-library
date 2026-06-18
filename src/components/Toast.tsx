@@ -11,8 +11,9 @@ import {
 import { createPortal } from 'react-dom'
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { type Status } from '@/lib/types'
 
-export type ToastStatus = 'info' | 'success' | 'warning' | 'danger'
+export type ToastStatus = Status
 
 export interface ToastOptions {
   title: string
@@ -159,6 +160,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
 }
 
 /** Access the toast API. Must be called within a ToastProvider. */
+// eslint-disable-next-line react-refresh/only-export-components -- provider + hook are intentionally co-located
 export function useToast(): ToastContextValue {
   const ctx = useContext(ToastContext)
   if (!ctx) {

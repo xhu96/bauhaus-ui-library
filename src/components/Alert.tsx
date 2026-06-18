@@ -1,8 +1,7 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react'
 import { Info, CheckCircle2, AlertTriangle, XCircle, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-type Status = 'info' | 'success' | 'warning' | 'danger'
+import { type Status } from '@/lib/types'
 
 export interface AlertProps extends HTMLAttributes<HTMLDivElement> {
   status?: Status

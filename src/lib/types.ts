@@ -3,6 +3,9 @@ export type BauhausColor = 'red' | 'blue' | 'yellow' | 'ink'
 
 export type Size = 'sm' | 'md' | 'lg'
 
+/** Semantic status used by feedback components (Alert, Toast). */
+export type Status = 'info' | 'success' | 'warning' | 'danger'
+
 /** Maps a BauhausColor to its solid Tailwind background + the text color that sits on it.
  *  `coal`/`paper` are used (not white/ink) so text stays legible in dark mode. */
 export const solidColor: Record<BauhausColor, string> = {
@@ -10,14 +13,6 @@ export const solidColor: Record<BauhausColor, string> = {
   blue: 'bg-bblue text-white',
   yellow: 'bg-byellow text-coal',
   ink: 'bg-ink text-paper',
-}
-
-/** Foreground color that sits on a solid fill of the given palette color. */
-export const onSolid: Record<BauhausColor, string> = {
-  red: 'text-white',
-  blue: 'text-white',
-  yellow: 'text-coal',
-  ink: 'text-paper',
 }
 
 /** Hover background for solid variants. */
