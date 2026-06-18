@@ -132,9 +132,7 @@ export const KeyboardNavigation: Story = {
     await userEvent.keyboard('{ArrowRight}')
     expect(details).toHaveFocus()
     expect(details).toHaveAttribute('aria-selected', 'true')
-    expect(await canvas.findByRole('tabpanel')).toHaveTextContent(
-      'The fine print and specifications.',
-    )
+    expect(await canvas.findByRole('tabpanel')).toHaveTextContent('The fine print and specifications.')
 
     // ArrowLeft from the first tab wraps around to the last one.
     overview.focus()

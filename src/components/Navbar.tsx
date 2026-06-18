@@ -1,8 +1,4 @@
-import {
-  type AnchorHTMLAttributes,
-  type HTMLAttributes,
-  type ReactNode,
-} from 'react'
+import { type AnchorHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 export interface NavbarProps extends HTMLAttributes<HTMLElement> {
@@ -35,7 +31,10 @@ export function Navbar({ sticky = false, className, children, ...props }: Navbar
 export function NavbarBrand({ className, children, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex items-center gap-2 font-display text-xl font-bold tracking-tight text-ink', className)}
+      className={cn(
+        'flex items-center gap-2 font-display text-xl font-bold tracking-tight text-ink',
+        className,
+      )}
       {...props}
     >
       {children}
@@ -58,17 +57,9 @@ const justifyMap: Record<NonNullable<NavbarContentProps['justify']>, string> = {
 /**
  * Flexible content slot, typically holding nav links. Grows to fill the bar.
  */
-export function NavbarContent({
-  justify = 'end',
-  className,
-  children,
-  ...props
-}: NavbarContentProps) {
+export function NavbarContent({ justify = 'end', className, children, ...props }: NavbarContentProps) {
   return (
-    <div
-      className={cn('flex min-w-0 flex-1 items-center gap-5', justifyMap[justify], className)}
-      {...props}
-    >
+    <div className={cn('flex min-w-0 flex-1 items-center gap-5', justifyMap[justify], className)} {...props}>
       {children}
     </div>
   )
@@ -90,9 +81,7 @@ export function NavbarLink({ href, active = false, className, children, ...props
       aria-current={active ? 'page' : undefined}
       className={cn(
         'press font-display text-sm font-semibold uppercase tracking-wide',
-        active
-          ? 'text-ink underline decoration-3 underline-offset-4'
-          : 'text-ink-muted hover:text-ink',
+        active ? 'text-ink underline decoration-3 underline-offset-4' : 'text-ink-muted hover:text-ink',
         className,
       )}
       {...props}

@@ -74,7 +74,15 @@ export function Shape({
         <circle cx={MID} cy={MID} r={CIRCLE_RADIUS} fill={fill} stroke={stroke} strokeWidth={sw} />
       )}
       {kind === 'square' && (
-        <rect x={EDGE} y={EDGE} width={FULL_SPAN} height={FULL_SPAN} fill={fill} stroke={stroke} strokeWidth={sw} />
+        <rect
+          x={EDGE}
+          y={EDGE}
+          width={FULL_SPAN}
+          height={FULL_SPAN}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={sw}
+        />
       )}
       {kind === 'triangle' && (
         <polygon

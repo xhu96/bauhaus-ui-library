@@ -52,9 +52,7 @@ describe('FormField', () => {
       </FormField>,
     )
 
-    expect(screen.getByRole('slider', { name: 'Brightness' })).not.toHaveAttribute(
-      'aria-required',
-    )
+    expect(screen.getByRole('slider', { name: 'Brightness' })).not.toHaveAttribute('aria-required')
   })
 
   it('passes error and required semantics to textareas and selects', () => {
@@ -117,13 +115,7 @@ describe('FormField', () => {
       </>,
     )
 
-    expect(screen.getByRole('slider', { name: 'Zoom' })).toHaveAttribute(
-      'aria-required',
-      'true',
-    )
-    expect(screen.getByRole('slider', { name: 'Volume' })).toHaveAttribute(
-      'aria-required',
-      'true',
-    )
+    expect(screen.getByRole('slider', { name: 'Zoom' })).toHaveAttribute('aria-required', 'true')
+    expect(screen.getByRole('slider', { name: 'Volume' })).toHaveAttribute('aria-required', 'true')
   })
 })

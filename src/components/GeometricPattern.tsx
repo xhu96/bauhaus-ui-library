@@ -84,11 +84,17 @@ function Tile({ motif, fg, rot }: { motif: Motif; fg: string; rot: number }) {
       )
     case 'triangle':
       return g(
-        <polygon points={`${TILE_EDGE},${TILE_END} ${TILE_END},${TILE_END} ${TILE_EDGE},${TILE_EDGE}`} fill={fg} />,
+        <polygon
+          points={`${TILE_EDGE},${TILE_END} ${TILE_END},${TILE_END} ${TILE_EDGE},${TILE_EDGE}`}
+          fill={fg}
+        />,
       )
     case 'diagonal':
       return g(
-        <polygon points={`${TILE_EDGE},${TILE_EDGE} ${TILE_END},${TILE_EDGE} ${TILE_EDGE},${TILE_END}`} fill={fg} />,
+        <polygon
+          points={`${TILE_EDGE},${TILE_EDGE} ${TILE_END},${TILE_EDGE} ${TILE_EDGE},${TILE_END}`}
+          fill={fg}
+        />,
       )
     case 'plus':
       return (

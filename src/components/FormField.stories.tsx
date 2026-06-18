@@ -112,12 +112,7 @@ export const RequiredWithError: Story = {
     const id = useId()
     return (
       <div className="w-80">
-        <FormField
-          label="Email"
-          required
-          error="This field is required."
-          htmlFor={id}
-        >
+        <FormField label="Email" required error="This field is required." htmlFor={id}>
           <Input id={id} type="email" error placeholder="you@example.com" />
         </FormField>
       </div>
@@ -187,11 +182,7 @@ export const StackedForm: Story = {
         <FormField label="Last name" required htmlFor={lastId}>
           <Input id={lastId} placeholder="Doe" />
         </FormField>
-        <FormField
-          label="Email"
-          hint="We'll never share your email."
-          htmlFor={emailId}
-        >
+        <FormField label="Email" hint="We'll never share your email." htmlFor={emailId}>
           <Input id={emailId} type="email" placeholder="you@example.com" />
         </FormField>
       </form>

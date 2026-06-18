@@ -104,13 +104,7 @@ export const BrandWithIcon: Story = {
   render: () => (
     <Navbar>
       <NavbarBrand>
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
-        >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <rect x="0" y="0" width="20" height="20" />
         </svg>
         Bauhaus

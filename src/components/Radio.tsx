@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useId,
-  useState,
-  type ReactNode,
-} from 'react'
+import { createContext, useContext, useId, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { type BauhausColor } from '@/lib/types'
 

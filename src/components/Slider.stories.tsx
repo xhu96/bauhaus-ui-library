@@ -33,12 +33,7 @@ function SliderDemo() {
   const [value, setValue] = useState(40)
   return (
     <div className="flex w-72 flex-col gap-2">
-      <Slider
-        min={0}
-        max={100}
-        value={value}
-        onChange={(e) => setValue(Number(e.target.value))}
-      />
+      <Slider min={0} max={100} value={value} onChange={(e) => setValue(Number(e.target.value))} />
       <span className="font-display text-sm text-ink">Value: {value}</span>
     </div>
   )

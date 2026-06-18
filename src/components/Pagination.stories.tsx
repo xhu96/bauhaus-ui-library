@@ -42,13 +42,7 @@ function PaginationDemo({
 }) {
   const [page, setPage] = useState(initialPage)
   return (
-    <Pagination
-      page={page}
-      count={count}
-      onPageChange={setPage}
-      color={color}
-      siblingCount={siblingCount}
-    />
+    <Pagination page={page} count={count} onPageChange={setPage} color={color} siblingCount={siblingCount} />
   )
 }
 

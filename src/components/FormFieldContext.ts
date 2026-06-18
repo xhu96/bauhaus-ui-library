@@ -10,8 +10,7 @@ export const FormFieldContext = createContext<FormFieldContextValue | null>(null
 
 export function useFormFieldSemantics(explicitDescribedBy?: string) {
   const context = useContext(FormFieldContext)
-  const describedBy =
-    [explicitDescribedBy, context?.describedBy].filter(Boolean).join(' ') || undefined
+  const describedBy = [explicitDescribedBy, context?.describedBy].filter(Boolean).join(' ') || undefined
 
   return {
     describedBy,

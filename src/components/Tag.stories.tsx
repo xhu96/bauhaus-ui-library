@@ -85,7 +85,9 @@ export const RemovableColors: Story = {
  *  component's single real behavior, which the static stories never exercise. */
 export const InteractiveRemove: Story = {
   render: () => {
-    const [tags, setTags] = useState<{ id: number; label: string; color: 'red' | 'blue' | 'yellow' | 'ink' }[]>([
+    const [tags, setTags] = useState<
+      { id: number; label: string; color: 'red' | 'blue' | 'yellow' | 'ink' }[]
+    >([
       { id: 1, label: 'Design', color: 'red' },
       { id: 2, label: 'Engineering', color: 'blue' },
       { id: 3, label: 'Research', color: 'yellow' },

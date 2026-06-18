@@ -31,9 +31,7 @@ export function FormField({
   const describedBy = errorId ?? hintId
 
   return (
-    <FormFieldContext.Provider
-      value={{ describedBy, invalid: Boolean(error), required }}
-    >
+    <FormFieldContext.Provider value={{ describedBy, invalid: Boolean(error), required }}>
       <div className={cn('flex flex-col gap-1.5', className)}>
         {label && (
           <label

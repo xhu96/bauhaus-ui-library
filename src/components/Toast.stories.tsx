@@ -109,7 +109,12 @@ function DurationDemo() {
       <Button
         color="yellow"
         onClick={() =>
-          toast({ title: 'Persistent', description: 'Stays until dismissed.', status: 'warning', duration: 0 })
+          toast({
+            title: 'Persistent',
+            description: 'Stays until dismissed.',
+            status: 'warning',
+            duration: 0,
+          })
         }
       >
         Persistent (duration: 0)

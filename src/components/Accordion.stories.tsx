@@ -30,9 +30,7 @@ export const Default: Story = {
     <Accordion type="single" defaultValue="item-1" className="w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
-        <AccordionContent>
-          A German art school that combined crafts and the fine arts.
-        </AccordionContent>
+        <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
         <AccordionTrigger>When was it founded?</AccordionTrigger>
@@ -78,9 +76,7 @@ export const Playground: Story = {
     <Accordion {...args} className="w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
-        <AccordionContent>
-          A German art school that combined crafts and the fine arts.
-        </AccordionContent>
+        <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
         <AccordionTrigger>When was it founded?</AccordionTrigger>
@@ -103,9 +99,7 @@ export const AllCollapsed: Story = {
     <Accordion type="single" className="w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
-        <AccordionContent>
-          A German art school that combined crafts and the fine arts.
-        </AccordionContent>
+        <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
         <AccordionTrigger>When was it founded?</AccordionTrigger>
@@ -128,9 +122,7 @@ export const TogglesOpen: Story = {
     <Accordion type="single" className="w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
-        <AccordionContent>
-          A German art school that combined crafts and the fine arts.
-        </AccordionContent>
+        <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
         <AccordionTrigger>When was it founded?</AccordionTrigger>

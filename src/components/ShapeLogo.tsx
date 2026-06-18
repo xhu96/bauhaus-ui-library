@@ -31,7 +31,13 @@ export function ShapeLogo({ shapes = DEFAULT_MARK, label, size = 22, className, 
     <div className={cn('inline-flex items-center gap-2', className)} {...props}>
       <span className="inline-flex items-center gap-1">
         {shapes.map((s, i) => (
-          <Shape key={i} kind={s.kind} color={s.color} size={size} className={i > 0 ? KERN[s.kind] : undefined} />
+          <Shape
+            key={i}
+            kind={s.kind}
+            color={s.color}
+            size={size}
+            className={i > 0 ? KERN[s.kind] : undefined}
+          />
         ))}
       </span>
       {label && (

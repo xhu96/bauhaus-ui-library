@@ -52,7 +52,9 @@ export const Seeds: Story = {
 }
 
 export const CustomPalette: Story = {
-  render: () => <GeometricPattern rows={3} cols={6} palette={['red', 'ink']} surfaces={['white', 'yellow']} />,
+  render: () => (
+    <GeometricPattern rows={3} cols={6} palette={['red', 'ink']} surfaces={['white', 'yellow']} />
+  ),
 }
 
 // Hero backdrop: a large dense grid, the headline use case from the JSDoc.

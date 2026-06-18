@@ -109,8 +109,7 @@ export function TabsList({ className, children, ...props }: HTMLAttributes<HTMLD
   )
 }
 
-export interface TabsTriggerProps
-  extends Omit<HTMLAttributes<HTMLButtonElement>, 'color'> {
+export interface TabsTriggerProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'color'> {
   value: string
   color?: BauhausColor
   children: ReactNode
@@ -120,13 +119,7 @@ export interface TabsTriggerProps
  * A single tab. Active triggers fill with a solid color and a bordered tab;
  * inactive ones stay plain. Arrow keys move between triggers.
  */
-export function TabsTrigger({
-  value,
-  color = 'blue',
-  className,
-  children,
-  ...props
-}: TabsTriggerProps) {
+export function TabsTrigger({ value, color = 'blue', className, children, ...props }: TabsTriggerProps) {
   const { value: active, setValue, baseId, register, focusAdjacent } = useTabsContext('TabsTrigger')
   const selected = active === value
 

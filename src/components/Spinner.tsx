@@ -19,7 +19,13 @@ const sizePx: Record<Size, number> = {
  * Bauhaus loader: a rotating quarter-circle arc with a counter-rotating
  * dot orbiting inside. Inline SVG, announced as a status region.
  */
-export function Spinner({ size = 'md', color = 'ink', label = 'Loading', className, ...props }: SpinnerProps) {
+export function Spinner({
+  size = 'md',
+  color = 'ink',
+  label = 'Loading',
+  className,
+  ...props
+}: SpinnerProps) {
   const px = typeof size === 'number' ? size : sizePx[size]
   const c = hex[color]
 
@@ -35,16 +41,13 @@ export function Spinner({ size = 'md', color = 'ink', label = 'Loading', classNa
       >
         {/* Rotating quarter-circle arc */}
         <g className="origin-center animate-spin" style={{ transformBox: 'fill-box' }}>
-          <path
-            d="M50 8 A42 42 0 0 1 92 50"
-            fill="none"
-            stroke={c}
-            strokeWidth={14}
-            strokeLinecap="square"
-          />
+          <path d="M50 8 A42 42 0 0 1 92 50" fill="none" stroke={c} strokeWidth={14} strokeLinecap="square" />
         </g>
         {/* Counter-rotating orbiting dot */}
-        <g className="origin-center animate-spin-slow" style={{ transformBox: 'fill-box', animationDirection: 'reverse' }}>
+        <g
+          className="origin-center animate-spin-slow"
+          style={{ transformBox: 'fill-box', animationDirection: 'reverse' }}
+        >
           <rect x="44" y="74" width="14" height="14" fill={c} />
         </g>
       </svg>

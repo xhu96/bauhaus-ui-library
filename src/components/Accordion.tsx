@@ -57,13 +57,7 @@ export interface AccordionProps extends HTMLAttributes<HTMLDivElement> {
  * Compound accordion. Manages the open item set via context; collapse behavior
  * depends on `type`.
  */
-export function Accordion({
-  type = 'single',
-  defaultValue,
-  className,
-  children,
-  ...props
-}: AccordionProps) {
+export function Accordion({ type = 'single', defaultValue, className, children, ...props }: AccordionProps) {
   const [open, setOpen] = useState<string[]>(() => toArray(defaultValue))
 
   const isOpen = (value: string) => open.includes(value)
@@ -105,10 +99,7 @@ export function AccordionItem({ value, className, children, ...props }: Accordio
 
   return (
     <AccordionItemContext.Provider value={ctx}>
-      <div
-        className={cn('border-ink [&:not(:last-child)]:border-b-3', className)}
-        {...props}
-      >
+      <div className={cn('border-ink [&:not(:last-child)]:border-b-3', className)} {...props}>
         {children}
       </div>
     </AccordionItemContext.Provider>
@@ -119,11 +110,7 @@ export function AccordionItem({ value, className, children, ...props }: Accordio
  * Full-width clickable header. The chevron rotates when the item is open.
  * Enter/Space toggles.
  */
-export function AccordionTrigger({
-  className,
-  children,
-  ...props
-}: HTMLAttributes<HTMLButtonElement>) {
+export function AccordionTrigger({ className, children, ...props }: HTMLAttributes<HTMLButtonElement>) {
   const { isOpen, toggle } = useAccordionContext('AccordionTrigger')
   const { value, triggerId, contentId } = useAccordionItemContext('AccordionTrigger')
   const open = isOpen(value)
@@ -162,11 +149,7 @@ export function AccordionTrigger({
 /**
  * Region revealed when its item is open.
  */
-export function AccordionContent({
-  className,
-  children,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) {
+export function AccordionContent({ className, children, ...props }: HTMLAttributes<HTMLDivElement>) {
   const { isOpen } = useAccordionContext('AccordionContent')
   const { value, triggerId, contentId } = useAccordionItemContext('AccordionContent')
   if (!isOpen(value)) return null

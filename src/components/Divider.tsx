@@ -53,7 +53,9 @@ export function Divider({
           className="flex-1"
           style={{ borderTopWidth: thickness, borderTopStyle: variant, borderTopColor: lineColor }}
         />
-        <span className="shrink-0 font-display text-sm font-bold uppercase tracking-wide text-ink">{label}</span>
+        <span className="shrink-0 font-display text-sm font-bold uppercase tracking-wide text-ink">
+          {label}
+        </span>
         <span
           className="flex-1"
           style={{ borderTopWidth: thickness, borderTopStyle: variant, borderTopColor: lineColor }}

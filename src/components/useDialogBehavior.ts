@@ -9,11 +9,7 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',')
 
-export function useDialogBehavior(
-  open: boolean,
-  panelRef: RefObject<HTMLElement>,
-  onClose: () => void,
-) {
+export function useDialogBehavior(open: boolean, panelRef: RefObject<HTMLElement>, onClose: () => void) {
   const onCloseRef = useRef(onClose)
   onCloseRef.current = onClose
 

@@ -92,8 +92,8 @@ function TitlelessModalDemo() {
       <Button onClick={() => setOpen(true)}>Open Titleless Modal</Button>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalBody>
-          A modal with no title prop, so no bordered header is rendered and the dialog has no
-          accessible label from a title.
+          A modal with no title prop, so no bordered header is rendered and the dialog has no accessible label
+          from a title.
         </ModalBody>
         <ModalFooter>
           <Button onClick={() => setOpen(false)}>Close</Button>
@@ -114,9 +114,7 @@ function CustomHeaderModalDemo() {
       <Button onClick={() => setOpen(true)}>Open Custom Header Modal</Button>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>
-          <h2 className="font-display text-xl font-bold tracking-tight text-ink">
-            Custom composition
-          </h2>
+          <h2 className="font-display text-xl font-bold tracking-tight text-ink">Custom composition</h2>
           <p className="mt-1 text-sm text-ink/70">Built from the exported ModalHeader sub-part.</p>
         </ModalHeader>
         <ModalBody>Compose the header manually when you need more than a plain title.</ModalBody>
@@ -137,12 +135,7 @@ function NonDismissableModalDemo() {
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open Non-dismissable Modal</Button>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Action required"
-        closeOnBackdrop={false}
-      >
+      <Modal open={open} onClose={() => setOpen(false)} title="Action required" closeOnBackdrop={false}>
         <ModalBody>
           Clicking the backdrop will not close this modal. Use the explicit action instead.
         </ModalBody>

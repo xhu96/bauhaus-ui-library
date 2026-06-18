@@ -53,11 +53,7 @@ export const WithIcons: Story = {
     <div className="flex w-80 flex-col gap-3">
       <Input leftIcon={<Mail className="h-4 w-4" />} placeholder="Email" type="email" />
       <Input rightIcon={<Search className="h-4 w-4" />} placeholder="Search" />
-      <Input
-        leftIcon={<Lock className="h-4 w-4" />}
-        placeholder="Password"
-        type="password"
-      />
+      <Input leftIcon={<Lock className="h-4 w-4" />} placeholder="Password" type="password" />
     </div>
   ),
 }

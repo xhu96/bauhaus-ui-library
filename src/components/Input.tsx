@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  type HTMLInputTypeAttribute,
-  type InputHTMLAttributes,
-  type ReactNode,
-} from 'react'
+import { forwardRef, type HTMLInputTypeAttribute, type InputHTMLAttributes, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { type Size } from '@/lib/types'
 import { useFormFieldSemantics } from './FormFieldContext'
@@ -83,9 +78,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         ref={ref}
         disabled={disabled}
         aria-describedby={semantics.describedBy}
-        aria-required={
-          ariaRequired ?? (semantics.required && derivesRequired ? true : undefined)
-        }
+        aria-required={ariaRequired ?? (semantics.required && derivesRequired ? true : undefined)}
         aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
         className={cn(
           'w-full border-3 bg-surface font-sans text-ink placeholder:text-ink-muted',
