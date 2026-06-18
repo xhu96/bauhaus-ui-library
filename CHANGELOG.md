@@ -10,8 +10,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Added
 
-- Initial release: 29 accessible React + TypeScript components across forms, feedback,
-  navigation and overlays, plus the geometric primitives `Shape`, `ShapeLogo` and `GeometricPattern`.
+- Initial release: 29 accessible React + TypeScript components — geometric primitives
+  (`Shape`, `ShapeLogo`, `GeometricPattern`), forms, feedback, navigation and overlays.
 - Built-in light and dark theming driven by a single `.dark` class.
 - Storybook with stories for every component, plus Introduction and Design-tokens pages and a
   dark-mode toolbar toggle.

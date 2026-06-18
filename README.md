@@ -25,7 +25,7 @@ Built with **React + TypeScript + Tailwind CSS + Vite + Storybook**.
 
 ## Features
 
-- **29 components** across forms, feedback, navigation, overlays, plus signature geometric primitives.
+- **29 components** spanning signature geometric primitives, forms, feedback, navigation and overlays.
 - **Bauhaus design system.** A disciplined palette (red `#E63329`, blue `#21409A`, yellow `#F4C20D`, ink `#1C1C1C`), geometric sans-serif type (Space Grotesk + Archivo), sharp corners and hard offset shadows.
 - **Signature generator.** `GeometricPattern` tessellates deterministic Bauhaus motif grids for heroes and backdrops.
 - **Dark mode** built in. Flip a single `.dark` class on `<html>`; surfaces and ink invert while the primary triad stays vivid.
