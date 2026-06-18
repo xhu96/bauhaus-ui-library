@@ -9,6 +9,10 @@
   <rect x="70" y="80" width="40" height="40" fill="#1C1C1C"/>
   <circle cx="142" cy="100" r="20" fill="#E63329"/>
   <polygon points="192,77 214,121 170,121" fill="#21409A"/>
+  <g fill="#F4C20D">
+    <rect x="235" y="80" width="14" height="40"/>
+    <rect x="222" y="93" width="40" height="14"/>
+  </g>
 
   <text x="68" y="208" font-size="82" font-weight="800" letter-spacing="-2" fill="#1C1C1C">BAUHAUS <tspan fill="#E63329">UI</tspan></text>
   <text x="72" y="252" font-size="27" font-weight="500" fill="#3A3A38">29 geometric React components.</text>

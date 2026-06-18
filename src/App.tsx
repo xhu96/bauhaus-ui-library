@@ -697,9 +697,10 @@ function Showcase() {
         <div className="mx-auto w-full max-w-6xl px-6 py-14">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1">
-              <Shape kind="square" color="yellow" size={22} />
+              <Shape kind="square" color="ink" className="!text-paper" size={22} />
               <Shape kind="circle" color="red" size={22} />
               <Shape kind="triangle" color="blue" size={22} />
+              <Shape kind="cross" color="yellow" size={22} />
             </span>
             <span className="font-display text-lg font-bold uppercase tracking-tight">Bauhaus UI</span>
           </div>
