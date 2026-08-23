@@ -3,15 +3,7 @@ import { cn } from '@/lib/utils'
 import { type BauhausColor } from '@/lib/types'
 
 export type ShapeKind =
-  | 'circle'
-  | 'square'
-  | 'triangle'
-  | 'semicircle'
-  | 'quarter'
-  | 'ring'
-  | 'diamond'
-  | 'cross'
-  | 'arc'
+  'circle' | 'square' | 'triangle' | 'semicircle' | 'quarter' | 'ring' | 'diamond' | 'cross' | 'arc'
 
 export interface ShapeProps extends Omit<SVGProps<SVGSVGElement>, 'color'> {
   /** Which geometric primitive to draw. */
@@ -26,10 +18,10 @@ export interface ShapeProps extends Omit<SVGProps<SVGSVGElement>, 'color'> {
 
 /** Text-color class per palette name. `ink` is variable-backed so it flips in dark mode. */
 const colorClass: Record<BauhausColor, string> = {
-  red: 'text-bred',
-  blue: 'text-bblue',
-  yellow: 'text-byellow',
-  ink: 'text-ink',
+  red: 'bui-text-bred',
+  blue: 'bui-text-bblue',
+  yellow: 'bui-text-byellow',
+  ink: 'bui-text-ink',
 }
 
 const EDGE = 4
@@ -66,7 +58,7 @@ export function Shape({
       width={size}
       height={size}
       viewBox="0 0 100 100"
-      className={cn('inline-block shrink-0', colorClass[color], className)}
+      className={cn('bui-reset', 'bui-inline-block bui-shrink-0', colorClass[color], className)}
       aria-hidden="true"
       {...props}
     >

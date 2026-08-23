@@ -6,3 +6,5 @@ coverage
 package-lock.json
 *.svg
 *.mdx
+etc/*.api.md
+temp

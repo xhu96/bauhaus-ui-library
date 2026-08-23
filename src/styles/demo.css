@@ -1,0 +1,19 @@
+@import './globals.css';
+
+@tailwind base;
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  @apply bui-bg-paper bui-font-sans bui-text-ink;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @apply bui-font-display bui-font-bold bui-tracking-tight;
+}

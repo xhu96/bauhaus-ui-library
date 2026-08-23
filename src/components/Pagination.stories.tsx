@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn, within, userEvent, expect } from '@storybook/test'
+import { fn, within, userEvent, expect } from 'storybook/test'
 import { useState } from 'react'
 import { Pagination } from './Pagination'
 
@@ -60,7 +60,7 @@ export const Colored: Story = {
 /** All four active-fill colors so each BauhausColor is demonstrated. */
 export const AllColors: Story = {
   render: () => (
-    <div className="flex flex-col gap-4">
+    <div className="bui-flex bui-flex-col bui-gap-4">
       <PaginationDemo count={8} color="ink" />
       <PaginationDemo count={8} color="red" />
       <PaginationDemo count={8} color="blue" />

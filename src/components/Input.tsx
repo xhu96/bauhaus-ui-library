@@ -11,21 +11,21 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 text-sm',
-  md: 'h-11 text-base',
-  lg: 'h-14 text-lg',
+  sm: 'bui-h-9 bui-text-sm',
+  md: 'bui-h-11 bui-text-base',
+  lg: 'bui-h-14 bui-text-lg',
 }
 
 const padX: Record<Size, { base: string; left: string; right: string }> = {
-  sm: { base: 'px-3', left: 'pl-9', right: 'pr-9' },
-  md: { base: 'px-4', left: 'pl-11', right: 'pr-11' },
-  lg: { base: 'px-5', left: 'pl-14', right: 'pr-14' },
+  sm: { base: 'bui-px-3', left: 'bui-pl-9', right: 'bui-pr-9' },
+  md: { base: 'bui-px-4', left: 'bui-pl-11', right: 'bui-pr-11' },
+  lg: { base: 'bui-px-5', left: 'bui-pl-14', right: 'bui-pr-14' },
 }
 
 const iconBox: Record<Size, string> = {
-  sm: 'w-9',
-  md: 'w-11',
-  lg: 'w-14',
+  sm: 'bui-w-9',
+  md: 'bui-w-11',
+  lg: 'bui-w-14',
 }
 
 const inputTypesWithoutRequired = new Set<HTMLInputTypeAttribute>([
@@ -50,6 +50,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     rightIcon,
     className,
     disabled,
+    id,
+    required,
     'aria-describedby': ariaDescribedBy,
     'aria-invalid': ariaInvalid,
     'aria-required': ariaRequired,
@@ -61,13 +63,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const derivesRequired = !inputTypesWithoutRequired.has(props.type ?? 'text')
 
   return (
-    <div className="relative inline-flex w-full items-center">
+    <div className="bui-reset bui-relative bui-inline-flex bui-w-full bui-items-center">
       {leftIcon && (
         <span
           className={cn(
-            'pointer-events-none absolute left-0 inline-flex items-center justify-center text-ink-muted',
+            'bui-reset',
+            'bui-pointer-events-none bui-absolute bui-left-0 bui-inline-flex bui-items-center bui-justify-center bui-text-ink-muted',
             iconBox[inputSize],
-            'h-full',
+            'bui-h-full',
           )}
           aria-hidden
         >
@@ -76,14 +79,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       )}
       <input
         ref={ref}
+        id={id ?? semantics.controlId}
         disabled={disabled}
+        required={required ?? (semantics.required && derivesRequired ? true : undefined)}
         aria-describedby={semantics.describedBy}
         aria-required={ariaRequired ?? (semantics.required && derivesRequired ? true : undefined)}
         aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
         className={cn(
-          'w-full border-3 bg-surface font-sans text-ink placeholder:text-ink-muted',
-          'disabled:cursor-not-allowed disabled:opacity-50',
-          error ? 'border-bred' : 'border-ink',
+          'bui-reset',
+          'bui-w-full bui-border-3 bui-bg-surface bui-font-sans bui-text-ink placeholder:bui-text-ink-muted',
+          'disabled:bui-cursor-not-allowed disabled:bui-opacity-50',
+          error || semantics.invalid ? 'bui-border-bred' : 'bui-border-ink',
           sizes[inputSize],
           padX[inputSize].base,
           leftIcon && padX[inputSize].left,
@@ -95,9 +101,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {rightIcon && (
         <span
           className={cn(
-            'pointer-events-none absolute right-0 inline-flex items-center justify-center text-ink-muted',
+            'bui-reset',
+            'bui-pointer-events-none bui-absolute bui-right-0 bui-inline-flex bui-items-center bui-justify-center bui-text-ink-muted',
             iconBox[inputSize],
-            'h-full',
+            'bui-h-full',
           )}
           aria-hidden
         >

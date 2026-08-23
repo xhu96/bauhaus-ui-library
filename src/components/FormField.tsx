@@ -26,36 +26,40 @@ export function FormField({
   children,
 }: FormFieldProps) {
   const supportId = useId()
+  const controlId = htmlFor ?? `${supportId}-control`
+  const labelId = label ? `${controlId}-label` : undefined
   const errorId = error ? `${supportId}-error` : undefined
-  const hintId = hint && !error ? `${supportId}-hint` : undefined
-  const describedBy = errorId ?? hintId
+  const hintId = hint ? `${supportId}-hint` : undefined
+  const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
 
   return (
-    <FormFieldContext.Provider value={{ describedBy, invalid: Boolean(error), required }}>
-      <div className={cn('flex flex-col gap-1.5', className)}>
+    <FormFieldContext.Provider value={{ controlId, describedBy, labelId, invalid: Boolean(error), required }}>
+      <div className={cn('bui-reset', 'bui-flex bui-flex-col bui-gap-1.5', className)}>
         {label && (
           <label
-            htmlFor={htmlFor}
-            className="font-display text-sm font-semibold uppercase tracking-wide text-ink"
+            id={labelId}
+            htmlFor={controlId}
+            className="bui-reset bui-font-display bui-text-sm bui-font-semibold bui-uppercase bui-tracking-wide bui-text-ink"
           >
             {label}
             {required && (
-              <span className="ml-1 text-bred-ink" aria-hidden>
+              <span className="bui-reset bui-ml-1 bui-text-bred-ink" aria-hidden>
                 *
               </span>
             )}
           </label>
         )}
         {children}
-        {error ? (
-          <p id={errorId} className="text-sm font-medium text-bred-ink">
-            {error}
-          </p>
-        ) : hint ? (
-          <p id={hintId} className="text-sm text-ink-muted">
+        {hint && (
+          <p id={hintId} className="bui-reset bui-m-0 bui-text-sm bui-text-ink-muted">
             {hint}
           </p>
-        ) : null}
+        )}
+        {error && (
+          <p id={errorId} className="bui-reset bui-m-0 bui-text-sm bui-font-medium bui-text-bred-ink">
+            {error}
+          </p>
+        )}
       </div>
     </FormFieldContext.Provider>
   )

@@ -15,13 +15,18 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.19.5, 22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
+      - name: Format
+        run: npm run format:check
       - name: Lint
         run: npm run lint
       - name: Typecheck
@@ -30,5 +35,9 @@ jobs:
         run: npm test
       - name: Build library
         run: npm run build:lib
+      - name: Check public API contract
+        run: npm run api:check
+      - name: Smoke test packed package
+        run: npm run package:smoke
       - name: Build Storybook
         run: npm run build-storybook

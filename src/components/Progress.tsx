@@ -14,9 +14,9 @@ export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const trackHeights: Record<Size, string> = {
-  sm: 'h-3',
-  md: 'h-5',
-  lg: 'h-7',
+  sm: 'bui-h-3',
+  md: 'bui-h-5',
+  lg: 'bui-h-7',
 }
 
 /**
@@ -30,25 +30,39 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(function Progr
   const clamped = Math.max(0, Math.min(100, value))
 
   return (
-    <div ref={ref} className={cn('flex items-center gap-3', className)} {...props}>
+    <div ref={ref} className={cn('bui-reset', 'bui-flex bui-items-center bui-gap-3', className)} {...props}>
       <div
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={indeterminate ? undefined : clamped}
-        className={cn('relative w-full overflow-hidden border-3 border-ink bg-surface', trackHeights[size])}
+        className={cn(
+          'bui-reset',
+          'bui-relative bui-w-full bui-overflow-hidden bui-border-3 bui-border-ink bui-bg-surface',
+          trackHeights[size],
+        )}
       >
         {indeterminate ? (
-          <div className={cn('absolute inset-y-0 left-0 w-1/3 animate-indeterminate', solidColor[color])} />
+          <div
+            className={cn(
+              'bui-reset',
+              'bui-absolute bui-inset-y-0 bui-left-0 bui-w-1/3 bui-animate-indeterminate',
+              solidColor[color],
+            )}
+          />
         ) : (
           <div
-            className={cn('h-full transition-[width] duration-300 ease-out', solidColor[color])}
+            className={cn(
+              'bui-reset',
+              'bui-h-full bui-transition-[width] bui-duration-300 bui-ease-out',
+              solidColor[color],
+            )}
             style={{ width: `${clamped}%` }}
           />
         )}
       </div>
       {showLabel && !indeterminate && (
-        <span className="w-10 shrink-0 text-right font-mono text-sm font-bold tabular-nums text-ink">
+        <span className="bui-reset bui-w-10 bui-shrink-0 bui-text-right bui-font-mono bui-text-sm bui-font-bold bui-tabular-nums bui-text-ink">
           {Math.round(clamped)}%
         </span>
       )}

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 import { useState } from 'react'
 import { Slider } from './Slider'
 
@@ -32,9 +32,9 @@ type Story = StoryObj<typeof meta>
 function SliderDemo() {
   const [value, setValue] = useState(40)
   return (
-    <div className="flex w-72 flex-col gap-2">
+    <div className="bui-flex bui-w-72 bui-flex-col bui-gap-2">
       <Slider min={0} max={100} value={value} onChange={(e) => setValue(Number(e.target.value))} />
-      <span className="font-display text-sm text-ink">Value: {value}</span>
+      <span className="bui-font-display bui-text-sm bui-text-ink">Value: {value}</span>
     </div>
   )
 }
@@ -57,7 +57,7 @@ export const Disabled: Story = {
 
 export const AllColors: Story = {
   render: (args) => (
-    <div className="flex w-72 flex-col gap-4">
+    <div className="bui-flex bui-w-72 bui-flex-col bui-gap-4">
       {(['red', 'blue', 'yellow', 'ink'] as const).map((color) => (
         <Slider key={color} {...args} color={color} defaultValue={60} />
       ))}

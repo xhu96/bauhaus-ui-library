@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { within, userEvent, expect, fn } from '@storybook/test'
+import { within, userEvent, expect, fn } from 'storybook/test'
 import { Select } from './Select'
 
 const options = [
@@ -90,7 +90,7 @@ export const Placeholder: Story = {
 
 export const AllSizes: Story = {
   render: (args) => (
-    <div className="flex flex-col gap-4">
+    <div className="bui-flex bui-flex-col bui-gap-4">
       <Select {...args} selectSize="sm" />
       <Select {...args} selectSize="md" />
       <Select {...args} selectSize="lg" />

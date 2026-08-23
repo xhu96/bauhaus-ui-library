@@ -1,4 +1,4 @@
-import { useRef, type HTMLAttributes, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -22,9 +22,9 @@ export interface ModalProps {
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'max-w-sm',
-  md: 'max-w-lg',
-  lg: 'max-w-2xl',
+  sm: 'bui-max-w-sm',
+  md: 'bui-max-w-lg',
+  lg: 'bui-max-w-2xl',
 }
 
 /**
@@ -40,15 +40,17 @@ export function Modal({
   closeOnBackdrop = true,
   children,
 }: ModalProps) {
+  const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  useDialogBehavior(open, panelRef, onClose)
+  useEffect(() => setMounted(true), [])
+  useDialogBehavior(mounted && open, panelRef, onClose)
 
-  if (!open) return null
+  if (!open || !mounted) return null
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 animate-fade-in"
+      className="bui-reset bui-fixed bui-inset-0 bui-z-50 bui-flex bui-items-center bui-justify-center bui-bg-ink/40 bui-p-4 bui-animate-fade-in"
       onMouseDown={(e) => {
         if (closeOnBackdrop && e.target === e.currentTarget) onClose()
       }}
@@ -60,7 +62,8 @@ export function Modal({
         aria-label={title ?? ariaLabel}
         tabIndex={-1}
         className={cn(
-          'relative w-full border-3 border-ink bg-surface shadow-hard-lg outline-none animate-pop-in',
+          'bui-reset',
+          'bui-relative bui-w-full bui-border-3 bui-border-ink bui-bg-surface bui-shadow-hard-lg bui-outline-none bui-animate-pop-in',
           sizes[size],
         )}
       >
@@ -68,13 +71,15 @@ export function Modal({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="press absolute right-2 top-2 inline-flex h-11 w-11 shrink-0 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
+          className="bui-reset bui-press bui-absolute bui-right-2 bui-top-2 bui-inline-flex bui-h-11 bui-w-11 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
         >
-          <X className="h-4 w-4" aria-hidden />
+          <X className="bui-reset bui-h-4 bui-w-4" aria-hidden />
         </button>
         {title && (
           <ModalHeader>
-            <h2 className="font-display text-xl font-bold tracking-tight text-ink">{title}</h2>
+            <h2 className="bui-reset bui-m-0 bui-font-display bui-text-xl bui-font-bold bui-tracking-tight bui-text-ink">
+              {title}
+            </h2>
           </ModalHeader>
         )}
         {children}
@@ -86,19 +91,28 @@ export function Modal({
 
 /** Bordered header section for a Modal. */
 export function ModalHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('border-b-3 border-ink p-5 pr-14', className)} {...props} />
+  return (
+    <div
+      className={cn('bui-reset', 'bui-border-b-3 bui-border-ink bui-p-5 bui-pr-14', className)}
+      {...props}
+    />
+  )
 }
 
 /** Padded body section for a Modal. */
 export function ModalBody({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('p-5', className)} {...props} />
+  return <div className={cn('bui-reset', 'bui-p-5', className)} {...props} />
 }
 
 /** Bordered footer section for a Modal, typically holding actions. */
 export function ModalFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex items-center justify-end gap-3 border-t-3 border-ink p-5', className)}
+      className={cn(
+        'bui-reset',
+        'bui-flex bui-items-center bui-justify-end bui-gap-3 bui-border-t-3 bui-border-ink bui-p-5',
+        className,
+      )}
       {...props}
     />
   )

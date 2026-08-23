@@ -29,7 +29,7 @@ export const Default: Story = {}
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-4">
       <Spinner color="red" size={40} />
       <Spinner color="blue" size={40} />
       <Spinner color="yellow" size={40} />
@@ -40,7 +40,7 @@ export const Colors: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-4">
       <Spinner size="sm" color="blue" />
       <Spinner size="md" color="blue" />
       <Spinner size="lg" color="blue" />

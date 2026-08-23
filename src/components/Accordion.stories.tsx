@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { within, userEvent, expect } from '@storybook/test'
+import { within, userEvent, expect } from 'storybook/test'
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './Accordion'
 
 const meta = {
@@ -27,7 +27,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: () => (
-    <Accordion type="single" defaultValue="item-1" className="w-96">
+    <Accordion type="single" defaultValue="item-1" className="bui-w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
         <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>
@@ -46,7 +46,7 @@ export const Default: Story = {
 
 export const Multiple: Story = {
   render: () => (
-    <Accordion type="multiple" defaultValue={['a', 'b']} className="w-96">
+    <Accordion type="multiple" defaultValue={['a', 'b']} className="bui-w-96">
       <AccordionItem value="a">
         <AccordionTrigger>First</AccordionTrigger>
         <AccordionContent>Open by default.</AccordionContent>
@@ -73,7 +73,7 @@ export const Playground: Story = {
     defaultValue: 'item-1',
   },
   render: (args) => (
-    <Accordion {...args} className="w-96">
+    <Accordion {...args} className="bui-w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
         <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>
@@ -96,7 +96,7 @@ export const Playground: Story = {
  */
 export const AllCollapsed: Story = {
   render: () => (
-    <Accordion type="single" className="w-96">
+    <Accordion type="single" className="bui-w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
         <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>
@@ -119,7 +119,7 @@ export const AllCollapsed: Story = {
  */
 export const TogglesOpen: Story = {
   render: () => (
-    <Accordion type="single" className="w-96">
+    <Accordion type="single" className="bui-w-96">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is Bauhaus?</AccordionTrigger>
         <AccordionContent>A German art school that combined crafts and the fine arts.</AccordionContent>

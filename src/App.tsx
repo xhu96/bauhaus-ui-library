@@ -1,150 +1,118 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useMemo, useState } from 'react'
 import {
+  Accessibility,
   ArrowRight,
-  Check,
+  Code2,
   Copy,
-  ExternalLink,
   Github,
-  Heart,
-  Mail,
+  Menu,
   Moon,
+  PackageCheck,
   Search,
-  Star,
+  ShieldCheck,
   Sun,
-  Trash2,
+  SwatchBook,
+  X,
+  Zap,
 } from 'lucide-react'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   Alert,
-  Avatar,
-  Badge,
-  Breadcrumb,
-  BreadcrumbItem,
+  BauhausMascot,
   Button,
-  Card,
-  CardBody,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Checkbox,
-  Divider,
-  Drawer,
-  FormField,
-  GeometricPattern,
   Input,
   Modal,
   ModalBody,
   ModalFooter,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarLink,
-  Pagination,
-  Progress,
-  Radio,
-  RadioGroup,
-  Select,
   Shape,
   ShapeLogo,
-  Slider,
-  Spinner,
   Switch,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Tag,
-  Textarea,
   ToastProvider,
-  Tooltip,
   useToast,
-  type BauhausColor,
 } from './index'
-import { type ShapeKind } from './components/Shape'
-import { HeroBoard } from './components/HeroBoard'
 import { copyText } from './lib/clipboard'
 
-const accentBg: Record<BauhausColor, string> = {
-  red: 'bg-bred',
-  blue: 'bg-bblue',
-  yellow: 'bg-byellow',
-  ink: 'bg-ink',
-}
-
+const PACKAGE_NAME = 'bauhaus-ui-library'
+const VERSION = '0.2.0dev'
+const INSTALL_COMMAND = `npm install ${PACKAGE_NAME}`
 const REPO_URL = 'https://github.com/xhu96/bauhaus-ui-library'
-const STORYBOOK_URL = 'https://xhu96.github.io/bauhaus-ui-library/storybook/'
-const INSTALL_COMMAND = 'npm install bauhaus-ui-library'
+const NPM_URL = 'https://www.npmjs.com/package/bauhaus-ui-library'
+const STORYBOOK_URL = './storybook/'
+const CHANGELOG_URL = `${REPO_URL}/blob/0.2.0dev/CHANGELOG.md`
+const DEV_BRANCH_URL = `${REPO_URL}/tree/0.2.0dev`
 
-const PALETTE: { name: string; hex: string; color: BauhausColor }[] = [
-  { name: 'Red', hex: '#E63329', color: 'red' },
-  { name: 'Blue', hex: '#21409A', color: 'blue' },
-  { name: 'Yellow', hex: '#F4C20D', color: 'yellow' },
-  { name: 'Ink', hex: '#1C1C1C', color: 'ink' },
+const componentNames = ['Button', 'Input', 'Switch', 'Modal', 'Tabs', 'Alert']
+
+const values = [
+  {
+    icon: Accessibility,
+    title: 'Accessible by default',
+    copy: 'Keyboard navigation, visible focus, semantic markup, and predictable focus management.',
+  },
+  {
+    icon: Code2,
+    title: 'TypeScript first',
+    copy: 'Typed props, strong autocomplete, safe composition, and an editor-friendly API.',
+  },
+  {
+    icon: SwatchBook,
+    title: 'Themeable at scale',
+    copy: 'A compact set of design tokens for color, typography, spacing, and dark mode.',
+  },
+  {
+    icon: Zap,
+    title: 'Production-minded',
+    copy: 'Tree-shakeable modules, sensible defaults, and a small, deliberate public surface.',
+  },
 ]
 
-const SHAPE_KINDS: ShapeKind[] = [
-  'circle',
-  'square',
-  'triangle',
-  'semicircle',
-  'quarter',
-  'ring',
-  'diamond',
-  'cross',
-  'arc',
+const trustSignals = [
+  { icon: ShieldCheck, title: 'MIT licensed', copy: 'Open source and community friendly.' },
+  { icon: Accessibility, title: 'Accessible', copy: 'WCAG-aware interaction patterns.' },
+  { icon: Code2, title: 'TypeScript', copy: 'Typed APIs and editor support.' },
+  { icon: PackageCheck, title: 'ESM + CJS', copy: 'Modern modules with require support.' },
+  { icon: SwatchBook, title: 'Design tokens', copy: 'A consistent visual system.' },
 ]
 
-function Section({
-  shape,
-  color,
-  title,
-  children,
-}: {
-  shape: ShapeKind
-  color: BauhausColor
-  title: string
-  children: ReactNode
-}) {
-  const titleId = useId()
+const appCode = `import { Button } from '${PACKAGE_NAME}'
+import '${PACKAGE_NAME}/styles.css'
+
+export function App() {
   return (
-    <section aria-labelledby={titleId} className="mx-auto w-full max-w-6xl px-6 py-16">
-      <div className="mb-10 flex items-center gap-4">
-        <Shape kind={shape} color={color} size={34} />
-        <h2 id={titleId} className="font-display text-3xl font-bold uppercase tracking-tight text-ink">
-          {title}
-        </h2>
-        <span className={`ml-1 hidden h-1 flex-1 sm:block ${accentBg[color]}`} />
-      </div>
-      {children}
-    </section>
+    <Button color="blue">
+      Build with Bauhaus
+    </Button>
   )
-}
+}`
 
-function Tile({ label, children }: { label: string; children: ReactNode }) {
+function SectionHeading({ eyebrow, title, copy }: { eyebrow?: string; title: string; copy: string }) {
   return (
-    <div className="flex flex-col gap-3 border-3 border-ink bg-surface p-5">
-      <span className="font-mono text-[11px] uppercase tracking-widest text-ink-muted">{label}</span>
-      <div className="flex flex-1 flex-wrap items-center gap-3">{children}</div>
+    <div className="landing-section-heading">
+      {eyebrow && <p className="landing-eyebrow">{eyebrow}</p>}
+      <h2>{title}</h2>
+      <p>{copy}</p>
     </div>
   )
 }
 
-function Showcase() {
+function LandingPage() {
   const { toast } = useToast()
-  const [modalOpen, setModalOpen] = useState(false)
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [drawerSide, setDrawerSide] = useState<'left' | 'right'>('right')
-  const [radioValue, setRadioValue] = useState('square')
-  const [sliderValue, setSliderValue] = useState(60)
-  const [tab, setTab] = useState('overview')
-  const [page, setPage] = useState(3)
-  const [notify, setNotify] = useState(true)
   const [dark, setDark] = useState(
     () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
+  )
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [switchOn, setSwitchOn] = useState(true)
+  const [tab, setTab] = useState('overview')
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const filteredComponents = useMemo(
+    () => componentNames.filter((name) => name.toLowerCase().includes(query.trim().toLowerCase())),
+    [query],
   )
 
   const toggleTheme = () => {
@@ -154,625 +122,509 @@ function Showcase() {
     try {
       localStorage.setItem('bauhaus-theme', next ? 'dark' : 'light')
     } catch {
-      /* ignore */
+      // Theme persistence is optional.
     }
   }
 
-  const openRepo = () => window.open(REPO_URL, '_blank', 'noopener,noreferrer')
-  const goToComponents = () => document.getElementById('foundations')?.scrollIntoView({ behavior: 'smooth' })
-  const copyInstallCommand = async () => {
+  const copySnippet = async (text: string, label: string) => {
     try {
-      await copyText(INSTALL_COMMAND)
-      toast({ title: 'Install command copied', description: INSTALL_COMMAND, status: 'success' })
+      await copyText(text)
+      toast({ title: `${label} copied`, description: text.split('\n')[0], status: 'success' })
     } catch {
-      toast({
-        title: 'Copy failed',
-        description: 'Select the command and copy it manually.',
-        status: 'danger',
-      })
+      toast({ title: 'Copy failed', description: 'Select the text and copy it manually.', status: 'danger' })
     }
   }
 
   return (
-    <div className="min-h-screen bg-paper">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border-3 focus:border-ink focus:bg-byellow focus:px-4 focus:py-2 focus:font-display focus:text-sm focus:font-bold focus:uppercase focus:text-ink"
-      >
+    <div className="landing-shell">
+      <a className="landing-skip" href="#main-content">
         Skip to content
       </a>
-      {/* ── Navbar ───────────────────────────────────────────── */}
-      <Navbar sticky className="gap-2 px-4 sm:gap-6 sm:px-5">
-        <NavbarBrand className="shrink-0">
-          <ShapeLogo
-            label="Bauhaus UI"
-            className="[&>span:last-child]:hidden sm:[&>span:last-child]:inline"
-          />
-        </NavbarBrand>
-        <NavbarContent justify="center" className="hidden lg:flex">
-          <NavbarLink href="#foundations">Components</NavbarLink>
-          <NavbarLink href="#overlays">Overlays</NavbarLink>
-          <NavbarLink href="#footer">About</NavbarLink>
-        </NavbarContent>
-        <NavbarContent justify="end" className="shrink-0 gap-1 sm:gap-5">
-          <Button
-            size="sm"
-            color="ink"
-            variant="ghost"
-            aria-label="Toggle dark mode"
+
+      <header className="landing-header">
+        <a href="#top" className="landing-brand" aria-label="Bauhaus UI home">
+          <span className="landing-brand-word">bauhaus</span>
+          <span>React library</span>
+        </a>
+
+        <nav className={`landing-nav ${mobileMenuOpen ? 'is-open' : ''}`} aria-label="Primary navigation">
+          <a href="#components" onClick={() => setMobileMenuOpen(false)}>
+            Components
+          </a>
+          <a href={STORYBOOK_URL} target="_blank" rel="noreferrer">
+            Docs
+          </a>
+          <a href="#tokens" onClick={() => setMobileMenuOpen(false)}>
+            Theming
+          </a>
+          <a href="#install" onClick={() => setMobileMenuOpen(false)}>
+            Resources
+          </a>
+          <a href="./bau/">Bau</a>
+          <a href={CHANGELOG_URL} target="_blank" rel="noreferrer">
+            Changelog
+          </a>
+        </nav>
+
+        <div className="landing-header-actions">
+          <button
+            type="button"
+            className="landing-icon-button landing-search-button"
+            aria-label="Search components"
+            aria-expanded={searchOpen}
+            onClick={() => setSearchOpen((open) => !open)}
+          >
+            <Search aria-hidden />
+            <span>Search</span>
+          </button>
+          <a
+            className="landing-icon-button"
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="GitHub"
+          >
+            <Github aria-hidden />
+          </a>
+          <button
+            type="button"
+            className="landing-theme-button"
+            aria-label={dark ? 'Use light theme' : 'Use dark theme'}
             aria-pressed={dark}
             onClick={toggleTheme}
           >
-            {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
-          <Button
-            size="sm"
-            color="ink"
-            variant="outline"
-            className="hidden sm:inline-flex"
-            leftIcon={<Github className="h-4 w-4" />}
-            onClick={openRepo}
-          >
-            GitHub
-          </Button>
-          <Button
-            size="sm"
-            color="red"
-            className="whitespace-nowrap"
-            rightIcon={<ArrowRight className="h-4 w-4" />}
-            onClick={goToComponents}
-          >
+            <span aria-hidden>{dark ? <Moon /> : <Sun />}</span>
+          </button>
+          <a className="landing-primary-link" href="#install">
             Get started
-          </Button>
-        </NavbarContent>
-      </Navbar>
+          </a>
+          <button
+            type="button"
+            className="landing-mobile-menu"
+            aria-label="Toggle navigation"
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            {mobileMenuOpen ? <X aria-hidden /> : <Menu aria-hidden />}
+          </button>
+        </div>
+      </header>
+
+      {searchOpen && (
+        <div className="landing-search-panel">
+          <label htmlFor="component-search">Search the component preview</label>
+          <div>
+            <Input
+              id="component-search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Try “Button” or “Tabs”"
+              autoFocus
+              leftIcon={<Search aria-hidden />}
+            />
+            <a href="#components" onClick={() => setSearchOpen(false)}>
+              View results
+            </a>
+          </div>
+        </div>
+      )}
 
       <main id="main-content">
-        {/* ── Hero ─────────────────────────────────────────────── */}
-        <header className="mx-auto w-full max-w-6xl px-6 pb-8 pt-16">
-          <div className="grid items-center gap-10 lg:grid-cols-2">
-            <div>
-              <Badge color="red" className="mb-6">
-                v0.1 · 29 components
-              </Badge>
-              <h1 className="font-display text-6xl font-bold uppercase leading-[0.95] tracking-tight text-ink sm:text-7xl">
-                Build
-                <br />
-                <span className="text-bred">bold.</span> Think
-                <br />
-                in <span className="text-bblue">shapes.</span>
-              </h1>
-              <p className="mt-6 max-w-md text-lg text-ink-soft">
-                A geometric React component library inspired by the Bauhaus movement. Primary colors, hard
-                edges, and a relentless grid.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Button
-                  size="lg"
-                  color="red"
-                  rightIcon={<ArrowRight className="h-5 w-5" />}
-                  onClick={goToComponents}
-                >
-                  Get started
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  color="ink"
-                  leftIcon={<Github className="h-5 w-5" />}
-                  onClick={openRepo}
-                >
-                  View source
-                </Button>
-              </div>
-              <div className="mt-5 flex max-w-xl flex-col gap-3 sm:flex-row sm:items-stretch">
-                <div className="flex min-w-0 flex-1 items-center border-3 border-ink bg-surface">
-                  <code className="min-w-0 flex-1 overflow-x-auto px-4 py-3 font-mono text-sm text-ink">
-                    {INSTALL_COMMAND}
-                  </code>
-                  <button
-                    type="button"
-                    onClick={copyInstallCommand}
-                    aria-label="Copy install command"
-                    className="press inline-flex h-11 w-11 shrink-0 items-center justify-center border-l-3 border-ink text-ink hover:bg-ink hover:text-paper"
-                  >
-                    <Copy className="h-4 w-4" aria-hidden />
-                  </button>
-                </div>
-                <a
-                  href={STORYBOOK_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="press press-hard inline-flex h-11 items-center justify-center gap-2 border-3 border-ink bg-surface px-4 font-display text-sm font-semibold uppercase tracking-wide text-ink"
-                >
-                  Storybook
-                  <ExternalLink className="h-4 w-4" aria-hidden />
-                </a>
-              </div>
+        <section id="top" className="landing-hero">
+          <div className="landing-hero-copy">
+            <a className="landing-version" href={DEV_BRANCH_URL} target="_blank" rel="noreferrer">
+              <span>v{VERSION}</span>
+            </a>
+            <h1>
+              React components
+              <br />
+              built with <em>intention.</em>
+            </h1>
+            <p className="landing-hero-lede">
+              Bauhaus UI is an accessible, TypeScript-first component library with a visual system that scales
+              from prototype to production.
+            </p>
+            <div className="landing-hero-actions">
+              <a className="landing-primary-link landing-primary-link-lg" href="#install">
+                Get started <ArrowRight aria-hidden />
+              </a>
+              <a className="landing-secondary-link" href="#components">
+                Browse components
+              </a>
             </div>
-            <div className="border-3 border-coal shadow-hard-coal-lg">
-              <HeroBoard />
+            <div className="landing-install-command">
+              <code>$ {INSTALL_COMMAND}</code>
+              <button type="button" onClick={() => copySnippet(INSTALL_COMMAND, 'Install command')}>
+                <Copy aria-hidden /> Copy
+              </button>
             </div>
+            <p className="landing-compatibility">
+              <span>React 18 / 19</span>
+              <span>Next.js</span>
+              <span>Vite</span>
+              <span>TypeScript</span>
+            </p>
           </div>
-        </header>
 
-        <div className="mx-auto w-full max-w-6xl px-6 pb-8">
-          <div className="border-3 border-coal shadow-hard-coal">
-            <GeometricPattern
-              rows={1}
-              cols={14}
-              seed={29}
-              bordered
-              palette={['red', 'blue', 'yellow', 'ink']}
-              surfaces={['paper', 'white', 'paper']}
+          <figure className="landing-hero-art">
+            <BauhausMascot pose="standing" direction="left" scene width="760" height="520" />
+          </figure>
+        </section>
+
+        <section className="landing-trust" aria-label="Library qualities">
+          {trustSignals.map(({ icon: Icon, title, copy }) => (
+            <article key={title}>
+              <span className="landing-trust-icon" aria-hidden>
+                <Icon />
+              </span>
+              <div>
+                <h2>{title}</h2>
+                <p>{copy}</p>
+              </div>
+            </article>
+          ))}
+        </section>
+
+        <section className="landing-section landing-why">
+          <SectionHeading
+            eyebrow="Why Bauhaus UI"
+            title="Why developers choose Bauhaus UI."
+            copy="The confidence of a strong visual language, without giving up familiar React ergonomics."
+          />
+          <div className="landing-value-grid">
+            {values.map(({ icon: Icon, title, copy }, index) => (
+              <article key={title}>
+                <span className={`landing-value-symbol symbol-${index + 1}`} aria-hidden>
+                  <Icon />
+                </span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="components" className="landing-section landing-components">
+          <div className="landing-components-intro">
+            <SectionHeading
+              eyebrow="30 components"
+              title="Beautiful components. Built to work."
+              copy="Thoughtful defaults, meaningful states, and accessible interactions straight out of the box."
             />
-          </div>
-        </div>
-
-        {/* ── 01 Foundations ──────────────────────────────────── */}
-        <div id="foundations">
-          <Section shape="circle" color="blue" title="Foundations">
-            <div className="grid gap-6 md:grid-cols-2">
-              <Tile label="Palette">
-                {PALETTE.map((p) => (
-                  <div key={p.name} className="flex flex-col items-center gap-2">
-                    <span className="h-16 w-16 border-3 border-ink" style={{ background: p.hex }} />
-                    <span className="font-mono text-[11px] uppercase tracking-widest text-ink-muted">
-                      {p.name}
-                    </span>
-                  </div>
-                ))}
-              </Tile>
-              <Tile label="Shape primitives">
-                {SHAPE_KINDS.map((kind, i) => (
-                  <Shape key={kind} kind={kind} color={PALETTE[i % PALETTE.length].color} size={44} />
-                ))}
-              </Tile>
-            </div>
-            <div className="mt-6 border-3 border-ink bg-surface p-6">
-              <p className="font-mono text-[11px] uppercase tracking-widest text-ink-muted">
-                Type scale · Space Grotesk + Archivo
+            <a href={STORYBOOK_URL} target="_blank" rel="noreferrer">
+              Explore all components <ArrowRight aria-hidden />
+            </a>
+            {query && (
+              <p className="landing-results" aria-live="polite">
+                {filteredComponents.length} preview{filteredComponents.length === 1 ? '' : 's'} match “{query}
+                ”
               </p>
-              <p className="mt-3 font-display text-5xl font-bold uppercase tracking-tight text-ink">
-                Form follows function
-              </p>
-              <p className="mt-2 text-base text-ink-soft">
-                The grid is the silent organizer. Everything snaps to it; nothing floats.
-              </p>
-            </div>
-          </Section>
-        </div>
-
-        {/* ── 02 Buttons ──────────────────────────────────────── */}
-        <Section shape="square" color="red" title="Buttons">
-          <div className="grid gap-6 md:grid-cols-3">
-            <Tile label="Solid">
-              <Button color="red">Red</Button>
-              <Button color="blue">Blue</Button>
-              <Button color="yellow">Yellow</Button>
-              <Button color="ink">Ink</Button>
-            </Tile>
-            <Tile label="Outline">
-              <Button variant="outline" color="red">
-                Red
-              </Button>
-              <Button variant="outline" color="blue">
-                Blue
-              </Button>
-              <Button variant="outline" color="ink">
-                Ink
-              </Button>
-            </Tile>
-            <Tile label="Ghost & states">
-              <Button variant="ghost" color="blue">
-                Ghost
-              </Button>
-              <Button isLoading color="ink">
-                Loading
-              </Button>
-              <Button disabled>Disabled</Button>
-            </Tile>
-            <Tile label="Sizes">
-              <Button size="sm" color="blue">
-                Small
-              </Button>
-              <Button size="md" color="blue">
-                Medium
-              </Button>
-              <Button size="lg" color="blue">
-                Large
-              </Button>
-            </Tile>
-            <Tile label="With icons">
-              <Button color="red" leftIcon={<Heart className="h-4 w-4" />}>
-                Like
-              </Button>
-              <Button color="ink" rightIcon={<ArrowRight className="h-4 w-4" />}>
-                Next
-              </Button>
-            </Tile>
-            <Tile label="Full width">
-              <Button fullWidth color="yellow">
-                Block button
-              </Button>
-            </Tile>
+            )}
           </div>
-        </Section>
 
-        {/* ── 03 Forms ────────────────────────────────────────── */}
-        <Section shape="triangle" color="yellow" title="Forms">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Sign up</CardTitle>
-                <CardDescription>Text inputs, selects and validation states.</CardDescription>
-              </CardHeader>
-              <CardBody className="space-y-5">
-                <FormField label="Email" htmlFor="email" hint="We'll never share it.">
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@studio.com"
-                    leftIcon={<Mail className="h-4 w-4" />}
-                  />
-                </FormField>
-                <FormField label="Search" htmlFor="q">
-                  <Input id="q" placeholder="Find components" leftIcon={<Search className="h-4 w-4" />} />
-                </FormField>
-                <FormField label="Role" htmlFor="role">
-                  <Select
-                    id="role"
-                    options={[
-                      { label: 'Designer', value: 'designer' },
-                      { label: 'Developer', value: 'developer' },
-                      { label: 'Both', value: 'both' },
-                    ]}
-                  />
-                </FormField>
-                <FormField label="Password" htmlFor="pw" error="Must be at least 8 characters.">
-                  <Input id="pw" type="password" defaultValue="123" error />
-                </FormField>
-              </CardBody>
-            </Card>
-            <Card accent="blue">
-              <CardHeader>
-                <CardTitle>Preferences</CardTitle>
-                <CardDescription>Selection controls.</CardDescription>
-              </CardHeader>
-              <CardBody className="space-y-6">
-                <FormField label="Message" htmlFor="msg">
-                  <Textarea id="msg" rows={3} placeholder="Tell us about your project…" />
-                </FormField>
-                <div className="flex flex-col gap-2">
-                  <p className="font-display text-xs font-semibold uppercase tracking-wide text-ink">
-                    Interests
-                  </p>
-                  <Checkbox label="Components" defaultChecked color="red" />
-                  <Checkbox label="Templates" color="blue" />
-                  <Checkbox label="Newsletter" defaultChecked color="ink" />
-                </div>
-                <div className="space-y-2">
-                  <p className="font-display text-xs font-semibold uppercase tracking-wide text-ink">
-                    Favorite shape
-                  </p>
-                  <RadioGroup value={radioValue} onValueChange={setRadioValue}>
-                    <Radio value="square" label="Square" color="red" />
-                    <Radio value="circle" label="Circle" color="blue" />
-                    <Radio value="triangle" label="Triangle" color="yellow" />
-                  </RadioGroup>
-                </div>
-                <Divider />
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-ink-soft">Email notifications</span>
-                  <Switch
-                    checked={notify}
-                    onCheckedChange={setNotify}
-                    color="blue"
-                    aria-label="Notifications"
-                  />
-                </div>
-                <FormField label={`Opacity · ${sliderValue}%`} htmlFor="opacity">
-                  <Slider
-                    id="opacity"
-                    min={0}
-                    max={100}
-                    value={sliderValue}
-                    color="red"
-                    onChange={(e) => setSliderValue(Number(e.target.value))}
-                  />
-                </FormField>
-              </CardBody>
-            </Card>
-          </div>
-        </Section>
-
-        {/* ── 04 Feedback ─────────────────────────────────────── */}
-        <Section shape="semicircle" color="red" title="Feedback">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-4">
-              <Alert status="info" title="Heads up">
-                The grid is the silent organizer of every layout.
-              </Alert>
-              <Alert status="success" title="Saved">
-                Your composition has been stored.
-              </Alert>
-              <Alert status="warning" title="Careful">
-                Too many colors break the Bauhaus discipline.
-              </Alert>
-              <Alert
-                status="danger"
-                title="Error"
-                onClose={() => toast({ title: 'Dismissed', status: 'info' })}
-              >
-                Something went sideways.
-              </Alert>
-            </div>
-            <div className="space-y-6">
-              <Tile label="Progress">
-                <div className="w-full space-y-4">
-                  <Progress value={35} color="red" showLabel />
-                  <Progress value={70} color="blue" showLabel />
-                  <Progress indeterminate color="yellow" />
-                </div>
-              </Tile>
-              <Tile label="Badges, tags & spinner">
-                <Badge color="red">New</Badge>
-                <Badge variant="outline" color="blue">
-                  Beta
-                </Badge>
-                <Tag color="ink" dot>
-                  React
-                </Tag>
-                <Tag color="blue" onRemove={() => toast({ title: 'Removed tag', status: 'info' })}>
-                  Tailwind
-                </Tag>
-                <Spinner color="ink" />
-              </Tile>
-            </div>
-          </div>
-        </Section>
-
-        {/* ── 05 Data display ─────────────────────────────────── */}
-        <Section shape="diamond" color="blue" title="Data display">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Tile label="Avatars">
-              <Avatar name="Walter Gropius" color="red" />
-              <Avatar name="Anni Albers" color="blue" shape="circle" />
-              <Avatar name="Paul Klee" color="yellow" />
-              <Avatar name="László Moholy" color="ink" shape="circle" />
-            </Tile>
-            <Tile label="Tooltip">
-              <Tooltip content="Top tooltip" side="top">
-                <Button variant="outline" size="sm">
-                  Hover top
+          <div className="landing-component-grid">
+            {(!query || filteredComponents.includes('Button')) && (
+              <article className="landing-component-card">
+                <h3>Button</h3>
+                <Button color="blue" fullWidth className="landing-demo-button">
+                  Primary
                 </Button>
-              </Tooltip>
-              <Tooltip content="Right tooltip" side="right">
-                <Button variant="outline" size="sm">
-                  Hover right
+                <Button variant="outline" color="ink" fullWidth className="landing-demo-button">
+                  Secondary
                 </Button>
-              </Tooltip>
-            </Tile>
-            <Card accent="red" className="md:col-span-2 lg:col-span-1">
-              <CardBody>
-                <div className="mb-3 flex items-center gap-3">
-                  <Avatar name="Studio Bauhaus" color="blue" />
+                <Button disabled fullWidth className="landing-demo-button">
+                  Disabled
+                </Button>
+              </article>
+            )}
+
+            {(!query || filteredComponents.includes('Input')) && (
+              <article className="landing-component-card">
+                <h3>Input</h3>
+                <Input
+                  id="landing-input-default"
+                  inputSize="sm"
+                  placeholder="Default"
+                  aria-label="Default input example"
+                />
+                <Input
+                  id="landing-input-focused"
+                  inputSize="sm"
+                  defaultValue="Focused"
+                  aria-label="Focused input example"
+                  className="is-demo-focused"
+                />
+                <Input
+                  id="landing-input-error"
+                  inputSize="sm"
+                  defaultValue="Error"
+                  error
+                  aria-label="Error input example"
+                />
+              </article>
+            )}
+
+            {(!query || filteredComponents.includes('Switch')) && (
+              <article className="landing-component-card">
+                <h3>Switch</h3>
+                <div className="landing-switch-row">
+                  <span>Enabled</span>
+                  <Switch checked={switchOn} onCheckedChange={setSwitchOn} size="sm" aria-label="Enabled" />
+                </div>
+                <div className="landing-switch-row">
+                  <span>Checked</span>
+                  <Switch defaultChecked size="sm" aria-label="Checked" />
+                </div>
+                <div className="landing-switch-row">
+                  <span>Disabled</span>
+                  <Switch disabled size="sm" aria-label="Disabled" />
+                </div>
+              </article>
+            )}
+
+            {(!query || filteredComponents.includes('Modal')) && (
+              <article className="landing-component-card">
+                <h3>Dialog</h3>
+                <div className="landing-dialog-preview">
+                  <strong>Confirm changes?</strong>
+                  <span>This action cannot be undone.</span>
                   <div>
-                    <p className="font-display font-bold text-ink">Studio Bauhaus</p>
-                    <p className="text-xs text-ink-muted">Dessau, 1925</p>
+                    <button type="button">Cancel</button>
+                    <button type="button" onClick={() => setDialogOpen(true)}>
+                      Confirm
+                    </button>
                   </div>
                 </div>
-                <p className="text-sm text-ink-soft">
-                  A card with an accent bar, hard shadow and thick border.
-                </p>
-              </CardBody>
-              <CardFooter>
-                <Button size="sm" color="ink" leftIcon={<Star className="h-4 w-4" />}>
-                  Follow
-                </Button>
-                <Button size="sm" variant="ghost" color="red" leftIcon={<Trash2 className="h-4 w-4" />}>
-                  Remove
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-        </Section>
+              </article>
+            )}
 
-        {/* ── 06 Navigation ───────────────────────────────────── */}
-        <Section shape="quarter" color="yellow" title="Navigation">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
-              <CardBody>
+            {(!query || filteredComponents.includes('Tabs')) && (
+              <article className="landing-component-card">
+                <h3>Tabs</h3>
                 <Tabs value={tab} onValueChange={setTab}>
-                  <TabsList>
-                    <TabsTrigger value="overview" color="red">
-                      Overview
-                    </TabsTrigger>
-                    <TabsTrigger value="install" color="red">
-                      Install
-                    </TabsTrigger>
-                    <TabsTrigger value="theme" color="red">
-                      Theme
-                    </TabsTrigger>
+                  <TabsList className="landing-demo-tabs">
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="details">Details</TabsTrigger>
+                    <TabsTrigger value="settings">Settings</TabsTrigger>
                   </TabsList>
                   <TabsContent value="overview">
-                    <p className="pt-4 text-sm text-ink-soft">29 components, one geometric language.</p>
+                    Accessible tab components with smooth interactions.
                   </TabsContent>
-                  <TabsContent value="install">
-                    <p className="pt-4 font-mono text-sm text-ink">npm install bauhaus-ui</p>
+                  <TabsContent value="details">
+                    Compound parts keep content and triggers connected.
                   </TabsContent>
-                  <TabsContent value="theme">
-                    <p className="pt-4 text-sm text-ink-soft">
-                      Override the CSS variables or extend the Tailwind preset.
-                    </p>
-                  </TabsContent>
+                  <TabsContent value="settings">Controlled and uncontrolled modes are supported.</TabsContent>
                 </Tabs>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardBody>
-                <Accordion type="single" defaultValue="a">
-                  <AccordionItem value="a">
-                    <AccordionTrigger>What is Bauhaus UI?</AccordionTrigger>
-                    <AccordionContent>A bold, geometric React component library.</AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="b">
-                    <AccordionTrigger>Is it accessible?</AccordionTrigger>
-                    <AccordionContent>
-                      Yes. Roles, aria attributes and keyboard support throughout.
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="c">
-                    <AccordionTrigger>Can I theme it?</AccordionTrigger>
-                    <AccordionContent>Every token is a CSS variable and a Tailwind color.</AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </CardBody>
-            </Card>
-          </div>
-          <div className="mt-6 flex flex-col items-center gap-6 border-3 border-ink bg-surface p-6">
-            <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Components</BreadcrumbItem>
-              <BreadcrumbItem current>Navigation</BreadcrumbItem>
-            </Breadcrumb>
-            <Pagination page={page} count={10} onPageChange={setPage} color="blue" />
-          </div>
-        </Section>
+              </article>
+            )}
 
-        {/* ── 07 Overlays ─────────────────────────────────────── */}
-        <div id="overlays">
-          <Section shape="ring" color="ink" title="Overlays">
-            <Tile label="Open something">
-              <Button color="red" onClick={() => setModalOpen(true)}>
-                Open modal
-              </Button>
-              <Button
-                color="blue"
-                onClick={() => {
-                  setDrawerSide('right')
-                  setDrawerOpen(true)
-                }}
-              >
-                Drawer (right)
-              </Button>
-              <Button
-                variant="outline"
-                color="ink"
-                onClick={() => {
-                  setDrawerSide('left')
-                  setDrawerOpen(true)
-                }}
-              >
-                Drawer (left)
-              </Button>
-              <Button
-                color="yellow"
-                onClick={() =>
-                  toast({
-                    title: 'Composition saved',
-                    description: 'Snapped to the grid.',
-                    status: 'success',
-                  })
-                }
-              >
-                Success toast
-              </Button>
-              <Button
-                variant="outline"
-                color="red"
-                onClick={() =>
-                  toast({ title: 'Upload failed', description: 'Try a smaller file.', status: 'danger' })
-                }
-              >
-                Error toast
-              </Button>
-            </Tile>
-          </Section>
-        </div>
+            {(!query || filteredComponents.includes('Alert')) && (
+              <article className="landing-component-card">
+                <h3>Alert</h3>
+                <Alert status="success" className="landing-demo-alert">
+                  Success message
+                </Alert>
+                <Alert status="warning" className="landing-demo-alert">
+                  Warning message
+                </Alert>
+                <Alert status="danger" className="landing-demo-alert">
+                  Error message
+                </Alert>
+              </article>
+            )}
+
+            {query && filteredComponents.length === 0 && (
+              <div className="landing-empty-state">
+                <Search aria-hidden />
+                <h3>No preview matches “{query}”</h3>
+                <p>Try Button, Input, Switch, Modal, Tabs, or Alert.</p>
+                <button type="button" onClick={() => setQuery('')}>
+                  Clear search
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section id="tokens" className="landing-section landing-tokens">
+          <SectionHeading
+            eyebrow="Design system"
+            title="A design system that stays in style."
+            copy="Built on timeless principles. Adaptable to any brand."
+          />
+          <div className="landing-token-grid">
+            <article>
+              <h3>Colors</h3>
+              <div className="landing-swatches" aria-label="Bauhaus color palette">
+                {['#21409A', '#E63329', '#F4C20D', '#1C1C1C', '#F3EFE6', '#FFFFFF'].map((color) => (
+                  <span key={color} style={{ backgroundColor: color }} title={color} />
+                ))}
+              </div>
+            </article>
+            <article>
+              <h3>Typography</h3>
+              <strong className="landing-type-sample">Aa</strong>
+              <span>Space Grotesk</span>
+            </article>
+            <article>
+              <h3>Geometry</h3>
+              <div className="landing-shapes">
+                <Shape kind="circle" color="blue" size={42} />
+                <Shape kind="square" color="red" size={42} />
+                <Shape kind="triangle" color="yellow" size={42} />
+              </div>
+              <span>Sharp, modular, expressive</span>
+            </article>
+            <article>
+              <h3>Spacing</h3>
+              <div className="landing-spacing-scale">
+                {[4, 8, 16, 24, 32].map((space) => (
+                  <span key={space} style={{ width: space, height: space }} title={`${space}px`} />
+                ))}
+              </div>
+              <span>4 · 8 · 16 · 24 · 32</span>
+            </article>
+            <article>
+              <h3>Themes</h3>
+              <button type="button" onClick={() => !dark && toggleTheme()}>
+                Light <Sun aria-hidden />
+              </button>
+              <button type="button" className="is-dark" onClick={() => dark && toggleTheme()}>
+                Dark <Moon aria-hidden />
+              </button>
+            </article>
+          </div>
+        </section>
+
+        <section id="install" className="landing-install-section">
+          <div className="landing-install-copy">
+            <p className="landing-eyebrow">Start building</p>
+            <h2>From install to interface in minutes.</h2>
+            <p>Everything you need to create accessible, expressive interfaces—fast.</p>
+            <ol>
+              <li>
+                <span>1</span>
+                <div>
+                  <strong>Install</strong>
+                  <code>{INSTALL_COMMAND}</code>
+                </div>
+              </li>
+              <li>
+                <span>2</span>
+                <div>
+                  <strong>Import</strong>
+                  <code>
+                    import {'{ Button }'} from '{PACKAGE_NAME}'
+                  </code>
+                </div>
+              </li>
+              <li>
+                <span>3</span>
+                <div>
+                  <strong>Build</strong>
+                  <p>Ship accessible UI with confidence.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div className="landing-code-window">
+            <div className="landing-code-toolbar">
+              <span className="landing-window-controls" aria-hidden>
+                <i />
+                <i />
+                <i />
+              </span>
+              <strong>App.tsx</strong>
+              <button type="button" onClick={() => copySnippet(appCode, 'Code')}>
+                <Copy aria-hidden /> Copy
+              </button>
+            </div>
+            <pre>
+              <code>{appCode}</code>
+            </pre>
+          </div>
+
+          <BauhausMascot className="landing-install-mascot" pose="working" scene width="520" height="520" />
+        </section>
+
+        <section className="landing-final-cta">
+          <div>
+            <p className="landing-eyebrow">Version {VERSION}</p>
+            <h2>Build something timeless.</h2>
+            <p>Build beautiful, accessible interfaces with Bauhaus UI.</p>
+            <div>
+              <a className="landing-cta-light" href="#install">
+                Get started <ArrowRight aria-hidden />
+              </a>
+              <a className="landing-cta-outline" href={REPO_URL} target="_blank" rel="noreferrer">
+                <Github aria-hidden /> View on GitHub
+              </a>
+            </div>
+          </div>
+          <BauhausMascot pose="running" scene width="760" height="340" />
+        </section>
       </main>
 
-      {/* ── Footer ──────────────────────────────────────────── */}
-      <footer id="footer" className="border-t-3 border-ink bg-ink text-paper">
-        <div className="mx-auto w-full max-w-6xl px-6 py-14">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1">
-              <Shape kind="square" color="ink" className="!text-paper" size={22} />
-              <Shape kind="circle" color="red" size={22} />
-              <Shape kind="triangle" color="blue" size={22} />
-              <Shape kind="cross" color="yellow" size={22} />
-            </span>
-            <span className="font-display text-lg font-bold uppercase tracking-tight">Bauhaus UI</span>
+      <footer className="landing-footer">
+        <div className="landing-footer-grid">
+          <div>
+            <ShapeLogo label="Bauhaus UI" className="landing-footer-logo" />
+            <p>An accessible, TypeScript-first React component library inspired by Bauhaus principles.</p>
           </div>
-          <p className="mt-5 max-w-lg text-sm leading-relaxed text-paper-dark">
-            A bold, geometric React component library inspired by the Bauhaus movement: 29 accessible
-            components, built-in light and dark theming, and a relentless grid. Built with TypeScript and
-            Tailwind.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 font-display text-sm font-semibold uppercase tracking-wide">
-            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="hover:text-byellow">
-              GitHub
-            </a>
-            <a href={STORYBOOK_URL} target="_blank" rel="noopener noreferrer" className="hover:text-byellow">
-              Storybook
-            </a>
-            <a href="#foundations" className="hover:text-byellow">
-              Components
-            </a>
+          <div>
+            <h2>Product</h2>
+            <a href="#components">Components</a>
+            <a href="#tokens">Theming</a>
+            <a href="./bau/">Bau mascot</a>
+            <a href={CHANGELOG_URL}>Changelog</a>
+            <a href={NPM_URL}>npm package</a>
           </div>
-          <div className="mt-8 flex flex-col gap-3 border-t border-paper/25 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="flex items-center gap-2 text-xs text-paper-dark">
-              <Check className="h-4 w-4 shrink-0" /> MIT licensed · Built with React, TypeScript & Tailwind
-            </p>
-            <p className="font-display text-sm font-semibold tracking-wide text-paper">
-              © 2026 Xhulio Lavdari
-            </p>
+          <div>
+            <h2>Resources</h2>
+            <a href={STORYBOOK_URL}>Documentation</a>
+            <a href="#install">Installation</a>
+            <a href={REPO_URL}>Examples</a>
+            <a href={`${REPO_URL}/issues`}>Issues</a>
           </div>
+          <div>
+            <h2>Community</h2>
+            <a href={REPO_URL}>GitHub</a>
+            <a href={`${REPO_URL}/blob/main/CONTRIBUTING.md`}>Contributing</a>
+            <a href={`${REPO_URL}/blob/main/CODE_OF_CONDUCT.md`}>Code of conduct</a>
+          </div>
+        </div>
+
+        <div className="landing-footer-bottom">
+          <span>© 2026 Bauhaus UI</span>
+          <span>MIT licensed</span>
+          <a href={REPO_URL} aria-label="Bauhaus UI on GitHub">
+            <Github aria-hidden />
+          </a>
         </div>
       </footer>
 
-      {/* ── Overlay instances ──────────────────────────────── */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Join the studio" size="md">
+      <Modal open={dialogOpen} onClose={() => setDialogOpen(false)} title="Confirm changes">
         <ModalBody>
-          <FormField label="Name" htmlFor="m-name">
-            <Input id="m-name" placeholder="Your name" />
-          </FormField>
-          <p className="mt-4 text-sm text-ink-soft">
-            A focus-trapped, scroll-locked, ESC-dismissable dialog.
+          <p className="landing-modal-copy">
+            This demo uses the real Bauhaus UI modal, including focus management.
           </p>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" color="ink" onClick={() => setModalOpen(false)}>
+          <Button variant="ghost" onClick={() => setDialogOpen(false)}>
             Cancel
           </Button>
           <Button
-            color="red"
+            color="blue"
             onClick={() => {
-              setModalOpen(false)
-              toast({ title: 'Welcome aboard', status: 'success' })
+              setDialogOpen(false)
+              toast({ title: 'Changes confirmed', status: 'success' })
             }}
           >
-            Join
+            Confirm
           </Button>
         </ModalFooter>
       </Modal>
-
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} side={drawerSide} title="Filters">
-        <div className="flex flex-col gap-4">
-          <Checkbox label="Show solids" defaultChecked color="red" />
-          <Checkbox label="Show outlines" defaultChecked color="blue" />
-          <Checkbox label="Show ghosts" color="ink" />
-          <Divider label="Colors" />
-          <div className="flex gap-2">
-            {PALETTE.map((p) => (
-              <span key={p.name} className="h-8 w-8 border-3 border-ink" style={{ background: p.hex }} />
-            ))}
-          </div>
-          <Button fullWidth color="ink" onClick={() => setDrawerOpen(false)}>
-            Apply
-          </Button>
-        </div>
-      </Drawer>
     </div>
   )
 }
@@ -780,7 +632,7 @@ function Showcase() {
 export default function App() {
   return (
     <ToastProvider position="bottom-right">
-      <Showcase />
+      <LandingPage />
     </ToastProvider>
   )
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn, within, userEvent, expect } from '@storybook/test'
+import { fn, within, userEvent, expect } from 'storybook/test'
 import { useState } from 'react'
 import { Checkbox } from './Checkbox'
 
@@ -41,7 +41,7 @@ export const Disabled: Story = {
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex flex-col gap-3">
+    <div className="bui-flex bui-flex-col bui-gap-3">
       <Checkbox color="red" label="Red" defaultChecked />
       <Checkbox color="blue" label="Blue" defaultChecked />
       <Checkbox color="yellow" label="Yellow" defaultChecked />
@@ -95,8 +95,8 @@ export const Controlled: Story = {
 /** Common real-world layout: a group of related checkboxes sharing a `name`, in a fieldset. */
 export const CheckboxGroup: Story = {
   render: () => (
-    <fieldset className="flex flex-col gap-3 border-3 border-ink bg-surface p-4">
-      <legend className="px-2 font-sans text-base text-ink">Toppings</legend>
+    <fieldset className="bui-flex bui-flex-col bui-gap-3 bui-border-3 bui-border-ink bui-bg-surface bui-p-4">
+      <legend className="bui-px-2 bui-font-sans bui-text-base bui-text-ink">Toppings</legend>
       <Checkbox name="toppings" id="t-cheese" value="cheese" label="Cheese" defaultChecked />
       <Checkbox name="toppings" id="t-mushroom" value="mushroom" label="Mushroom" />
       <Checkbox name="toppings" id="t-olives" value="olives" label="Olives" color="red" />

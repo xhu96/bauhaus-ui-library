@@ -37,7 +37,7 @@ export const Default: Story = {}
 
 export const AllKinds: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-4">
       {ALL_KINDS.map((kind) => (
         <Shape key={kind} kind={kind} color="blue" size={64} />
       ))}
@@ -47,7 +47,7 @@ export const AllKinds: Story = {
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-4">
       <Shape kind="square" color="red" size={64} />
       <Shape kind="square" color="blue" size={64} />
       <Shape kind="square" color="yellow" size={64} />
@@ -58,7 +58,7 @@ export const Colors: Story = {
 
 export const Outline: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-4">
       <Shape kind="circle" color="red" size={64} outline />
       <Shape kind="square" color="blue" size={64} outline />
       <Shape kind="triangle" color="ink" size={64} outline />
@@ -69,7 +69,7 @@ export const Outline: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-wrap items-end gap-4">
+    <div className="bui-flex bui-flex-wrap bui-items-end bui-gap-4">
       {[24, 40, 64, 96, 128].map((size) => (
         <Shape key={size} kind="circle" color="blue" size={size} />
       ))}
@@ -79,7 +79,7 @@ export const Sizes: Story = {
 
 export const OutlineAllKinds: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-4">
       {ALL_KINDS.map((kind) => (
         <Shape key={kind} kind={kind} color="ink" size={64} outline />
       ))}
@@ -98,7 +98,7 @@ export const DarkInk: Story = {
   },
   decorators: [
     (StoryFn) => (
-      <div className="dark bg-surface p-8">
+      <div className="dark bui-bg-surface bui-p-8">
         <StoryFn />
       </div>
     ),

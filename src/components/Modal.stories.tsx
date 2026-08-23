@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { within, userEvent, expect, fn } from '@storybook/test'
+import { within, userEvent, expect, fn } from 'storybook/test'
 import { useState } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './Modal'
 import { Button } from './Button'
@@ -114,8 +114,12 @@ function CustomHeaderModalDemo() {
       <Button onClick={() => setOpen(true)}>Open Custom Header Modal</Button>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>
-          <h2 className="font-display text-xl font-bold tracking-tight text-ink">Custom composition</h2>
-          <p className="mt-1 text-sm text-ink/70">Built from the exported ModalHeader sub-part.</p>
+          <h2 className="bui-font-display bui-text-xl bui-font-bold bui-tracking-tight bui-text-ink">
+            Custom composition
+          </h2>
+          <p className="bui-mt-1 bui-text-sm bui-text-ink/70">
+            Built from the exported ModalHeader sub-part.
+          </p>
         </ModalHeader>
         <ModalBody>Compose the header manually when you need more than a plain title.</ModalBody>
         <ModalFooter>

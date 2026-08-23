@@ -9,9 +9,9 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'h-5 px-1.5 text-[10px] gap-1',
-  md: 'h-6 px-2 text-xs gap-1.5',
-  lg: 'h-7 px-2.5 text-sm gap-1.5',
+  sm: 'bui-h-5 bui-px-1.5 bui-text-[10px] bui-gap-1',
+  md: 'bui-h-6 bui-px-2 bui-text-xs bui-gap-1.5',
+  lg: 'bui-h-7 bui-px-2.5 bui-text-sm bui-gap-1.5',
 }
 
 /**
@@ -26,10 +26,11 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     <span
       ref={ref}
       className={cn(
-        'inline-flex items-center justify-center border-3 border-ink font-display font-bold uppercase tracking-wide leading-none',
+        'bui-reset',
+        'bui-inline-flex bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-font-display bui-font-bold bui-uppercase bui-tracking-wide bui-leading-none',
         sizes[size],
         variant === 'solid' && solidColor[color],
-        variant === 'outline' && cn('bg-transparent', textColor[color]),
+        variant === 'outline' && cn('bui-bg-transparent', textColor[color]),
         className,
       )}
       {...props}

@@ -37,7 +37,7 @@ export const Default: Story = {
 
 export const CustomSeparator: Story = {
   render: () => (
-    <Breadcrumb separator={<Slash className="h-4 w-4 text-ink-muted" aria-hidden />}>
+    <Breadcrumb separator={<Slash className="bui-h-4 bui-w-4 bui-text-ink-muted" aria-hidden />}>
       <BreadcrumbItem href="#">Home</BreadcrumbItem>
       <BreadcrumbItem href="#">Library</BreadcrumbItem>
       <BreadcrumbItem current>Data</BreadcrumbItem>

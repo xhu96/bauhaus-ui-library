@@ -25,7 +25,7 @@ export const Default: Story = {}
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Badge color="ink">Ink</Badge>
       <Badge color="red">Red</Badge>
       <Badge color="blue">Blue</Badge>
@@ -36,7 +36,7 @@ export const Colors: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Badge variant="solid" color="blue">
         Solid
       </Badge>
@@ -49,7 +49,7 @@ export const Variants: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Badge size="sm">Small</Badge>
       <Badge size="md">Medium</Badge>
       <Badge size="lg">Large</Badge>
@@ -59,7 +59,7 @@ export const Sizes: Story = {
 
 export const OutlineColors: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Badge variant="outline" color="ink">
         Ink
       </Badge>

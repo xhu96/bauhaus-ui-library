@@ -25,7 +25,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   decorators: [
     (StoryFn) => (
-      <div className="w-96">
+      <div className="bui-w-96">
         <StoryFn />
       </div>
     ),
@@ -34,7 +34,7 @@ export const Default: Story = {
 
 export const WithLabel: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Progress value={72} showLabel color="blue" />
     </div>
   ),
@@ -42,7 +42,7 @@ export const WithLabel: Story = {
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-4">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-4">
       <Progress value={40} color="red" />
       <Progress value={60} color="blue" />
       <Progress value={80} color="yellow" />
@@ -53,7 +53,7 @@ export const Colors: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-4">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-4">
       <Progress value={60} size="sm" color="blue" />
       <Progress value={60} size="md" color="blue" />
       <Progress value={60} size="lg" color="blue" />
@@ -63,7 +63,7 @@ export const Sizes: Story = {
 
 export const Indeterminate: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Progress indeterminate color="blue" />
     </div>
   ),
@@ -71,7 +71,7 @@ export const Indeterminate: Story = {
 
 export const Empty: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Progress value={0} showLabel color="blue" />
     </div>
   ),
@@ -79,7 +79,7 @@ export const Empty: Story = {
 
 export const Clamped: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-4">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-4">
       <Progress value={150} showLabel color="red" />
       <Progress value={-20} showLabel color="ink" />
     </div>
@@ -88,7 +88,7 @@ export const Clamped: Story = {
 
 export const LabelWithSizes: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-4">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-4">
       <Progress value={100} showLabel size="sm" color="blue" />
       <Progress value={100} showLabel size="md" color="blue" />
       <Progress value={100} showLabel size="lg" color="blue" />
@@ -98,7 +98,7 @@ export const LabelWithSizes: Story = {
 
 export const LabelSuppressedWhenIndeterminate: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Progress indeterminate showLabel color="yellow" />
     </div>
   ),

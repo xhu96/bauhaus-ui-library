@@ -24,7 +24,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: (args) => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Divider {...args} />
     </div>
   ),
@@ -32,7 +32,7 @@ export const Default: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-6">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-6">
       <Divider variant="solid" />
       <Divider variant="dashed" />
       <Divider variant="dotted" />
@@ -42,7 +42,7 @@ export const Variants: Story = {
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-6">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-6">
       <Divider color="red" thickness={4} />
       <Divider color="blue" thickness={4} />
       <Divider color="yellow" thickness={4} />
@@ -53,7 +53,7 @@ export const Colors: Story = {
 
 export const WithLabel: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Divider label="Or" color="ink" />
     </div>
   ),
@@ -61,12 +61,12 @@ export const WithLabel: Story = {
 
 export const Vertical: Story = {
   render: () => (
-    <div className="flex h-16 items-stretch gap-4">
-      <span className="self-center font-display font-bold text-ink">Left</span>
+    <div className="bui-flex bui-h-16 bui-items-stretch bui-gap-4">
+      <span className="bui-self-center bui-font-display bui-font-bold bui-text-ink">Left</span>
       <Divider orientation="vertical" thickness={4} color="red" />
-      <span className="self-center font-display font-bold text-ink">Middle</span>
+      <span className="bui-self-center bui-font-display bui-font-bold bui-text-ink">Middle</span>
       <Divider orientation="vertical" thickness={4} color="blue" />
-      <span className="self-center font-display font-bold text-ink">Right</span>
+      <span className="bui-self-center bui-font-display bui-font-bold bui-text-ink">Right</span>
     </div>
   ),
 }
@@ -74,7 +74,7 @@ export const Vertical: Story = {
 /** Contrasts the default thickness (3) with progressively heavier lines. */
 export const Thickness: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-6">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-6">
       <Divider thickness={1} />
       <Divider thickness={3} />
       <Divider thickness={6} />
@@ -86,7 +86,7 @@ export const Thickness: Story = {
 /** Exercises the vertical render path with dashed and dotted variants. */
 export const VerticalVariants: Story = {
   render: () => (
-    <div className="flex h-16 items-stretch gap-6">
+    <div className="bui-flex bui-h-16 bui-items-stretch bui-gap-6">
       <Divider orientation="vertical" variant="solid" thickness={4} />
       <Divider orientation="vertical" variant="dashed" thickness={4} />
       <Divider orientation="vertical" variant="dotted" thickness={4} />
@@ -97,7 +97,7 @@ export const VerticalVariants: Story = {
 /** A ReactNode label (an icon) rather than a plain string. */
 export const LabelNode: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Divider
         label={
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -117,10 +117,10 @@ export const LabelNode: Story = {
  */
 export const VerticalWithLabelDropped: Story = {
   render: () => (
-    <div className="flex h-16 items-stretch gap-4">
-      <span className="self-center font-display font-bold text-ink">Before</span>
+    <div className="bui-flex bui-h-16 bui-items-stretch bui-gap-4">
+      <span className="bui-self-center bui-font-display bui-font-bold bui-text-ink">Before</span>
       <Divider orientation="vertical" thickness={4} label="ignored" />
-      <span className="self-center font-display font-bold text-ink">After</span>
+      <span className="bui-self-center bui-font-display bui-font-bold bui-text-ink">After</span>
     </div>
   ),
 }

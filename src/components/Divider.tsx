@@ -26,14 +26,14 @@ export function Divider({
   style,
   ...props
 }: DividerProps) {
-  const lineColor = hex[color]
+  const lineColor = color === 'ink' ? 'rgb(var(--bui-ink))' : hex[color]
 
   if (orientation === 'vertical') {
     return (
       <div
         role="separator"
         aria-orientation="vertical"
-        className={cn('inline-block self-stretch', className)}
+        className={cn('bui-reset', 'bui-inline-block bui-self-stretch', className)}
         style={{ borderLeftWidth: thickness, borderLeftStyle: variant, borderLeftColor: lineColor, ...style }}
         {...props}
       />
@@ -45,19 +45,19 @@ export function Divider({
       <div
         role="separator"
         aria-orientation="horizontal"
-        className={cn('flex items-center gap-3', className)}
+        className={cn('bui-reset', 'bui-flex bui-items-center bui-gap-3', className)}
         style={style}
         {...props}
       >
         <span
-          className="flex-1"
+          className="bui-reset bui-flex-1"
           style={{ borderTopWidth: thickness, borderTopStyle: variant, borderTopColor: lineColor }}
         />
-        <span className="shrink-0 font-display text-sm font-bold uppercase tracking-wide text-ink">
+        <span className="bui-reset bui-shrink-0 bui-font-display bui-text-sm bui-font-bold bui-uppercase bui-tracking-wide bui-text-ink">
           {label}
         </span>
         <span
-          className="flex-1"
+          className="bui-reset bui-flex-1"
           style={{ borderTopWidth: thickness, borderTopStyle: variant, borderTopColor: lineColor }}
         />
       </div>
@@ -68,7 +68,7 @@ export function Divider({
     <div
       role="separator"
       aria-orientation="horizontal"
-      className={cn('w-full', className)}
+      className={cn('bui-reset', 'bui-w-full', className)}
       style={{ borderTopWidth: thickness, borderTopStyle: variant, borderTopColor: lineColor, ...style }}
       {...props}
     />

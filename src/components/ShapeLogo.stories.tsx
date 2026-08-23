@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 import { ShapeLogo } from './ShapeLogo'
 
 const meta = {
@@ -43,7 +43,7 @@ export const CustomMark: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-col gap-4">
+    <div className="bui-flex bui-flex-col bui-gap-4">
       <ShapeLogo label="Small" size={18} />
       <ShapeLogo label="Medium" size={26} />
       <ShapeLogo label="Large" size={36} />
@@ -74,7 +74,7 @@ export const Clickable: Story = {
     size: 28,
     role: 'button',
     tabIndex: 0,
-    className: 'cursor-pointer',
+    className: 'bui-cursor-pointer',
   },
 }
 
@@ -83,6 +83,6 @@ export const CustomClassName: Story = {
   args: {
     label: 'Custom',
     size: 26,
-    className: 'gap-6 rounded-md border-2 border-ink bg-surface p-4',
+    className: 'bui-gap-6 bui-rounded-md bui-border-2 bui-border-ink bui-bg-surface bui-p-4',
   },
 }

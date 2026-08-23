@@ -1,50 +1,43 @@
 @import './tokens.css';
 
-@tailwind base;
 @tailwind components;
+
+/* Minimal Preflight replacement, scoped only to elements owned by this library.
+   Consumer-provided children are untouched unless they intentionally use .bui-reset. */
+.bui-reset,
+.bui-reset::before,
+.bui-reset::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: currentColor;
+}
+
 @tailwind utilities;
 
-@layer base {
-  html {
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  body {
-    @apply bg-paper text-ink font-sans;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    @apply font-display font-bold tracking-tight;
-  }
-
-  /* Focus ring: geometric, high-contrast, matches the Bauhaus look. */
-  :where(button, a, input, select, textarea, [tabindex]):focus-visible {
-    outline: 3px solid rgb(var(--bui-blue));
-    outline-offset: 2px;
-  }
+/* Focus ring: geometric, high-contrast, matches the Bauhaus look. */
+:where(.bui-press, .bui-reset):focus-visible {
+  outline: 3px solid rgb(var(--bui-blue));
+  outline-offset: 2px;
 }
 
 @layer utilities {
   /* Hard offset shadow that flips into the ink color on hover/active. */
-  .press {
-    @apply transition-all duration-100 ease-out;
+  .bui-press {
+    @apply bui-transition-all bui-duration-100 bui-ease-out;
   }
-  .press-hard {
-    @apply shadow-hard hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-hard-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+  .bui-press-hard {
+    @apply bui-shadow-hard hover:-bui-translate-x-[1px] hover:-bui-translate-y-[1px] hover:bui-shadow-hard-lg active:bui-translate-x-[2px] active:bui-translate-y-[2px] active:bui-shadow-none;
   }
 
   /* Bauhaus dot-grid background. */
-  .bg-dotgrid {
+  .bui-bg-dotgrid {
     background-image: radial-gradient(rgb(var(--bui-ink)) 1.5px, transparent 1.5px);
     background-size: 18px 18px;
   }
 
   /* Diagonal stripe fill. */
-  .bg-stripes {
+  .bui-bg-stripes {
     background-image: repeating-linear-gradient(
       45deg,
       rgb(var(--bui-ink)) 0,
@@ -65,11 +58,15 @@
   }
 }
 
+/* Reduced-motion: only targets Bauhaus library animations and transitions, not consumer elements. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
+  [class*='bui-animate-pop'],
+  [class*='bui-animate-fade'],
+  [class*='bui-animate-slide'],
+  [class*='bui-animate-spin-slow'],
+  [class*='bui-animate-marquee'],
+  [class*='bui-animate-indeterminate'],
+  .bui-press {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

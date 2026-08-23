@@ -5,8 +5,40 @@ import { Input } from './Input'
 import { Select } from './Select'
 import { Slider } from './Slider'
 import { Textarea } from './Textarea'
+import { Checkbox } from './Checkbox'
 
 describe('FormField', () => {
+  it('generates a control id and propagates native required semantics', () => {
+    render(
+      <FormField label="Email" required>
+        <Input />
+      </FormField>,
+    )
+
+    const input = screen.getByRole('textbox', { name: 'Email' })
+    const label = screen.getByText('Email').closest('label')
+
+    expect(input.id).not.toBe('')
+    expect(label).toHaveAttribute('for', input.id)
+    expect(input).toBeRequired()
+    expect(input).toHaveAttribute('aria-required', 'true')
+  })
+
+  it('keeps hint and error visible and references both descriptions', () => {
+    render(
+      <FormField label="Password" hint="Use at least eight characters." error="Password is too short.">
+        <Input />
+      </FormField>,
+    )
+
+    const input = screen.getByRole('textbox', { name: 'Password' })
+    const hint = screen.getByText('Use at least eight characters.')
+    const error = screen.getByText('Password is too short.')
+
+    expect(input.getAttribute('aria-describedby')?.split(' ')).toEqual([hint.id, error.id])
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+  })
+
   it('associates an error with its input and marks it invalid', () => {
     render(
       <FormField label="Password" htmlFor="password" error="Use at least eight characters.">
@@ -73,13 +105,35 @@ describe('FormField', () => {
     const textareaError = screen.getByText('Message is required.')
     expect(textarea).toHaveAttribute('aria-invalid', 'true')
     expect(textarea).toHaveAttribute('aria-required', 'true')
+    expect(textarea).toBeRequired()
     expect(textarea).toHaveAttribute('aria-describedby', textareaError.id)
 
     const select = screen.getByRole('combobox', { name: 'Color' })
     const selectError = screen.getByText('Choose a color.')
     expect(select).toHaveAttribute('aria-invalid', 'true')
     expect(select).toHaveAttribute('aria-required', 'true')
+    expect(select).toBeRequired()
     expect(select).toHaveAttribute('aria-describedby', selectError.id)
+  })
+
+  it('propagates generated ids and native required semantics to checkbox controls', () => {
+    const { rerender } = render(
+      <FormField label="Terms" required>
+        <Checkbox />
+      </FormField>,
+    )
+
+    const checkbox = screen.getByRole('checkbox', { name: 'Terms' })
+    expect(checkbox.id).not.toBe('')
+    expect(checkbox).toBeRequired()
+
+    rerender(
+      <FormField label="Message" required>
+        <Textarea />
+      </FormField>,
+    )
+
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeRequired()
   })
 
   it('preserves explicit invalid and required aria values', () => {

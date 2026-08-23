@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 import { useState } from 'react'
 import { Tag } from './Tag'
 
@@ -29,7 +29,7 @@ export const Default: Story = {}
 
 export const WithDot: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Tag dot color="red">
         Bug
       </Tag>
@@ -48,7 +48,7 @@ export const WithDot: Story = {
 
 export const Removable: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Tag color="blue" onRemove={() => {}}>
         TypeScript
       </Tag>
@@ -64,7 +64,7 @@ export const Removable: Story = {
  *  which appears in the Removable story. */
 export const RemovableColors: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Tag color="red" onRemove={() => {}}>
         Red
       </Tag>
@@ -94,9 +94,9 @@ export const InteractiveRemove: Story = {
       { id: 4, label: 'Ops', color: 'ink' },
     ])
     return (
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
         {tags.length === 0 ? (
-          <span className="font-display text-sm text-ink-soft">All tags removed.</span>
+          <span className="bui-font-display bui-text-sm bui-text-ink-soft">All tags removed.</span>
         ) : (
           tags.map((tag) => (
             <Tag

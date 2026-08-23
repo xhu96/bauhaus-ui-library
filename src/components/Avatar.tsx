@@ -38,11 +38,12 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
   return (
     <span
       ref={ref}
-      role="img"
-      aria-label={name || 'avatar'}
+      role={src ? undefined : 'img'}
+      aria-label={src ? undefined : name || 'avatar'}
       className={cn(
-        'inline-flex shrink-0 select-none items-center justify-center overflow-hidden border-3 border-ink',
-        shape === 'circle' ? 'rounded-full' : 'rounded-none',
+        'bui-reset',
+        'bui-inline-flex bui-shrink-0 bui-select-none bui-items-center bui-justify-center bui-overflow-hidden bui-border-3 bui-border-ink',
+        shape === 'circle' ? 'bui-rounded-full' : 'bui-rounded-none',
         !src && solidColor[color],
         className,
       )}
@@ -50,10 +51,10 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
       {...props}
     >
       {src ? (
-        <img src={src} alt={name || ''} className="h-full w-full object-cover" />
+        <img src={src} alt={name || ''} className="bui-reset bui-h-full bui-w-full bui-object-cover" />
       ) : (
         <span
-          className="font-display font-bold uppercase leading-none tracking-wide"
+          className="bui-reset bui-font-display bui-font-bold bui-uppercase bui-leading-none bui-tracking-wide"
           style={{ fontSize: Math.round(px * 0.4) }}
           aria-hidden="true"
         >

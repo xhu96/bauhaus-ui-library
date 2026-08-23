@@ -17,6 +17,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
     className,
     style,
     disabled,
+    id,
     'aria-describedby': ariaDescribedBy,
     'aria-invalid': ariaInvalid,
     'aria-required': ariaRequired,
@@ -29,20 +30,23 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   return (
     <div
       className={cn(
-        'flex w-full items-center border-3 border-ink bg-surface px-3 py-2',
-        disabled && 'cursor-not-allowed opacity-50',
+        'bui-reset',
+        'bui-flex bui-w-full bui-items-center bui-border-3 bui-bg-surface bui-px-3 bui-py-2',
+        semantics.invalid ? 'bui-border-bred' : 'bui-border-ink',
+        disabled && 'bui-cursor-not-allowed bui-opacity-50',
         className,
       )}
     >
       <input
         ref={ref}
+        id={id ?? semantics.controlId}
         type="range"
         disabled={disabled}
         aria-describedby={semantics.describedBy}
         aria-required={ariaRequired}
         aria-invalid={ariaInvalid ?? (semantics.invalid || undefined)}
-        className="h-11 w-full cursor-pointer disabled:cursor-not-allowed"
-        style={{ accentColor: hex[color], ...style }}
+        className="bui-reset bui-h-11 bui-w-full bui-cursor-pointer disabled:bui-cursor-not-allowed"
+        style={{ accentColor: color === 'ink' ? 'rgb(var(--bui-ink))' : hex[color], ...style }}
         {...props}
       />
     </div>

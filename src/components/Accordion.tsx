@@ -3,12 +3,13 @@ import {
   useContext,
   useId,
   useState,
+  type ButtonHTMLAttributes,
   type HTMLAttributes,
-  type KeyboardEvent,
   type ReactNode,
 } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { composeEventHandlers } from '@/lib/composeEventHandlers'
 
 interface AccordionContextValue {
   isOpen: (value: string) => boolean
@@ -42,39 +43,67 @@ function useAccordionItemContext(part: string): AccordionItemContextValue {
 }
 
 function toArray(value: string | string[] | undefined): string[] {
-  if (value === undefined) return []
+  if (value === undefined || value === '') return []
   return Array.isArray(value) ? value : [value]
 }
 
-export interface AccordionProps extends HTMLAttributes<HTMLDivElement> {
-  /** 'single' allows one open item at a time, 'multiple' allows many. */
-  type?: 'single' | 'multiple'
-  defaultValue?: string | string[]
+export interface AccordionBaseProps extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
   children: ReactNode
 }
+
+export interface AccordionSingleProps extends AccordionBaseProps {
+  type?: 'single'
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+}
+
+export interface AccordionMultipleProps extends AccordionBaseProps {
+  type: 'multiple'
+  value?: string[]
+  defaultValue?: string[]
+  onValueChange?: (value: string[]) => void
+}
+
+export type AccordionProps = AccordionSingleProps | AccordionMultipleProps
 
 /**
  * Compound accordion. Manages the open item set via context; collapse behavior
  * depends on `type`.
  */
-export function Accordion({ type = 'single', defaultValue, className, children, ...props }: AccordionProps) {
+export function Accordion(props: AccordionProps) {
+  const { type = 'single', value, defaultValue, className, children, onValueChange, ...htmlProps } = props
   const [open, setOpen] = useState<string[]>(() => toArray(defaultValue))
+  const isControlled = value !== undefined
+  const current = isControlled ? toArray(value) : open
 
-  const isOpen = (value: string) => open.includes(value)
+  const isOpen = (itemValue: string) => current.includes(itemValue)
 
-  const toggle = (value: string) => {
-    setOpen((prev) => {
-      const has = prev.includes(value)
-      if (type === 'single') {
-        return has ? [] : [value]
-      }
-      return has ? prev.filter((v) => v !== value) : [...prev, value]
-    })
+  const toggle = (itemValue: string) => {
+    const has = current.includes(itemValue)
+    const next =
+      type === 'single'
+        ? has
+          ? []
+          : [itemValue]
+        : has
+          ? current.filter((openValue) => openValue !== itemValue)
+          : [...current, itemValue]
+
+    if (!isControlled) setOpen(next)
+    if (type === 'multiple') {
+      ;(onValueChange as AccordionMultipleProps['onValueChange'])?.(next)
+    } else {
+      ;(onValueChange as AccordionSingleProps['onValueChange'])?.(next[0] ?? '')
+    }
   }
 
   return (
     <AccordionContext.Provider value={{ isOpen, toggle }}>
-      <div className={cn('flex flex-col border-3 border-ink', className)} {...props}>
+      <div
+        className={cn('bui-reset', 'bui-flex bui-flex-col bui-border-3 bui-border-ink', className)}
+        {...htmlProps}
+      >
         {children}
       </div>
     </AccordionContext.Provider>
@@ -99,7 +128,10 @@ export function AccordionItem({ value, className, children, ...props }: Accordio
 
   return (
     <AccordionItemContext.Provider value={ctx}>
-      <div className={cn('border-ink [&:not(:last-child)]:border-b-3', className)} {...props}>
+      <div
+        className={cn('bui-reset', 'bui-border-ink [&:not(:last-child)]:bui-border-b-3', className)}
+        {...props}
+      >
         {children}
       </div>
     </AccordionItemContext.Provider>
@@ -110,36 +142,40 @@ export function AccordionItem({ value, className, children, ...props }: Accordio
  * Full-width clickable header. The chevron rotates when the item is open.
  * Enter/Space toggles.
  */
-export function AccordionTrigger({ className, children, ...props }: HTMLAttributes<HTMLButtonElement>) {
+export function AccordionTrigger({
+  className,
+  children,
+  onClick,
+  onKeyDown,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
   const { isOpen, toggle } = useAccordionContext('AccordionTrigger')
   const { value, triggerId, contentId } = useAccordionItemContext('AccordionTrigger')
   const open = isOpen(value)
 
-  const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      toggle(value)
-    }
-  }
-
   return (
     <button
+      {...props}
       type="button"
       id={triggerId}
       aria-expanded={open}
       aria-controls={contentId}
-      onClick={() => toggle(value)}
+      onClick={composeEventHandlers(onClick, () => toggle(value))}
       onKeyDown={onKeyDown}
       className={cn(
-        'press flex w-full items-center justify-between gap-3 px-4 py-3 text-left font-display text-base font-semibold uppercase tracking-wide text-ink',
-        open ? 'bg-byellow' : 'bg-transparent hover:bg-paper-dark',
+        'bui-reset',
+        'bui-press bui-flex bui-w-full bui-items-center bui-justify-between bui-gap-3 bui-px-4 bui-py-3 bui-text-left bui-font-display bui-text-base bui-font-semibold bui-uppercase bui-tracking-wide bui-text-ink',
+        open ? 'bui-bg-byellow' : 'bui-bg-transparent hover:bui-bg-paper-dark',
         className,
       )}
-      {...props}
     >
       {children}
       <ChevronDown
-        className={cn('h-5 w-5 shrink-0 transition-transform duration-200', open && 'rotate-180')}
+        className={cn(
+          'bui-reset',
+          'bui-h-5 bui-w-5 bui-shrink-0 bui-transition-transform bui-duration-200',
+          open && 'bui-rotate-180',
+        )}
         aria-hidden
       />
     </button>
@@ -156,11 +192,15 @@ export function AccordionContent({ className, children, ...props }: HTMLAttribut
 
   return (
     <div
+      {...props}
       role="region"
       id={contentId}
       aria-labelledby={triggerId}
-      className={cn('animate-fade-in border-t-3 border-ink px-4 py-3 text-ink', className)}
-      {...props}
+      className={cn(
+        'bui-reset',
+        'bui-animate-fade-in bui-border-t-3 bui-border-ink bui-px-4 bui-py-3 bui-text-ink',
+        className,
+      )}
     >
       {children}
     </div>

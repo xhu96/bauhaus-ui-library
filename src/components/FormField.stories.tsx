@@ -30,7 +30,7 @@ export const Default: Story = {
   render: (args) => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField {...args} htmlFor={id}>
           <Input id={id} type="email" placeholder="you@example.com" />
         </FormField>
@@ -43,7 +43,7 @@ export const Required: Story = {
   render: () => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField label="Full name" required htmlFor={id}>
           <Input id={id} placeholder="Jane Doe" />
         </FormField>
@@ -56,7 +56,7 @@ export const WithError: Story = {
   render: () => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField label="Password" error="Password must be at least 8 characters." htmlFor={id}>
           <Input id={id} type="password" error defaultValue="abc" />
         </FormField>
@@ -70,7 +70,7 @@ function LiveValidation() {
   const [value, setValue] = useState('')
   const isValid = value.includes('@')
   return (
-    <div className="w-80">
+    <div className="bui-w-80">
       <FormField
         label="Email"
         htmlFor={id}
@@ -98,7 +98,7 @@ export const NoLabel: Story = {
   render: () => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField hint="No label rendered above this control." htmlFor={id}>
           <Input id={id} placeholder="Unlabeled field" />
         </FormField>
@@ -111,7 +111,7 @@ export const RequiredWithError: Story = {
   render: () => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField label="Email" required error="This field is required." htmlFor={id}>
           <Input id={id} type="email" error placeholder="you@example.com" />
         </FormField>
@@ -124,7 +124,7 @@ export const ErrorOverridesHint: Story = {
   render: () => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField
           label="Password"
           hint="Use 8 or more characters."
@@ -142,7 +142,7 @@ export const LabelOnly: Story = {
   render: () => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField label="Username" htmlFor={id}>
           <Input id={id} placeholder="jane.doe" />
         </FormField>
@@ -155,12 +155,12 @@ export const WithCustomClassName: Story = {
   render: () => {
     const id = useId()
     return (
-      <div className="w-80">
+      <div className="bui-w-80">
         <FormField
           label="Notes"
           hint="Custom className adds extra vertical gap."
           htmlFor={id}
-          className="gap-4 rounded-base border-2 border-ink bg-surface p-4"
+          className="bui-gap-4 rounded-base bui-border-2 bui-border-ink bui-bg-surface bui-p-4"
         >
           <Input id={id} placeholder="Anything else?" />
         </FormField>
@@ -175,7 +175,7 @@ export const StackedForm: Story = {
     const lastId = useId()
     const emailId = useId()
     return (
-      <form className="flex w-80 flex-col gap-5">
+      <form className="bui-flex bui-w-80 bui-flex-col bui-gap-5">
         <FormField label="First name" required htmlFor={firstId}>
           <Input id={firstId} placeholder="Jane" />
         </FormField>

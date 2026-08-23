@@ -4,12 +4,14 @@ import {
   useId,
   useRef,
   useState,
+  type ButtonHTMLAttributes,
   type HTMLAttributes,
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
 import { cn } from '@/lib/utils'
 import { solidColor, type BauhausColor } from '@/lib/types'
+import { composeEventHandlers } from '@/lib/composeEventHandlers'
 
 interface TabsContextValue {
   value: string
@@ -17,6 +19,8 @@ interface TabsContextValue {
   baseId: string
   register: (value: string, el: HTMLButtonElement | null) => void
   focusAdjacent: (current: string, dir: 1 | -1) => void
+  focusEdge: (edge: 'first' | 'last') => void
+  isFirst: (value: string) => boolean
 }
 
 const TabsContext = createContext<TabsContextValue | null>(null)
@@ -63,18 +67,34 @@ export function Tabs({
     onValueChange?.(next)
   }
 
+  const [firstKey, setFirstKey] = useState<string | null>(null)
+
   const register = (key: string, el: HTMLButtonElement | null) => {
     if (el) {
       triggers.current.set(key, el)
-      if (!order.current.includes(key)) order.current.push(key)
+      if (!order.current.includes(key)) {
+        order.current.push(key)
+        if (order.current.length === 1) {
+          setFirstKey(key)
+          // Auto-select the first tab in uncontrolled mode when no defaultValue
+          if (!isControlled && uncontrolled === '') {
+            setUncontrolled(key)
+          }
+        }
+      }
     } else {
       triggers.current.delete(key)
       order.current = order.current.filter((k) => k !== key)
+      if (firstKey === key) {
+        setFirstKey(order.current[0] ?? null)
+      }
     }
   }
 
+  const isFirst = (val: string) => firstKey === val || order.current[0] === val
+
   const focusAdjacent = (current: string, dir: 1 | -1) => {
-    const keys = order.current
+    const keys = order.current.filter((key) => !triggers.current.get(key)?.disabled)
     const idx = keys.indexOf(current)
     if (idx === -1) return
     const nextKey = keys[(idx + dir + keys.length) % keys.length]
@@ -85,9 +105,19 @@ export function Tabs({
     }
   }
 
+  const focusEdge = (edge: 'first' | 'last') => {
+    const keys = order.current.filter((key) => !triggers.current.get(key)?.disabled)
+    const nextKey = edge === 'first' ? keys[0] : keys[keys.length - 1]
+    const el = nextKey ? triggers.current.get(nextKey) : undefined
+    if (el && nextKey) {
+      el.focus()
+      setValue(nextKey)
+    }
+  }
+
   return (
-    <TabsContext.Provider value={{ value, setValue, baseId, register, focusAdjacent }}>
-      <div className={cn('flex flex-col gap-4', className)} {...props}>
+    <TabsContext.Provider value={{ value, setValue, baseId, register, focusAdjacent, focusEdge, isFirst }}>
+      <div className={cn('bui-reset', 'bui-flex bui-flex-col bui-gap-4', className)} {...props}>
         {children}
       </div>
     </TabsContext.Provider>
@@ -101,7 +131,11 @@ export function TabsList({ className, children, ...props }: HTMLAttributes<HTMLD
   return (
     <div
       role="tablist"
-      className={cn('flex flex-wrap items-end gap-2 border-b-3 border-ink', className)}
+      className={cn(
+        'bui-reset',
+        'bui-flex bui-flex-wrap bui-items-end bui-gap-2 bui-border-b-3 bui-border-ink',
+        className,
+      )}
       {...props}
     >
       {children}
@@ -109,7 +143,7 @@ export function TabsList({ className, children, ...props }: HTMLAttributes<HTMLD
   )
 }
 
-export interface TabsTriggerProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'color'> {
+export interface TabsTriggerProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
   value: string
   color?: BauhausColor
   children: ReactNode
@@ -119,39 +153,62 @@ export interface TabsTriggerProps extends Omit<HTMLAttributes<HTMLButtonElement>
  * A single tab. Active triggers fill with a solid color and a bordered tab;
  * inactive ones stay plain. Arrow keys move between triggers.
  */
-export function TabsTrigger({ value, color = 'blue', className, children, ...props }: TabsTriggerProps) {
-  const { value: active, setValue, baseId, register, focusAdjacent } = useTabsContext('TabsTrigger')
+export function TabsTrigger({
+  value,
+  color = 'blue',
+  className,
+  children,
+  onClick,
+  onKeyDown,
+  ...props
+}: TabsTriggerProps) {
+  const {
+    value: active,
+    setValue,
+    baseId,
+    register,
+    focusAdjacent,
+    focusEdge,
+    isFirst,
+  } = useTabsContext('TabsTrigger')
   const selected = active === value
 
-  const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'ArrowRight') {
       e.preventDefault()
       focusAdjacent(value, 1)
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault()
       focusAdjacent(value, -1)
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      focusEdge('first')
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      focusEdge('last')
     }
   }
 
   return (
     <button
+      {...props}
       type="button"
       role="tab"
       id={`${baseId}-tab-${value}`}
       aria-selected={selected}
       aria-controls={`${baseId}-panel-${value}`}
-      tabIndex={selected ? 0 : -1}
+      tabIndex={selected || (!active && isFirst(value)) ? 0 : -1}
       ref={(el) => register(value, el)}
-      onClick={() => setValue(value)}
-      onKeyDown={onKeyDown}
+      onClick={composeEventHandlers(onClick, () => setValue(value))}
+      onKeyDown={composeEventHandlers(onKeyDown, handleKeyDown)}
       className={cn(
-        'press -mb-[3px] inline-flex items-center gap-2 border-3 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide',
+        'bui-reset',
+        'bui-press -bui-mb-[3px] bui-inline-flex bui-items-center bui-gap-2 bui-border-3 bui-px-4 bui-py-2 bui-font-display bui-text-sm bui-font-semibold bui-uppercase bui-tracking-wide',
         selected
-          ? cn('border-ink', solidColor[color])
-          : 'border-transparent bg-transparent text-ink-muted hover:text-ink',
+          ? cn('bui-border-ink', solidColor[color])
+          : 'bui-border-transparent bui-bg-transparent bui-text-ink-muted hover:bui-text-ink',
         className,
       )}
-      {...props}
     >
       {children}
     </button>
@@ -172,12 +229,12 @@ export function TabsContent({ value, className, children, ...props }: TabsConten
 
   return (
     <div
+      {...props}
       role="tabpanel"
       id={`${baseId}-panel-${value}`}
       aria-labelledby={`${baseId}-tab-${value}`}
       tabIndex={0}
-      className={cn('animate-fade-in', className)}
-      {...props}
+      className={cn('bui-reset', 'bui-animate-fade-in', className)}
     >
       {children}
     </div>

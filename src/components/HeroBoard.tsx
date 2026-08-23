@@ -60,8 +60,8 @@ function tileStyle(t: TileDef): CSSProperties {
  */
 export function HeroBoard({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('hb', className)} {...props}>
-      <div className="board" aria-hidden="true">
+    <div className={cn('bui-reset', 'hb', className)} {...props}>
+      <div className="bui-reset board" aria-hidden="true">
         {TILES.map((t, i) => (
           <div key={i} className={`tile ${t.cls}`} style={tileStyle(t)} />
         ))}

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn, within, userEvent, expect } from '@storybook/test'
+import { fn, within, userEvent, expect } from 'storybook/test'
 import { ArrowRight, Download, Plus } from 'lucide-react'
 import { Button } from './Button'
 
@@ -40,7 +40,7 @@ export const Default: Story = {}
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Button color="ink">Ink</Button>
       <Button color="red">Red</Button>
       <Button color="blue">Blue</Button>
@@ -51,7 +51,7 @@ export const Colors: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Button variant="solid" color="blue">
         Solid
       </Button>
@@ -67,7 +67,7 @@ export const Variants: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Button size="sm">Small</Button>
       <Button size="md">Medium</Button>
       <Button size="lg">Large</Button>
@@ -77,12 +77,12 @@ export const Sizes: Story = {
 
 export const WithIcons: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button leftIcon={<Plus className="h-[1.1em] w-[1.1em]" />}>Add item</Button>
-      <Button rightIcon={<ArrowRight className="h-[1.1em] w-[1.1em]" />} color="red">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
+      <Button leftIcon={<Plus className="bui-h-[1.1em] bui-w-[1.1em]" />}>Add item</Button>
+      <Button rightIcon={<ArrowRight className="bui-h-[1.1em] bui-w-[1.1em]" />} color="red">
         Next
       </Button>
-      <Button leftIcon={<Download className="h-[1.1em] w-[1.1em]" />} variant="outline" color="blue">
+      <Button leftIcon={<Download className="bui-h-[1.1em] bui-w-[1.1em]" />} variant="outline" color="blue">
         Download
       </Button>
     </div>
@@ -91,7 +91,7 @@ export const WithIcons: Story = {
 
 export const Loading: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Button isLoading>Saving</Button>
       <Button isLoading color="red" variant="outline">
         Deleting
@@ -121,9 +121,9 @@ export const Disabled: Story = {
  */
 export const VariantColorMatrix: Story = {
   render: () => (
-    <div className="flex flex-col gap-3">
+    <div className="bui-flex bui-flex-col bui-gap-3">
       {(['solid', 'outline', 'ghost'] as const).map((variant) => (
-        <div key={variant} className="flex flex-wrap items-center gap-3">
+        <div key={variant} className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
           {(['ink', 'red', 'blue', 'yellow'] as const).map((color) => (
             <Button key={color} variant={variant} color={color}>
               {variant}/{color}
@@ -141,15 +141,15 @@ export const VariantColorMatrix: Story = {
  */
 export const LoadingWithIcons: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button leftIcon={<Plus className="h-[1.1em] w-[1.1em]" />}>Add</Button>
-      <Button leftIcon={<Plus className="h-[1.1em] w-[1.1em]" />} isLoading>
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
+      <Button leftIcon={<Plus className="bui-h-[1.1em] bui-w-[1.1em]" />}>Add</Button>
+      <Button leftIcon={<Plus className="bui-h-[1.1em] bui-w-[1.1em]" />} isLoading>
         Add
       </Button>
-      <Button rightIcon={<ArrowRight className="h-[1.1em] w-[1.1em]" />} color="blue">
+      <Button rightIcon={<ArrowRight className="bui-h-[1.1em] bui-w-[1.1em]" />} color="blue">
         Next
       </Button>
-      <Button rightIcon={<ArrowRight className="h-[1.1em] w-[1.1em]" />} color="blue" isLoading>
+      <Button rightIcon={<ArrowRight className="bui-h-[1.1em] bui-w-[1.1em]" />} color="blue" isLoading>
         Next
       </Button>
     </div>
@@ -162,7 +162,7 @@ export const LoadingWithIcons: Story = {
  */
 export const DisabledVariants: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Button variant="solid" color="blue" disabled>
         Solid
       </Button>

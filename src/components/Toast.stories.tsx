@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { within, userEvent, expect } from '@storybook/test'
+import { within, userEvent, expect } from 'storybook/test'
 import { useState } from 'react'
 import { ToastProvider, useToast } from './Toast'
 import { Button } from './Button'
@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>
 function ToastButtons() {
   const { toast } = useToast()
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="bui-flex bui-flex-wrap bui-gap-3">
       <Button
         color="blue"
         onClick={() => toast({ title: 'Heads up', description: 'Something informative.', status: 'info' })}
@@ -99,7 +99,7 @@ export const TopRightPosition: Story = {
 function DurationDemo() {
   const { toast } = useToast()
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="bui-flex bui-flex-wrap bui-gap-3">
       <Button
         color="blue"
         onClick={() => toast({ title: 'Quick', description: 'Gone in 1s.', status: 'info', duration: 1000 })}
@@ -179,7 +179,7 @@ function ProgrammaticDismissDemo() {
   const { toast, dismiss } = useToast()
   const [id, setId] = useState<string | null>(null)
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="bui-flex bui-flex-wrap bui-gap-3">
       <Button
         color="blue"
         onClick={() =>

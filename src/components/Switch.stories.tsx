@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import { expect, fn, userEvent, within } from '@storybook/test'
+import { expect, fn, userEvent, within } from 'storybook/test'
 import { Switch } from './Switch'
 
 const meta = {
@@ -64,7 +64,7 @@ export const DisabledOff: Story = {
 
 export const Colors: Story = {
   render: () => (
-    <div className="flex items-center gap-4">
+    <div className="bui-flex bui-items-center bui-gap-4">
       <Switch color="red" defaultChecked aria-label="Red" />
       <Switch color="blue" defaultChecked aria-label="Blue" />
       <Switch color="yellow" defaultChecked aria-label="Yellow" />
@@ -75,7 +75,7 @@ export const Colors: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex items-center gap-4">
+    <div className="bui-flex bui-items-center bui-gap-4">
       <Switch size="sm" defaultChecked aria-label="Small" />
       <Switch size="md" defaultChecked aria-label="Medium" />
       <Switch size="lg" defaultChecked aria-label="Large" />
@@ -85,8 +85,8 @@ export const Sizes: Story = {
 
 export const WithLabel: Story = {
   render: () => (
-    <div className="flex items-center gap-3">
-      <label id="notifications-label" htmlFor="notifications" className="font-bold">
+    <div className="bui-flex bui-items-center bui-gap-3">
+      <label id="notifications-label" htmlFor="notifications" className="bui-font-bold">
         Enable notifications
       </label>
       <Switch id="notifications" aria-labelledby="notifications-label" />

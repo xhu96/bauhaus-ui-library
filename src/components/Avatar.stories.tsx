@@ -36,7 +36,7 @@ export const Default: Story = {}
 
 export const Initials: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Avatar name="Walter Gropius" color="blue" />
       <Avatar name="Anni Albers" color="red" />
       <Avatar name="Paul Klee" color="yellow" />
@@ -54,7 +54,7 @@ export const Image: Story = {
 
 export const Shapes: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Avatar name="Square" shape="square" color="red" />
       <Avatar name="Circle" shape="circle" color="blue" />
     </div>
@@ -63,7 +63,7 @@ export const Shapes: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
       <Avatar name="Small" size="sm" color="ink" />
       <Avatar name="Medium" size="md" color="ink" />
       <Avatar name="Large" size="lg" color="ink" />

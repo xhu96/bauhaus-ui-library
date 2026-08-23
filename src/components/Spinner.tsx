@@ -7,6 +7,8 @@ export interface SpinnerProps extends Omit<SVGProps<SVGSVGElement>, 'color'> {
   color?: BauhausColor
   /** Accessible label announced to screen readers. */
   label?: string
+  /** Hide the spinner from assistive technology when another control already communicates loading state. */
+  decorative?: boolean
 }
 
 const sizePx: Record<Size, number> = {
@@ -16,42 +18,54 @@ const sizePx: Record<Size, number> = {
 }
 
 /**
- * Bauhaus loader: a rotating quarter-circle arc with a counter-rotating
- * dot orbiting inside. Inline SVG, announced as a status region.
+ * Bauhaus loader: a single rotating three-quarter ring with a deliberate gap
+ * and square-cut ends. Inline SVG, announced as a status region by default.
  */
 export function Spinner({
   size = 'md',
   color = 'ink',
   label = 'Loading',
+  decorative = false,
   className,
+  style,
   ...props
 }: SpinnerProps) {
   const px = typeof size === 'number' ? size : sizePx[size]
-  const c = hex[color]
+  const c = color === 'ink' ? 'currentColor' : hex[color]
 
   return (
-    <span role="status" aria-label={label} className="inline-flex">
+    <span
+      role={decorative ? undefined : 'status'}
+      aria-label={decorative ? undefined : label}
+      aria-hidden={decorative ? 'true' : undefined}
+      className="bui-reset bui-inline-flex"
+    >
       <svg
         width={px}
         height={px}
         viewBox="0 0 100 100"
-        className={cn('inline-block shrink-0', className)}
+        className={cn(
+          'bui-reset bui-inline-block bui-shrink-0 bui-origin-center bui-animate-spin',
+          color === 'ink' && 'bui-text-ink',
+          className,
+        )}
+        style={{ transformBox: 'fill-box', ...style }}
         aria-hidden="true"
         {...props}
       >
-        {/* Rotating quarter-circle arc */}
-        <g className="origin-center animate-spin" style={{ transformBox: 'fill-box' }}>
-          <path d="M50 8 A42 42 0 0 1 92 50" fill="none" stroke={c} strokeWidth={14} strokeLinecap="square" />
-        </g>
-        {/* Counter-rotating orbiting dot */}
-        <g
-          className="origin-center animate-spin-slow"
-          style={{ transformBox: 'fill-box', animationDirection: 'reverse' }}
-        >
-          <rect x="44" y="74" width="14" height="14" fill={c} />
-        </g>
+        <circle
+          cx="50"
+          cy="50"
+          r="38"
+          fill="none"
+          stroke={c}
+          strokeWidth="14"
+          strokeLinecap="square"
+          pathLength="100"
+          strokeDasharray="72 28"
+        />
       </svg>
-      <span className="sr-only">{label}</span>
+      {!decorative && <span className="bui-reset bui-sr-only">{label}</span>}
     </span>
   )
 }

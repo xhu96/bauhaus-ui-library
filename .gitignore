@@ -6,3 +6,6 @@ storybook-static
 .DS_Store
 .vite
 *.log
+temp/
+design-qa/
+design-qa.md

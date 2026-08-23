@@ -1,6 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
-import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Spinner } from './Spinner'
 import { solidColor, solidHover, type BauhausColor, type Size } from '@/lib/types'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,23 +14,29 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 px-3 text-sm gap-1.5',
-  md: 'h-11 px-5 text-base gap-2',
-  lg: 'h-14 px-7 text-lg gap-2.5',
+  sm: 'bui-h-9 bui-px-3 bui-text-sm bui-gap-1.5',
+  md: 'bui-h-11 bui-px-5 bui-text-base bui-gap-2',
+  lg: 'bui-h-14 bui-px-7 bui-text-lg bui-gap-2.5',
+}
+
+const spinnerSizes: Record<Size, number> = {
+  sm: 16,
+  md: 18,
+  lg: 20,
 }
 
 const outlineColor: Record<BauhausColor, string> = {
-  red: 'text-bred-ink hover:bg-bred-dark hover:text-white',
-  blue: 'text-bblue hover:bg-bblue hover:text-white',
-  yellow: 'text-byellow-ink hover:bg-byellow hover:text-coal',
-  ink: 'text-ink hover:bg-ink hover:text-paper',
+  red: 'bui-text-bred-ink hover:bui-bg-bred-dark hover:bui-text-white',
+  blue: 'bui-text-bblue hover:bui-bg-bblue hover:bui-text-white',
+  yellow: 'bui-text-byellow-ink hover:bui-bg-byellow hover:bui-text-coal',
+  ink: 'bui-text-ink hover:bui-bg-ink hover:bui-text-paper',
 }
 
 const ghostColor: Record<BauhausColor, string> = {
-  red: 'text-bred-ink hover:bg-bred/10',
-  blue: 'text-bblue hover:bg-bblue/10',
-  yellow: 'text-byellow-ink hover:bg-byellow/20',
-  ink: 'text-ink hover:bg-ink/10',
+  red: 'bui-text-bred-ink hover:bui-bg-bred/10',
+  blue: 'bui-text-bblue hover:bui-bg-bblue/10',
+  yellow: 'bui-text-byellow-ink hover:bui-bg-byellow/20',
+  ink: 'bui-text-ink hover:bui-bg-ink/10',
 }
 
 /**
@@ -39,6 +45,7 @@ const ghostColor: Record<BauhausColor, string> = {
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
+    type = 'button',
     variant = 'solid',
     color = 'ink',
     size = 'md',
@@ -56,26 +63,28 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   return (
     <button
       ref={ref}
+      type={type}
       disabled={disabled || isLoading}
       className={cn(
-        'press inline-flex items-center justify-center border-3 border-ink font-display font-semibold uppercase tracking-wide',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none',
+        'bui-reset',
+        'bui-press bui-inline-flex bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-font-display bui-font-semibold bui-uppercase bui-tracking-wide',
+        'disabled:bui-cursor-not-allowed disabled:bui-opacity-50 disabled:bui-shadow-none',
         sizes[size],
-        variant === 'solid' && cn(solidColor[color], solidHover[color], 'press-hard'),
-        variant === 'outline' && cn('bg-transparent press-hard', outlineColor[color]),
-        variant === 'ghost' && cn('border-transparent bg-transparent', ghostColor[color]),
-        fullWidth && 'w-full',
+        variant === 'solid' && cn(solidColor[color], solidHover[color], 'bui-press-hard'),
+        variant === 'outline' && cn('bui-bg-transparent bui-press-hard', outlineColor[color]),
+        variant === 'ghost' && cn('bui-border-transparent bui-bg-transparent', ghostColor[color]),
+        fullWidth && 'bui-w-full',
         className,
       )}
       {...props}
     >
       {isLoading ? (
-        <Loader2 className="h-[1.1em] w-[1.1em] animate-spin" aria-hidden />
+        <Spinner decorative size={spinnerSizes[size]} className="bui-text-current" />
       ) : (
-        leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>
+        leftIcon && <span className="bui-reset bui-inline-flex bui-shrink-0">{leftIcon}</span>
       )}
       {children}
-      {!isLoading && rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
+      {!isLoading && rightIcon && <span className="bui-reset bui-inline-flex bui-shrink-0">{rightIcon}</span>}
     </button>
   )
 })

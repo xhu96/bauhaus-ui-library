@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 import { Megaphone } from 'lucide-react'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 import { Alert } from './Alert'
 
 const meta = {
@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: (args) => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Alert {...args} />
     </div>
   ),
@@ -37,7 +37,7 @@ export const Default: Story = {
 
 export const Statuses: Story = {
   render: () => (
-    <div className="flex w-96 flex-col gap-4">
+    <div className="bui-flex bui-w-96 bui-flex-col bui-gap-4">
       <Alert status="info" title="Information">
         A neutral, informative note.
       </Alert>
@@ -56,7 +56,7 @@ export const Statuses: Story = {
 
 export const Dismissible: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Alert status="warning" title="Dismissible" onClose={() => {}}>
         Click the X button to dismiss this alert.
       </Alert>
@@ -66,7 +66,7 @@ export const Dismissible: Story = {
 
 export const TitleOnly: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Alert status="success" title="Saved successfully" />
     </div>
   ),
@@ -74,7 +74,7 @@ export const TitleOnly: Story = {
 
 export const BodyOnly: Story = {
   render: () => (
-    <div className="w-96">
+    <div className="bui-w-96">
       <Alert status="info">A standalone message with no title; the body has no top margin.</Alert>
     </div>
   ),
@@ -82,8 +82,8 @@ export const BodyOnly: Story = {
 
 export const CustomIcon: Story = {
   render: () => (
-    <div className="w-96">
-      <Alert status="info" title="New release" icon={<Megaphone className="h-5 w-5" aria-hidden />}>
+    <div className="bui-w-96">
+      <Alert status="info" title="New release" icon={<Megaphone className="bui-h-5 bui-w-5" aria-hidden />}>
         Override the default status icon via the icon prop.
       </Alert>
     </div>
@@ -94,7 +94,7 @@ export const InteractiveDismiss: Story = {
   render: () => {
     const [visible, setVisible] = useState(true)
     return (
-      <div className="w-96">
+      <div className="bui-w-96">
         {visible ? (
           <Alert status="warning" title="Dismiss me" onClose={() => setVisible(false)}>
             Clicking the X actually unmounts this alert.
@@ -103,7 +103,7 @@ export const InteractiveDismiss: Story = {
           <button
             type="button"
             onClick={() => setVisible(true)}
-            className="press border-3 border-ink bg-surface px-3 py-1.5 text-sm text-ink hover:bg-ink hover:text-paper"
+            className="bui-press bui-border-3 bui-border-ink bui-bg-surface bui-px-3 bui-py-1.5 bui-text-sm bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
           >
             Show alert again
           </button>

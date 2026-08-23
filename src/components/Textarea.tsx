@@ -15,6 +15,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
     error = false,
     className,
     disabled,
+    id,
+    required,
     'aria-describedby': ariaDescribedBy,
     'aria-invalid': ariaInvalid,
     'aria-required': ariaRequired,
@@ -27,14 +29,17 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   return (
     <textarea
       ref={ref}
+      id={id ?? semantics.controlId}
       disabled={disabled}
+      required={required ?? (semantics.required || undefined)}
       aria-describedby={semantics.describedBy}
       aria-required={ariaRequired ?? (semantics.required || undefined)}
       aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
       className={cn(
-        'min-h-[6rem] w-full resize-y border-3 bg-surface px-4 py-3 font-sans text-base text-ink placeholder:text-ink-muted',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        error ? 'border-bred' : 'border-ink',
+        'bui-reset',
+        'bui-min-h-[6rem] bui-w-full bui-resize-y bui-border-3 bui-bg-surface bui-px-4 bui-py-3 bui-font-sans bui-text-base bui-text-ink placeholder:bui-text-ink-muted',
+        'disabled:bui-cursor-not-allowed disabled:bui-opacity-50',
+        error || semantics.invalid ? 'bui-border-bred' : 'bui-border-ink',
         className,
       )}
       {...props}

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { within, userEvent, expect } from '@storybook/test'
+import { within, userEvent, expect } from 'storybook/test'
 import { Tooltip } from './Tooltip'
 import { Button } from './Button'
 
@@ -31,7 +31,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: (args) => (
-    <div className="flex justify-center p-12">
+    <div className="bui-flex bui-justify-center bui-p-12">
       <Tooltip {...args}>
         <Button color="blue">Hover me</Button>
       </Tooltip>
@@ -41,7 +41,7 @@ export const Default: Story = {
 
 export const Sides: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-10 p-16">
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-justify-center bui-gap-10 bui-p-16">
       <Tooltip content="Top tooltip" side="top">
         <Button>Top</Button>
       </Tooltip>
@@ -62,7 +62,7 @@ export const Sides: Story = {
 export const NoDelay: Story = {
   args: { delay: 0, content: 'Appears instantly' },
   render: (args) => (
-    <div className="flex justify-center p-12">
+    <div className="bui-flex bui-justify-center bui-p-12">
       <Tooltip {...args}>
         <Button>No delay</Button>
       </Tooltip>
@@ -74,7 +74,7 @@ export const NoDelay: Story = {
 export const LongDelay: Story = {
   args: { delay: 700, content: 'Waited 700ms before showing' },
   render: (args) => (
-    <div className="flex justify-center p-12">
+    <div className="bui-flex bui-justify-center bui-p-12">
       <Tooltip {...args}>
         <Button>Slow reveal</Button>
       </Tooltip>
@@ -89,7 +89,7 @@ export const LongContent: Story = {
       'This tooltip holds a much longer message that wraps onto multiple lines, demonstrating the max-w-xs constraint and leading-snug line height.',
   },
   render: (args) => (
-    <div className="flex justify-center p-16">
+    <div className="bui-flex bui-justify-center bui-p-16">
       <Tooltip {...args}>
         <Button>Long content</Button>
       </Tooltip>
@@ -107,7 +107,7 @@ export const RichContent: Story = {
     ),
   },
   render: (args) => (
-    <div className="flex justify-center p-12">
+    <div className="bui-flex bui-justify-center bui-p-12">
       <Tooltip {...args}>
         <Button>Rich content</Button>
       </Tooltip>
@@ -122,7 +122,7 @@ export const RichContent: Story = {
 export const StringTrigger: Story = {
   args: { content: 'Tooltip on plain text', children: 'Plain text trigger' },
   render: (args) => (
-    <div className="flex justify-center p-12">
+    <div className="bui-flex bui-justify-center bui-p-12">
       <Tooltip {...args} />
     </div>
   ),
@@ -136,7 +136,7 @@ export const StringTrigger: Story = {
 export const KeyboardFocus: Story = {
   args: { delay: 0, content: 'Revealed via keyboard focus' },
   render: (args) => (
-    <div className="flex justify-center p-12">
+    <div className="bui-flex bui-justify-center bui-p-12">
       <Tooltip {...args}>
         <Button>Focus me</Button>
       </Tooltip>

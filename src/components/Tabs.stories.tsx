@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn, within, userEvent, expect } from '@storybook/test'
+import { fn, within, userEvent, expect } from 'storybook/test'
 import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs'
 
@@ -31,7 +31,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: () => (
-    <Tabs defaultValue="overview" className="w-96">
+    <Tabs defaultValue="overview" className="bui-w-96">
       <TabsList>
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="details">Details</TabsTrigger>
@@ -47,7 +47,7 @@ export const Default: Story = {
 function ControlledTabs() {
   const [value, setValue] = useState('one')
   return (
-    <Tabs value={value} onValueChange={setValue} className="w-96">
+    <Tabs value={value} onValueChange={setValue} className="bui-w-96">
       <TabsList>
         <TabsTrigger value="one" color="red">
           One
@@ -76,7 +76,7 @@ export const Controlled: Story = {
  */
 export const AllColors: Story = {
   render: () => (
-    <Tabs defaultValue="ink" className="w-[28rem]">
+    <Tabs defaultValue="ink" className="bui-w-[28rem]">
       <TabsList>
         <TabsTrigger value="red" color="red">
           Red
@@ -105,7 +105,7 @@ export const AllColors: Story = {
  */
 export const KeyboardNavigation: Story = {
   render: () => (
-    <Tabs defaultValue="overview" className="w-96">
+    <Tabs defaultValue="overview" className="bui-w-96">
       <TabsList>
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="details">Details</TabsTrigger>

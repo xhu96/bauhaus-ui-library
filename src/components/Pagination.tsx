@@ -73,12 +73,16 @@ export function Pagination({
   const mobileEssential = (item: number) => item === 1 || item === page || item === count
 
   const squareBase =
-    'press inline-flex h-10 w-10 shrink-0 items-center justify-center border-3 border-ink bg-surface font-display text-sm font-semibold text-ink'
+    'bui-press bui-inline-flex bui-h-10 bui-w-10 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-font-display bui-text-sm bui-font-semibold bui-text-ink'
 
   return (
     <nav
       aria-label="Pagination"
-      className={cn('bui-pagination flex max-w-full items-center justify-center gap-2', className)}
+      className={cn(
+        'bui-reset',
+        'bui-pagination bui-flex bui-max-w-full bui-items-center bui-justify-center bui-gap-2',
+        className,
+      )}
     >
       <button
         type="button"
@@ -86,11 +90,12 @@ export function Pagination({
         disabled={atStart}
         onClick={() => onPageChange(page - 1)}
         className={cn(
+          'bui-reset',
           squareBase,
-          'press-hard hover:bg-paper-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none',
+          'bui-press-hard hover:bui-bg-paper-dark disabled:bui-cursor-not-allowed disabled:bui-opacity-50 disabled:bui-shadow-none',
         )}
       >
-        <ChevronLeft className="h-5 w-5" aria-hidden />
+        <ChevronLeft className="bui-reset bui-h-5 bui-w-5" aria-hidden />
       </button>
 
       {items.map((item, i) => {
@@ -100,7 +105,7 @@ export function Pagination({
               key={`ellipsis-${i}`}
               aria-hidden
               data-mobile-hidden="true"
-              className="inline-flex h-10 w-10 items-center justify-center font-display text-sm font-semibold text-ink-muted"
+              className="bui-reset bui-inline-flex bui-h-10 bui-w-10 bui-items-center bui-justify-center bui-font-display bui-text-sm bui-font-semibold bui-text-ink-muted"
             >
               &hellip;
             </span>
@@ -117,9 +122,10 @@ export function Pagination({
             data-mobile-hidden={mobileEssential(item) ? undefined : 'true'}
             onClick={() => onPageChange(item)}
             className={cn(
+              'bui-reset',
               squareBase,
-              'press-hard',
-              isActive ? cn(solidColor[color], 'shadow-hard') : 'hover:bg-paper-dark',
+              'bui-press-hard',
+              isActive ? cn(solidColor[color], 'bui-shadow-hard') : 'hover:bui-bg-paper-dark',
             )}
           >
             {item}
@@ -133,11 +139,12 @@ export function Pagination({
         disabled={atEnd}
         onClick={() => onPageChange(page + 1)}
         className={cn(
+          'bui-reset',
           squareBase,
-          'press-hard hover:bg-paper-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none',
+          'bui-press-hard hover:bui-bg-paper-dark disabled:bui-cursor-not-allowed disabled:bui-opacity-50 disabled:bui-shadow-none',
         )}
       >
-        <ChevronRight className="h-5 w-5" aria-hidden />
+        <ChevronRight className="bui-reset bui-h-5 bui-w-5" aria-hidden />
       </button>
     </nav>
   )

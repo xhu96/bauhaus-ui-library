@@ -17,15 +17,15 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 text-sm pl-3 pr-9',
-  md: 'h-11 text-base pl-4 pr-11',
-  lg: 'h-14 text-lg pl-5 pr-14',
+  sm: 'bui-h-9 bui-text-sm bui-pl-3 bui-pr-9',
+  md: 'bui-h-11 bui-text-base bui-pl-4 bui-pr-11',
+  lg: 'bui-h-14 bui-text-lg bui-pl-5 bui-pr-14',
 }
 
 const chevronPos: Record<Size, string> = {
-  sm: 'right-2.5',
-  md: 'right-3.5',
-  lg: 'right-4',
+  sm: 'bui-right-2.5',
+  md: 'bui-right-3.5',
+  lg: 'bui-right-4',
 }
 
 /**
@@ -39,6 +39,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     options,
     className,
     disabled,
+    id,
+    required,
     children,
     'aria-describedby': ariaDescribedBy,
     'aria-invalid': ariaInvalid,
@@ -50,17 +52,20 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   const semantics = useFormFieldSemantics(ariaDescribedBy)
 
   return (
-    <div className="relative inline-flex w-full items-center">
+    <div className="bui-reset bui-relative bui-inline-flex bui-w-full bui-items-center">
       <select
         ref={ref}
+        id={id ?? semantics.controlId}
         disabled={disabled}
+        required={required ?? (semantics.required || undefined)}
         aria-describedby={semantics.describedBy}
         aria-required={ariaRequired ?? (semantics.required || undefined)}
         aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
         className={cn(
-          'w-full appearance-none border-3 bg-surface font-sans text-ink',
-          'disabled:cursor-not-allowed disabled:opacity-50',
-          error ? 'border-bred' : 'border-ink',
+          'bui-reset',
+          'bui-w-full bui-appearance-none bui-border-3 bui-bg-surface bui-font-sans bui-text-ink',
+          'disabled:bui-cursor-not-allowed disabled:bui-opacity-50',
+          error || semantics.invalid ? 'bui-border-bred' : 'bui-border-ink',
           sizes[selectSize],
           className,
         )}
@@ -75,7 +80,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           : children}
       </select>
       <ChevronDown
-        className={cn('pointer-events-none absolute h-5 w-5 text-ink', chevronPos[selectSize])}
+        className={cn(
+          'bui-reset',
+          'bui-pointer-events-none bui-absolute bui-h-5 bui-w-5 bui-text-ink',
+          chevronPos[selectSize],
+        )}
         aria-hidden
       />
     </div>

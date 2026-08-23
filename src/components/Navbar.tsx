@@ -14,8 +14,9 @@ export function Navbar({ sticky = false, className, children, ...props }: Navbar
   return (
     <nav
       className={cn(
-        'flex w-full items-center gap-6 border-b-3 border-ink bg-paper px-5 py-3',
-        sticky && 'sticky top-0 z-40',
+        'bui-reset',
+        'bui-flex bui-w-full bui-items-center bui-gap-6 bui-border-b-3 bui-border-ink bui-bg-paper bui-px-5 bui-py-3',
+        sticky && 'bui-sticky bui-top-0 bui-z-40',
         className,
       )}
       {...props}
@@ -32,7 +33,8 @@ export function NavbarBrand({ className, children, ...props }: HTMLAttributes<HT
   return (
     <div
       className={cn(
-        'flex items-center gap-2 font-display text-xl font-bold tracking-tight text-ink',
+        'bui-reset',
+        'bui-flex bui-items-center bui-gap-2 bui-font-display bui-text-xl bui-font-bold bui-tracking-tight bui-text-ink',
         className,
       )}
       {...props}
@@ -49,9 +51,9 @@ export interface NavbarContentProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const justifyMap: Record<NonNullable<NavbarContentProps['justify']>, string> = {
-  start: 'justify-start',
-  center: 'justify-center',
-  end: 'justify-end',
+  start: 'bui-justify-start',
+  center: 'bui-justify-center',
+  end: 'bui-justify-end',
 }
 
 /**
@@ -59,7 +61,15 @@ const justifyMap: Record<NonNullable<NavbarContentProps['justify']>, string> = {
  */
 export function NavbarContent({ justify = 'end', className, children, ...props }: NavbarContentProps) {
   return (
-    <div className={cn('flex min-w-0 flex-1 items-center gap-5', justifyMap[justify], className)} {...props}>
+    <div
+      className={cn(
+        'bui-reset',
+        'bui-flex bui-min-w-0 bui-flex-1 bui-items-center bui-gap-5',
+        justifyMap[justify],
+        className,
+      )}
+      {...props}
+    >
       {children}
     </div>
   )
@@ -80,8 +90,11 @@ export function NavbarLink({ href, active = false, className, children, ...props
       href={href}
       aria-current={active ? 'page' : undefined}
       className={cn(
-        'press font-display text-sm font-semibold uppercase tracking-wide',
-        active ? 'text-ink underline decoration-3 underline-offset-4' : 'text-ink-muted hover:text-ink',
+        'bui-reset',
+        'bui-press bui-font-display bui-text-sm bui-font-semibold bui-uppercase bui-tracking-wide',
+        active
+          ? 'bui-text-ink bui-underline decoration-3 bui-underline-offset-4'
+          : 'bui-text-ink-muted hover:bui-text-ink',
         className,
       )}
       {...props}

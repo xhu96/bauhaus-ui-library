@@ -1,7 +1,7 @@
 import { useMemo, type HTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-type ColorKey = 'red' | 'blue' | 'yellow' | 'ink' | 'paper' | 'white'
+export type ColorKey = 'red' | 'blue' | 'yellow' | 'ink' | 'paper' | 'white'
 
 const COLORS: Record<ColorKey, string> = {
   red: '#E63329',
@@ -130,6 +130,7 @@ export function GeometricPattern({
   seed = 7,
   bordered = false,
   className,
+  style,
   ...props
 }: GeometricPatternProps) {
   const cells = useMemo(() => {
@@ -157,13 +158,13 @@ export function GeometricPattern({
   // distorted, at any container width. Each tile is its own square SVG.
   return (
     <div
-      className={cn('grid w-full', className)}
-      style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
+      className={cn('bui-reset', 'bui-grid bui-w-full', className)}
+      style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, ...style }}
       aria-hidden="true"
       {...props}
     >
       {cells.map((cell, i) => (
-        <svg key={i} viewBox="0 0 100 100" className="block aspect-square w-full">
+        <svg key={i} viewBox="0 0 100 100" className="bui-reset bui-block bui-aspect-square bui-w-full">
           <rect x="-0.5" y="-0.5" width="101" height="101" fill={cell.bg} />
           <Tile motif={cell.motif} fg={cell.fg} rot={cell.rot} />
           {bordered && (

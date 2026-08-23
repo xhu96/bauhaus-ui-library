@@ -27,7 +27,7 @@ interface ToastRecord extends ToastOptions {
   id: string
 }
 
-interface ToastContextValue {
+export interface ToastContextValue {
   toast: (opts: ToastOptions) => string
   dismiss: (id: string) => void
 }
@@ -35,10 +35,10 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null)
 
 const statusIconColor: Record<ToastStatus, string> = {
-  info: 'text-bblue',
-  success: 'text-bblue',
-  warning: 'text-byellow-ink',
-  danger: 'text-bred-ink',
+  info: 'bui-text-bblue',
+  success: 'bui-text-bblue',
+  warning: 'bui-text-byellow-ink',
+  danger: 'bui-text-bred-ink',
 }
 
 const statusIcons: Record<ToastStatus, typeof Info> = {
@@ -121,8 +121,9 @@ function ToastViewport({
       role="status"
       aria-live="polite"
       className={cn(
-        'pointer-events-none fixed left-4 right-4 z-[60] flex w-auto flex-col gap-3 sm:left-auto sm:w-full sm:max-w-sm',
-        position === 'top-right' ? 'top-4' : 'bottom-4',
+        'bui-reset',
+        'bui-pointer-events-none bui-fixed bui-left-4 bui-right-4 bui-z-[60] bui-flex bui-w-auto bui-flex-col bui-gap-3 sm:bui-left-auto sm:bui-w-full sm:bui-max-w-sm',
+        position === 'top-right' ? 'bui-top-4' : 'bui-bottom-4',
       )}
     >
       {toasts.map((t) => (
@@ -139,21 +140,29 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
   return (
     <div
       className={cn(
-        'pointer-events-auto flex items-start gap-3 border-3 border-ink bg-surface p-4 shadow-hard animate-slide-in-right',
+        'bui-reset',
+        'bui-pointer-events-auto bui-flex bui-items-start bui-gap-3 bui-border-3 bui-border-ink bui-bg-surface bui-p-4 bui-shadow-hard bui-animate-slide-in-right',
       )}
     >
-      <Icon className={cn('mt-0.5 h-5 w-5 shrink-0', statusIconColor[status])} aria-hidden />
-      <div className="min-w-0 flex-1">
-        <p className="font-display font-bold tracking-tight text-ink">{toast.title}</p>
-        {toast.description && <p className="mt-1 text-sm text-ink-muted">{toast.description}</p>}
+      <Icon
+        className={cn('bui-reset', 'bui-mt-0.5 bui-h-5 bui-w-5 bui-shrink-0', statusIconColor[status])}
+        aria-hidden
+      />
+      <div className="bui-reset bui-min-w-0 bui-flex-1">
+        <p className="bui-reset bui-m-0 bui-font-display bui-font-bold bui-tracking-tight bui-text-ink">
+          {toast.title}
+        </p>
+        {toast.description && (
+          <p className="bui-reset bui-m-0 bui-mt-1 bui-text-sm bui-text-ink-muted">{toast.description}</p>
+        )}
       </div>
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
         aria-label="Close"
-        className="press -mr-1 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center border-3 border-ink bg-surface text-ink hover:bg-ink hover:text-paper"
+        className="bui-reset bui-press -bui-mr-1 -bui-mt-1 bui-inline-flex bui-h-11 bui-w-11 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
       >
-        <X className="h-3.5 w-3.5" aria-hidden />
+        <X className="bui-reset bui-h-3.5 bui-w-3.5" aria-hidden />
       </button>
     </div>
   )

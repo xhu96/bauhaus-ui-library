@@ -14,17 +14,19 @@ export interface BreadcrumbProps {
  * inserts the separator between items.
  */
 export function Breadcrumb({ separator, children, className }: BreadcrumbProps) {
-  const sep = separator ?? <ChevronRight className="h-4 w-4 text-ink-muted" aria-hidden />
+  const sep = separator ?? (
+    <ChevronRight className="bui-reset bui-h-4 bui-w-4 bui-text-ink-muted" aria-hidden />
+  )
   const items = Children.toArray(children).filter(isValidElement)
 
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-2 font-display text-sm uppercase tracking-wide">
+      <ol className="bui-reset bui-m-0 bui-flex bui-list-none bui-flex-wrap bui-items-center bui-gap-2 bui-p-0 bui-font-display bui-text-sm bui-uppercase bui-tracking-wide">
         {items.map((child, i) => (
           <Fragment key={i}>
             {child}
             {i < items.length - 1 && (
-              <li aria-hidden className="inline-flex items-center">
+              <li aria-hidden className="bui-reset bui-inline-flex bui-items-center">
                 {sep}
               </li>
             )}
@@ -48,15 +50,15 @@ export interface BreadcrumbItemProps {
  */
 export function BreadcrumbItem({ href, current = false, children, className }: BreadcrumbItemProps) {
   return (
-    <li className={cn('inline-flex items-center', className)}>
+    <li className={cn('bui-reset', 'bui-inline-flex bui-items-center', className)}>
       {current ? (
-        <span aria-current="page" className="font-bold text-ink">
+        <span aria-current="page" className="bui-reset bui-font-bold bui-text-ink">
           {children}
         </span>
       ) : (
         <a
           href={href}
-          className="press font-semibold text-ink-muted underline-offset-4 hover:text-ink hover:underline"
+          className="bui-reset bui-press bui-font-semibold bui-text-ink-muted bui-underline-offset-4 hover:bui-text-ink hover:bui-underline"
         >
           {children}
         </a>

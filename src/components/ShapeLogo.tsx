@@ -22,14 +22,14 @@ const DEFAULT_MARK: { kind: ShapeKind; color: BauhausColor }[] = [
 // sloped sides) read as over-spaced. Nudge them toward the previous shape so the
 // gaps look even even though the raw box gaps are equal.
 const KERN: Partial<Record<ShapeKind, string>> = {
-  triangle: '-ml-1',
+  triangle: '-bui-ml-1',
 }
 
 /** A Bauhaus-style logo mark built from primitive shapes, with an optional wordmark. */
 export function ShapeLogo({ shapes = DEFAULT_MARK, label, size = 22, className, ...props }: ShapeLogoProps) {
   return (
-    <div className={cn('inline-flex items-center gap-2', className)} {...props}>
-      <span className="inline-flex items-center gap-1">
+    <div className={cn('bui-reset', 'bui-inline-flex bui-items-center bui-gap-2', className)} {...props}>
+      <span className="bui-reset bui-inline-flex bui-items-center bui-gap-1">
         {shapes.map((s, i) => (
           <Shape
             key={i}
@@ -41,7 +41,7 @@ export function ShapeLogo({ shapes = DEFAULT_MARK, label, size = 22, className, 
         ))}
       </span>
       {label && (
-        <span className="whitespace-nowrap font-display text-lg font-bold uppercase tracking-tight text-ink">
+        <span className="bui-reset bui-whitespace-nowrap bui-font-display bui-text-lg bui-font-bold bui-uppercase bui-tracking-tight bui-text-ink">
           {label}
         </span>
       )}

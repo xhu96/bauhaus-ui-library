@@ -9,6 +9,7 @@ export * from './lib/types'
 export * from './components/Shape'
 export * from './components/ShapeLogo'
 export * from './components/GeometricPattern'
+export * from './components/BauhausMascot'
 
 // Core
 export * from './components/Button'

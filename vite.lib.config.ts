@@ -4,7 +4,8 @@ import dts from 'vite-plugin-dts'
 import { fileURLToPath, URL } from 'node:url'
 import { resolve } from 'node:path'
 
-// Library build: emits ESM + UMD bundles and type declarations to /dist.
+// Primary library build: emits ESM + CJS bundles and type declarations to /dist.
+// The optional browser-global bundle is built separately by vite.umd.config.ts.
 export default defineConfig({
   // Don't copy the demo site's public/ assets (e.g. favicon.svg) into the package.
   publicDir: false,
@@ -23,7 +24,7 @@ export default defineConfig({
       ],
       // Bundle the whole public type graph (from src/index.ts) into a single
       // dist/index.d.ts; drops stray per-file declarations for internal modules.
-      rollupTypes: true,
+      bundleTypes: true,
     }),
   ],
   resolve: {
@@ -34,18 +35,12 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'BauhausUI',
-      fileName: 'bauhaus-ui',
+      formats: ['es', 'cjs'],
+      fileName: (format) => (format === 'es' ? 'bauhaus-ui.js' : 'bauhaus-ui.cjs'),
+      cssFileName: 'style',
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react/jsx-runtime'],
-      output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          'react/jsx-runtime': 'jsxRuntime',
-        },
-      },
     },
     cssCodeSplit: false,
   },

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import type { Preview, Decorator } from '@storybook/react'
-import '../src/styles/globals.css'
+import '../src/styles/demo.css'
 
 // Applies the library's `.dark` class to both the story container (in-canvas
 // components) and <html> (portalled Modal/Drawer/Toast), driven by the toolbar.

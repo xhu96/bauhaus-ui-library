@@ -43,7 +43,7 @@ export const Bordered: Story = {
 
 export const Seeds: Story = {
   render: () => (
-    <div className="flex flex-col gap-4">
+    <div className="bui-flex bui-flex-col bui-gap-4">
       {[1, 7, 42].map((seed) => (
         <GeometricPattern key={seed} rows={2} cols={12} seed={seed} />
       ))}
@@ -74,7 +74,7 @@ export const ContainerProps: Story = {
     <GeometricPattern
       rows={4}
       cols={8}
-      className="rounded-lg overflow-hidden shadow-md"
+      className="bui-rounded-lg bui-overflow-hidden bui-shadow-md"
       style={{ maxWidth: 480 }}
       data-testid="geometric-pattern"
     />

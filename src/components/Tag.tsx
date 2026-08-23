@@ -23,8 +23,9 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
     <span
       ref={ref}
       className={cn(
-        'inline-flex items-center gap-1.5 border-3 border-ink bg-surface px-2 font-display text-sm font-semibold leading-none text-ink',
-        onRemove ? 'min-h-11' : 'h-7',
+        'bui-reset',
+        'bui-inline-flex bui-items-center bui-gap-1.5 bui-border-3 bui-border-ink bui-bg-surface bui-px-2 bui-font-display bui-text-sm bui-font-semibold bui-leading-none bui-text-ink',
+        onRemove ? 'bui-min-h-11' : 'bui-h-7',
         className,
       )}
       {...props}
@@ -32,8 +33,8 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
       {dot && (
         <span
           aria-hidden="true"
-          className="h-2.5 w-2.5 shrink-0 border border-ink"
-          style={{ backgroundColor: hex[color] }}
+          className="bui-reset bui-h-2.5 bui-w-2.5 bui-shrink-0 bui-border bui-border-ink"
+          style={{ backgroundColor: color === 'ink' ? 'rgb(var(--bui-ink))' : hex[color] }}
         />
       )}
       {children}
@@ -43,12 +44,13 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
           aria-label="Remove"
           onClick={onRemove}
           className={cn(
-            'press -mr-1 ml-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center border border-ink',
+            'bui-reset',
+            'bui-press -bui-mr-1 bui-ml-0.5 bui-inline-flex bui-h-8 bui-w-8 bui-shrink-0 bui-items-center bui-justify-center bui-border bui-border-ink',
             solidColor[color],
-            'hover:opacity-80',
+            'hover:bui-opacity-80',
           )}
         >
-          <X className="h-3 w-3" aria-hidden />
+          <X className="bui-reset bui-h-3 bui-w-3" aria-hidden />
         </button>
       )}
     </span>

@@ -5,7 +5,7 @@
 # Bauhaus UI
 
 A bold, geometric React component library inspired by the **Bauhaus** movement: primary
-colors, hard edges, thick black borders, and a relentless grid. 29 components, fully typed,
+colors, hard edges, thick black borders, and a relentless grid. 30 components, fully typed,
 accessible, themeable, with a built-in dark mode.
 
 > Form follows function.
@@ -19,25 +19,32 @@ accessible, themeable, with a built-in dark mode.
 
 Built with **React + TypeScript + Tailwind CSS + Vite + Storybook**.
 
-**[Live demo](https://xhu96.github.io/bauhaus-ui-library/)** · **[Storybook](https://xhu96.github.io/bauhaus-ui-library/storybook/)**
+**[Stable demo](https://xhu96.github.io/bauhaus-ui-library/)** · **[Stable Storybook](https://xhu96.github.io/bauhaus-ui-library/storybook/)**
+
+Experimental branch: **[v0.2.0dev preview](https://xhu96.github.io/bauhaus-ui-library/0.2.0dev/)** · **[v0.2.0dev Storybook](https://xhu96.github.io/bauhaus-ui-library/0.2.0dev/storybook/)**. This preview is not published to npm.
 
 ---
 
 ## Features
 
-- **29 components** spanning signature geometric primitives, forms, feedback, navigation and overlays.
+- **30 components** spanning signature geometric primitives, forms, feedback, navigation and overlays.
 - **Bauhaus design system.** A disciplined palette (red `#E63329`, blue `#21409A`, yellow `#F4C20D`, ink `#1C1C1C`), geometric sans-serif type (Space Grotesk + Archivo), sharp corners and hard offset shadows.
-- **Signature generator.** `GeometricPattern` tessellates deterministic Bauhaus motif grids for heroes and backdrops.
+- **Signature artwork.** `GeometricPattern` generates deterministic motif grids, while `BauhausMascot` provides three consistent, code-native React SVG poses.
 - **Dark mode** built in. Flip a single `.dark` class on `<html>`; surfaces and ink invert while the primary triad stays vivid.
 - **Accessible.** Roles, ARIA attributes and keyboard support throughout (tabs, accordion, modal, toast).
 - **Themeable.** Every surface token is a CSS variable; primaries are Tailwind colors.
-- **Tree-shakeable** ESM + UMD builds with bundled type declarations.
+- **Flexible distribution.** Tree-shakeable ESM, CJS, and an optional UMD browser build, with
+  bundled type declarations.
 
 ## Installation
 
 ```bash
 npm install bauhaus-ui-library
 ```
+
+Consumer compatibility remains aligned with v0.1.1: React 18 or 19 and Node.js 20+ for
+package-manager and SSR workflows. Storybook and its Node.js requirements are development-only;
+Storybook is not installed in applications that consume the library.
 
 Import the stylesheet once at your app root:
 
@@ -46,8 +53,11 @@ import 'bauhaus-ui-library/styles.css'
 ```
 
 The bundled `styles.css` is self-contained (it includes the design tokens and every utility the
-components use), so Tailwind is **not required** in your app. If you do use Tailwind and want to
-author your own `bred` / `bblue` markup, copy the token definitions from the Theming section below.
+components use), so Tailwind is **not required** in your app. It does not ship Tailwind Preflight or
+generic utility selectors: library-owned utilities and interaction helpers use the `bui-` prefix,
+so importing the stylesheet does not restyle the rest of your application. If you do use Tailwind
+and want to author your own `bred` / `bblue` markup, copy the token definitions from the Theming
+section below.
 
 Load the fonts (e.g. in your `index.html`):
 
@@ -85,11 +95,23 @@ Every component shares a small, predictable API:
 - `size`: `'sm' | 'md' | 'lg'`
 - `variant` where it makes sense: `'solid' | 'outline' | 'ghost'`
 
+`FormField` generates and connects the control ID, label, hint and error descriptions, and
+propagates native `required` semantics to compatible controls:
+
+```tsx
+<FormField label="Email" hint="We will never share it." required>
+  <Input type="email" />
+</FormField>
+```
+
+Tabs and accordions support controlled and uncontrolled state. Consumer event handlers run before
+internal behavior and can call `event.preventDefault()` to cancel a state change.
+
 ## Components
 
 | Group                  | Components                                                                                       |
 | ---------------------- | ------------------------------------------------------------------------------------------------ |
-| **Signature**          | `Shape`, `ShapeLogo`, `GeometricPattern`                                                         |
+| **Signature**          | `Shape`, `ShapeLogo`, `GeometricPattern`, `BauhausMascot`                                        |
 | **Core**               | `Button`, `Card` (+ `CardHeader`/`CardTitle`/`CardDescription`/`CardBody`/`CardFooter`)          |
 | **Form**               | `FormField`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`/`RadioGroup`, `Switch`, `Slider` |
 | **Display & feedback** | `Badge`, `Tag`, `Avatar`, `Alert`, `Progress`, `Spinner`, `Divider`, `Tooltip`                   |
@@ -142,6 +164,9 @@ npm run typecheck   # tsc --noEmit
 npm test            # Vitest (npm run test:watch to watch)
 npm run build       # build the showcase
 npm run build:lib   # build the publishable library (dist/)
+npm run api:check   # verify the checked-in public API contract
+npm run api:update  # intentionally update the API contract report
+npm run package:smoke # test the packed artifact as ESM, CJS, SSR and TypeScript
 npm run build-storybook
 ```
 

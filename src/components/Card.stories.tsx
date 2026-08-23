@@ -22,13 +22,13 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: (args) => (
-    <Card {...args} className="w-80">
+    <Card {...args} className="bui-w-80">
       <CardHeader>
         <CardTitle>Bauhaus Card</CardTitle>
         <CardDescription>A composable surface with header, body and footer.</CardDescription>
       </CardHeader>
       <CardBody>
-        <p className="text-sm text-ink-soft">
+        <p className="bui-text-sm bui-text-ink-soft">
           Cards group related content behind a thick ink border and a hard offset shadow.
         </p>
       </CardBody>
@@ -46,9 +46,9 @@ export const Default: Story = {
 
 export const Accents: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-5">
+    <div className="bui-flex bui-flex-wrap bui-gap-5">
       {(['red', 'blue', 'yellow', 'ink'] as const).map((accent) => (
-        <Card key={accent} accent={accent} className="w-56">
+        <Card key={accent} accent={accent} className="bui-w-56">
           <CardBody>
             <CardTitle>{accent}</CardTitle>
             <CardDescription>Top accent bar in {accent}.</CardDescription>
@@ -61,14 +61,14 @@ export const Accents: Story = {
 
 export const Surfaces: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-5">
-      <Card surface="white" className="w-56">
+    <div className="bui-flex bui-flex-wrap bui-gap-5">
+      <Card surface="white" className="bui-w-56">
         <CardBody>
           <CardTitle>White</CardTitle>
           <CardDescription>White surface.</CardDescription>
         </CardBody>
       </Card>
-      <Card surface="paper" className="w-56">
+      <Card surface="paper" className="bui-w-56">
         <CardBody>
           <CardTitle>Paper</CardTitle>
           <CardDescription>Paper surface.</CardDescription>
@@ -80,7 +80,7 @@ export const Surfaces: Story = {
 
 export const NoShadow: Story = {
   render: () => (
-    <Card shadow={false} className="w-80">
+    <Card shadow={false} className="bui-w-80">
       <CardBody>
         <CardTitle>Flat card</CardTitle>
         <CardDescription>Shadow disabled.</CardDescription>
@@ -93,7 +93,7 @@ export const NoShadow: Story = {
 export const Playground: Story = {
   args: {
     accent: 'blue',
-    className: 'w-80 p-5',
+    className: 'bui-w-80 bui-p-5',
     children: 'Adjust shadow, surface and accent from the Controls panel.',
   },
 }
@@ -106,13 +106,13 @@ export const AccentOnPaper: Story = {
     shadow: true,
   },
   render: (args) => (
-    <Card {...args} className="w-80">
+    <Card {...args} className="bui-w-80">
       <CardHeader>
         <CardTitle>Accent on paper</CardTitle>
         <CardDescription>Red top bar over the paper surface, with the hard shadow.</CardDescription>
       </CardHeader>
       <CardBody>
-        <p className="text-sm text-ink-soft">
+        <p className="bui-text-sm bui-text-ink-soft">
           The inline-style accent bar, paper background and offset shadow all render together.
         </p>
       </CardBody>
