@@ -1,80 +1,78 @@
-name: Deploy 0.2.0dev to GitHub Pages
+name: Prepare verified two-site Pages artifact
 
+# Preparation is manual while remote main still has a competing legacy workflow.
+# Publication requires explicit dispatch + the repository's github-pages environment.
 on:
-  push:
-    branches: [0.2.0dev]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish only after remote main legacy deployment has been disabled/replaced
+        type: boolean
+        default: false
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  build:
+  verify:
+    uses: ./.github/workflows/verify.yml
+
+  assemble:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the stable site
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: main
-          path: stable
-
-      - name: Check out the 0.2.0dev site
-        uses: actions/checkout@v4
-        with:
-          ref: 0.2.0dev
+          ref: ${{ github.sha }}
           path: dev
-
+      - name: Frozen published 0.1.1 source
+        uses: actions/checkout@v4
+        with:
+          ref: 073de432fc4a66a4425d018eed95776e75a5cc7e
+          path: legacy
       - uses: actions/setup-node@v4
         with:
-          node-version: 20.19.5
+          node-version: 24
           cache: npm
-          cache-dependency-path: |
-            stable/package-lock.json
-            dev/package-lock.json
-
-      - name: Build the stable v0.1.1 site
-        working-directory: stable
+          cache-dependency-path: legacy/package-lock.json
+      - name: Reconstruct frozen site and Storybook without changing source
+        working-directory: legacy
         run: |
+          test "$(git rev-parse HEAD)" = 073de432fc4a66a4425d018eed95776e75a5cc7e
           npm ci
           npm run build
           npm run build-storybook
-
-      - name: Verify and build 0.2.0dev
-        working-directory: dev
-        run: |
-          npm ci
-          npm run format:check
-          npm run lint
-          npm run typecheck
-          npm test
-          npm run build
-          npm run build-storybook
-
-      - name: Assemble stable and experimental sites
-        run: |
-          mkdir -p pages-output/storybook
-          cp -R stable/dist/. pages-output/
-          cp -R stable/storybook-static/. pages-output/storybook/
-          mkdir -p pages-output/0.2.0dev/storybook
-          cp -R dev/dist/. pages-output/0.2.0dev/
-          cp -R dev/storybook-static/. pages-output/0.2.0dev/storybook/
-
-      - uses: actions/configure-pages@v5
+      - uses: actions/download-artifact@v4
         with:
-          enablement: true
+          name: verified-build-${{ github.sha }}
+          path: dev
+      - name: Assemble exact verified development build and frozen legacy build
+        run: |
+          test "$(git -C dev rev-parse HEAD)" = "${{ github.sha }}"
+          node dev/scripts/assemble-pages.mjs --legacy legacy --dev dev --sha "${{ github.sha }}" --output pages-output
+      - name: Retain immutable rollback artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-assembly-${{ github.sha }}-${{ github.run_id }}
+          path: pages-output
+          include-hidden-files: true
+          retention-days: 90
       - uses: actions/upload-pages-artifact@v3
+        if: inputs.publish
         with:
           path: pages-output
 
   deploy:
-    needs: build
+    if: inputs.publish
+    needs: assemble
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

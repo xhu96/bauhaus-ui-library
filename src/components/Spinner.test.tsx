@@ -34,11 +34,12 @@ describe('Spinner', () => {
     expect(circle).toHaveAttribute('stroke', 'currentColor')
   })
 
-  it('renders custom color hex when non-ink color is specified', () => {
+  it('renders semantic foreground color when non-ink color is specified', () => {
     const { container } = render(<Spinner color="red" />)
 
     const circle = container.querySelector('circle')
-    expect(circle).toHaveAttribute('stroke', '#E63329')
+    expect(circle).toHaveAttribute('stroke', 'currentColor')
+    expect(container.querySelector('svg')).toHaveClass('bui-text-bred-ink')
   })
 
   it('can render decoratively without adding an accessible loading label', () => {

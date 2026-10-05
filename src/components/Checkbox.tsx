@@ -63,9 +63,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           disabled={disabled}
           required={required ?? (semantics.required || undefined)}
           aria-describedby={semantics.describedBy}
-          aria-required={ariaRequired ?? (semantics.required || undefined)}
+          aria-labelledby={
+            props['aria-labelledby'] ?? (props['aria-label'] || label ? undefined : semantics.labelId)
+          }
+          aria-required={ariaRequired ?? required ?? (semantics.required || undefined)}
           aria-invalid={ariaInvalid ?? (semantics.invalid || undefined)}
-          className="bui-reset peer bui-absolute bui-inset-0 bui-h-full bui-w-full bui-cursor-pointer bui-opacity-0 disabled:bui-cursor-not-allowed"
+          className="bui-reset bui-peer bui-absolute bui-inset-0 bui-h-full bui-w-full bui-cursor-pointer bui-opacity-0 disabled:bui-cursor-not-allowed"
           {...props}
         />
         <span
@@ -74,7 +77,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
             'bui-reset',
             'bui-pointer-events-none bui-flex bui-h-6 bui-w-6 bui-items-center bui-justify-center bui-border-3 bui-bg-surface',
             semantics.invalid ? 'bui-border-bred' : 'bui-border-ink',
-            'peer-focus-visible:bui-outline peer-focus-visible:outline-3 peer-focus-visible:bui-outline-offset-2 peer-focus-visible:bui-outline-bblue',
+            'peer-focus-visible:bui-outline peer-focus-visible:bui-outline-[3px] peer-focus-visible:bui-outline-offset-2 peer-focus-visible:bui-outline-focus',
             'peer-checked:[&>svg]:bui-opacity-100',
             checkedFill[color],
           )}

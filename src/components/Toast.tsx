@@ -12,6 +12,7 @@ import { createPortal } from 'react-dom'
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Status } from '@/lib/types'
+import { useActiveDialog } from './dialogLayers'
 
 export type ToastStatus = Status
 
@@ -19,12 +20,19 @@ export interface ToastOptions {
   title: string
   description?: string
   status?: ToastStatus
-  /** Auto-dismiss delay in milliseconds. Defaults to 4000. */
+  /** Auto-dismiss delay in milliseconds. Defaults to 4000; 0 persists. Pauses on hover, focus, and a hidden page. */
   duration?: number
 }
 
 interface ToastRecord extends ToastOptions {
   id: string
+}
+
+interface ToastTimer {
+  remaining: number
+  started: number
+  handle?: ReturnType<typeof setTimeout>
+  paused: Set<string>
 }
 
 export interface ToastContextValue {
@@ -35,8 +43,8 @@ export interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null)
 
 const statusIconColor: Record<ToastStatus, string> = {
-  info: 'bui-text-bblue',
-  success: 'bui-text-bblue',
+  info: 'bui-text-bblue-ink',
+  success: 'bui-text-bblue-ink',
   warning: 'bui-text-byellow-ink',
   danger: 'bui-text-bred-ink',
 }
@@ -55,50 +63,113 @@ const statusIcons: Record<ToastStatus, typeof Info> = {
 export function ToastProvider({
   children,
   position = 'bottom-right',
+  maxToasts = 5,
+  dismissLabel = 'Close',
+  portalContainer,
 }: {
   children: ReactNode
   position?: 'top-right' | 'bottom-right'
+  /** Maximum visible notifications, default 5. Oldest are discarded, not queued. Minimum 1. */
+  maxToasts?: number
+  /** Translated dismiss button label. Defaults to Close for compatibility. */
+  dismissLabel?: string
+  /** Same-document themed host outside transformed/clipping ancestors. An open dialog's panel takes precedence. */
+  portalContainer?: HTMLElement | null
 }) {
   const [toasts, setToasts] = useState<ToastRecord[]>([])
-  const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+  const records = useRef<ToastRecord[]>([])
+  const timers = useRef(new Map<string, ToastTimer>())
+  const mountedRef = useRef(false)
+  const limit = Number.isFinite(maxToasts) ? Math.max(1, Math.floor(maxToasts)) : 5
 
   const dismiss = useCallback((id: string) => {
     const timer = timers.current.get(id)
-    if (timer) {
-      clearTimeout(timer)
-      timers.current.delete(id)
-    }
-    setToasts((prev) => prev.filter((t) => t.id !== id))
+    clearTimeout(timer?.handle)
+    timers.current.delete(id)
+    records.current = records.current.filter((t) => t.id !== id)
+    setToasts([...records.current])
   }, [])
+
+  const schedule = useCallback(
+    (id: string, timer: ToastTimer) => {
+      if (!mountedRef.current || timer.handle !== undefined || timer.paused.size || document.hidden) return
+      timer.started = Date.now()
+      timer.handle = setTimeout(() => dismiss(id), timer.remaining)
+    },
+    [dismiss],
+  )
+
+  const pause = useCallback(
+    (id: string, reason: string, value: boolean) => {
+      const timer = timers.current.get(id)
+      if (!timer) return
+      if (value) {
+        timer.paused.add(reason)
+        if (timer.handle !== undefined) {
+          clearTimeout(timer.handle)
+          timer.handle = undefined
+          timer.remaining = Math.max(0, timer.remaining - (Date.now() - timer.started))
+        }
+      } else {
+        timer.paused.delete(reason)
+        schedule(id, timer)
+      }
+    },
+    [schedule],
+  )
 
   const toast = useCallback(
     (opts: ToastOptions) => {
       const id = Math.random().toString(36).slice(2)
       const duration = opts.duration ?? 4000
-      setToasts((prev) => [...prev, { ...opts, id }])
+      records.current = [...records.current, { ...opts, id }]
+      while (records.current.length > limit) dismiss(records.current[0].id)
+      setToasts([...records.current])
       if (duration > 0) {
-        const timer = setTimeout(() => dismiss(id), duration)
+        const timer: ToastTimer = { remaining: duration, started: 0, paused: new Set() }
         timers.current.set(id, timer)
+        schedule(id, timer)
       }
       return id
     },
-    [dismiss],
+    [dismiss, limit, schedule],
   )
 
   useEffect(() => {
+    mountedRef.current = true
     const map = timers.current
+    const visibility = () => map.forEach((_, id) => pause(id, 'page', document.hidden))
+    visibility()
+    document.addEventListener('visibilitychange', visibility)
     return () => {
-      map.forEach((timer) => clearTimeout(timer))
-      map.clear()
+      mountedRef.current = false
+      document.removeEventListener('visibilitychange', visibility)
+      map.forEach((timer) => {
+        if (timer.handle !== undefined)
+          timer.remaining = Math.max(0, timer.remaining - (Date.now() - timer.started))
+        clearTimeout(timer.handle)
+        timer.handle = undefined
+      })
     }
-  }, [])
+  }, [pause])
+
+  useEffect(() => {
+    while (records.current.length > limit) dismiss(records.current[0].id)
+  }, [limit, dismiss])
 
   const value = useMemo(() => ({ toast, dismiss }), [toast, dismiss])
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <ToastViewport toasts={toasts} position={position} onDismiss={dismiss} />
+      <ToastViewport
+        toasts={toasts}
+        position={position}
+        onDismiss={dismiss}
+        onPause={pause}
+        dismissLabel={dismissLabel}
+        portalContainer={portalContainer}
+      />
     </ToastContext.Provider>
   )
 }
@@ -107,19 +178,39 @@ function ToastViewport({
   toasts,
   position,
   onDismiss,
+  onPause,
+  dismissLabel,
+  portalContainer,
 }: {
   toasts: ToastRecord[]
   position: 'top-right' | 'bottom-right'
   onDismiss: (id: string) => void
+  onPause: (id: string, reason: string, value: boolean) => void
+  dismissLabel: string
+  portalContainer?: HTMLElement | null
 }) {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
+  const active = useActiveDialog()
   if (!mounted) return null
 
   return createPortal(
     <div
       role="status"
       aria-live="polite"
+      onFocus={(event) => {
+        // Firefox can leave a partly visible focused control clipped. Scroll
+        // this viewport only, without moving the surrounding dialog or page.
+        const viewport = event.currentTarget
+        const bounds = viewport.getBoundingClientRect()
+        const control = (event.target as HTMLElement).getBoundingClientRect()
+        if (control.top < bounds.top) viewport.scrollTop -= Math.ceil(bounds.top - control.top)
+        else if (control.bottom > bounds.bottom)
+          viewport.scrollTop += Math.ceil(control.bottom - bounds.bottom)
+      }}
+      // Keep every notification reachable on short/dynamic viewports. The
+      // bottom position leaves room above the stack for the dialog header.
+      style={{ maxHeight: 'calc(100dvh - 6rem)', overflowY: 'auto', overscrollBehavior: 'contain' }}
       className={cn(
         'bui-reset',
         'bui-pointer-events-none bui-fixed bui-left-4 bui-right-4 bui-z-[60] bui-flex bui-w-auto bui-flex-col bui-gap-3 sm:bui-left-auto sm:bui-w-full sm:bui-max-w-sm',
@@ -127,21 +218,45 @@ function ToastViewport({
       )}
     >
       {toasts.map((t) => (
-        <ToastItem key={t.id} toast={t} onDismiss={onDismiss} />
+        <ToastItem key={t.id} toast={t} onDismiss={onDismiss} onPause={onPause} dismissLabel={dismissLabel} />
       ))}
     </div>,
-    document.body,
+    active ?? portalContainer ?? document.body,
   )
 }
 
-function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: string) => void }) {
+function ToastItem({
+  toast,
+  onDismiss,
+  onPause,
+  dismissLabel,
+}: {
+  toast: ToastRecord
+  onDismiss: (id: string) => void
+  onPause: (id: string, reason: string, value: boolean) => void
+  dismissLabel: string
+}) {
   const status = toast.status ?? 'info'
   const Icon = statusIcons[status]
+  useEffect(
+    () => () => {
+      onPause(toast.id, 'hover', false)
+      onPause(toast.id, 'focus', false)
+    },
+    [onPause, toast.id],
+  )
   return (
     <div
+      onMouseEnter={() => onPause(toast.id, 'hover', true)}
+      onMouseLeave={() => onPause(toast.id, 'hover', false)}
+      onFocus={() => onPause(toast.id, 'focus', true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+          onPause(toast.id, 'focus', false)
+      }}
       className={cn(
         'bui-reset',
-        'bui-pointer-events-auto bui-flex bui-items-start bui-gap-3 bui-border-3 bui-border-ink bui-bg-surface bui-p-4 bui-shadow-hard bui-animate-slide-in-right',
+        'bui-pointer-events-auto bui-flex bui-shrink-0 bui-items-start bui-gap-3 bui-border-3 bui-border-ink bui-bg-surface bui-p-4 bui-shadow-hard bui-animate-slide-in-right',
       )}
     >
       <Icon
@@ -159,8 +274,8 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
-        aria-label="Close"
-        className="bui-reset bui-press -bui-mr-1 -bui-mt-1 bui-inline-flex bui-h-11 bui-w-11 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
+        aria-label={dismissLabel}
+        className="bui-reset bui-press -bui-me-1 -bui-mt-1 bui-inline-flex bui-h-11 bui-w-11 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
       >
         <X className="bui-reset bui-h-3.5 bui-w-3.5" aria-hidden />
       </button>

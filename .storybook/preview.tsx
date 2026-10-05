@@ -51,7 +51,10 @@ const preview: Preview = {
   decorators: [withTheme],
   parameters: {
     layout: 'fullscreen',
-    controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
+    // `color` is a semantic BauhausColor union, not a CSS color string.
+    // Inference runs before explicit argTypes merge, so the old matcher warned
+    // even on stories that correctly declared a select control.
+    controls: { matchers: { date: /Date$/i } },
     options: {
       storySort: {
         order: ['Introduction', 'Foundations', 'Core', 'Form', 'Display', 'Navigation', 'Overlay'],

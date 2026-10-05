@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { Radio, RadioGroup } from './Radio'
 import { FormField } from './FormField'
+import { expectProviderError } from '../test/expectProviderError'
 
 describe('Radio and RadioGroup', () => {
   it('manages selection in uncontrolled mode', async () => {
@@ -41,11 +42,11 @@ describe('Radio and RadioGroup', () => {
   })
 
   it('throws error when Radio is used outside RadioGroup', () => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
-    expect(() => {
-      render(<Radio value="standalone" label="Standalone" />)
-    }).toThrow('Radio must be used within a RadioGroup')
-    consoleError.mockRestore()
+    expectProviderError(
+      () => render(<Radio value="standalone" label="Standalone" />),
+      'Radio must be used within a RadioGroup',
+      'ForwardRef(Radio2)',
+    )
   })
 
   it('automatically associates with FormField label and inherits semantics', () => {

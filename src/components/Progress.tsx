@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { solidColor, type BauhausColor, type Size } from '@/lib/types'
 
 export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
-  /** Completion percentage, 0–100. Ignored when indeterminate. */
+  /** Completion percentage, clamped to 0–100; nonfinite values become 0. Ignored when indeterminate. */
   value?: number
   color?: BauhausColor
   size?: Size
@@ -22,16 +22,20 @@ const trackHeights: Record<Size, string> = {
 /**
  * Determinate or indeterminate progress bar. Thick-bordered track with
  * a solid colored fill, sharp corners and an optional percentage label.
+ * Native attributes and ref target the progressbar; className styles its
+ * layout wrapper. Supply aria-label or aria-labelledby for an accessible name.
  */
 export const Progress = forwardRef<HTMLDivElement, ProgressProps>(function Progress(
   { value = 0, color = 'red', size = 'md', showLabel = false, indeterminate = false, className, ...props },
   ref,
 ) {
-  const clamped = Math.max(0, Math.min(100, value))
+  const clamped = Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0
 
   return (
-    <div ref={ref} className={cn('bui-reset', 'bui-flex bui-items-center bui-gap-3', className)} {...props}>
+    <div className={cn('bui-reset', 'bui-flex bui-items-center bui-gap-3', className)}>
       <div
+        {...props}
+        ref={ref}
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={100}

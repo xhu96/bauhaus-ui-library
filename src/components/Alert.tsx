@@ -10,6 +10,8 @@ export interface AlertProps extends HTMLAttributes<HTMLDivElement> {
   icon?: ReactNode
   /** When provided, renders a dismiss (X) button. */
   onClose?: () => void
+  /** Translated dismiss button label. Defaults to Dismiss. */
+  dismissLabel?: string
 }
 
 /** Adaptive color tint (alpha over the surface) so it works in light and dark. */
@@ -21,8 +23,8 @@ const statusTint: Record<Status, string> = {
 }
 
 const statusIconColor: Record<Status, string> = {
-  info: 'bui-text-bblue',
-  success: 'bui-text-bblue',
+  info: 'bui-text-bblue-ink',
+  success: 'bui-text-bblue-ink',
   warning: 'bui-text-byellow-ink',
   danger: 'bui-text-bred-ink',
 }
@@ -39,7 +41,7 @@ const statusIcon: Record<Status, ReactNode> = {
  * an adaptive tinted background, a colored status icon and an optional dismiss.
  */
 export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  { status = 'info', title, icon, onClose, className, children, ...props },
+  { status = 'info', title, icon, onClose, dismissLabel = 'Dismiss', className, children, ...props },
   ref,
 ) {
   return (
@@ -72,9 +74,9 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
       {onClose && (
         <button
           type="button"
-          aria-label="Dismiss"
+          aria-label={dismissLabel}
           onClick={onClose}
-          className="bui-reset bui-press -bui-mr-1 -bui-mt-1 bui-inline-flex bui-h-7 bui-w-7 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
+          className="bui-reset bui-press -bui-me-1 -bui-mt-1 bui-inline-flex bui-h-7 bui-w-7 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
         >
           <X className="bui-reset bui-h-4 bui-w-4" aria-hidden />
         </button>

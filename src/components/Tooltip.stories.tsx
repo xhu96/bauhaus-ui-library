@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { within, userEvent, expect } from 'storybook/test'
+import { useId } from 'react'
 import { Tooltip } from './Tooltip'
 import { Button } from './Button'
 
@@ -116,8 +117,8 @@ export const RichContent: Story = {
 }
 
 /**
- * String trigger: when children is not a valid element, it is rendered as-is
- * and the aria-describedby cloneElement branch is skipped.
+ * String trigger: the wrapper becomes a keyboard focus target and receives
+ * aria-describedby while the tooltip is visible.
  */
 export const StringTrigger: Story = {
   args: { content: 'Tooltip on plain text', children: 'Plain text trigger' },
@@ -149,9 +150,49 @@ export const KeyboardFocus: Story = {
     await userEvent.tab()
     await expect(trigger).toHaveFocus()
 
-    const tip = await canvas.findByRole('tooltip')
+    const tip = await within(canvasElement.ownerDocument.body).findByRole('tooltip')
     await expect(tip).toBeVisible()
     await expect(tip).toHaveTextContent('Revealed via keyboard focus')
     await expect(trigger).toHaveAttribute('aria-describedby', tip.id)
+  },
+}
+
+function SharedControlsDemo() {
+  const descriptionId = useId()
+  return (
+    <div className="bui-flex bui-flex-col bui-items-center bui-gap-3 bui-p-6">
+      <p id={descriptionId}>Both actions use the current project.</p>
+      <Tooltip content="You can change the project in settings." delay={0}>
+        <div className="bui-flex bui-flex-wrap bui-gap-3">
+          <Button aria-describedby={descriptionId}>Preview project</Button>
+          <Button aria-describedby={descriptionId}>Export project</Button>
+        </div>
+      </Tooltip>
+    </div>
+  )
+}
+
+/** A shared tooltip follows the focused control while retaining each control's own description. */
+export const SharedControls: Story = {
+  render: () => <SharedControlsDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = within(canvasElement.ownerDocument.body)
+    const preview = canvas.getByRole('button', { name: 'Preview project' })
+    const exportButton = canvas.getByRole('button', { name: 'Export project' })
+    const ownDescription = preview.getAttribute('aria-describedby')
+
+    await userEvent.tab()
+    const tip = await body.findByRole('tooltip')
+    await expect(preview).toHaveAttribute('aria-describedby', `${ownDescription} ${tip.id}`)
+
+    await userEvent.tab()
+    await expect(exportButton).toHaveFocus()
+    await expect(exportButton).toHaveAttribute('aria-describedby', `${ownDescription} ${tip.id}`)
+    await expect(preview).toHaveAttribute('aria-describedby', ownDescription)
+
+    await userEvent.keyboard('{Escape}')
+    await expect(exportButton).toHaveAttribute('aria-describedby', ownDescription)
+    await expect(body.queryByRole('tooltip')).not.toBeInTheDocument()
   },
 }

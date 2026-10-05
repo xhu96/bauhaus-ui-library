@@ -13,6 +13,10 @@ export interface PaginationProps {
   /** Fill color for the active page. */
   color?: BauhausColor
   className?: string
+  'aria-label'?: string
+  previousLabel?: string
+  nextLabel?: string
+  getPageLabel?: (page: number) => string
 }
 
 const ELLIPSIS = 'ellipsis'
@@ -64,6 +68,10 @@ export function Pagination({
   siblingCount = 1,
   color = 'ink',
   className,
+  'aria-label': ariaLabel = 'Pagination',
+  previousLabel = 'Go to previous page',
+  nextLabel = 'Go to next page',
+  getPageLabel = (page) => `Go to page ${page}`,
 }: PaginationProps) {
   if (count <= 0) return null
 
@@ -77,7 +85,7 @@ export function Pagination({
 
   return (
     <nav
-      aria-label="Pagination"
+      aria-label={ariaLabel}
       className={cn(
         'bui-reset',
         'bui-pagination bui-flex bui-max-w-full bui-items-center bui-justify-center bui-gap-2',
@@ -86,7 +94,7 @@ export function Pagination({
     >
       <button
         type="button"
-        aria-label="Go to previous page"
+        aria-label={previousLabel}
         disabled={atStart}
         onClick={() => onPageChange(page - 1)}
         className={cn(
@@ -95,7 +103,7 @@ export function Pagination({
           'bui-press-hard hover:bui-bg-paper-dark disabled:bui-cursor-not-allowed disabled:bui-opacity-50 disabled:bui-shadow-none',
         )}
       >
-        <ChevronLeft className="bui-reset bui-h-5 bui-w-5" aria-hidden />
+        <ChevronLeft className="bui-reset bui-h-5 bui-w-5 rtl:bui-rotate-180" aria-hidden />
       </button>
 
       {items.map((item, i) => {
@@ -117,7 +125,7 @@ export function Pagination({
           <button
             key={item}
             type="button"
-            aria-label={`Go to page ${item}`}
+            aria-label={getPageLabel(item)}
             aria-current={isActive ? 'page' : undefined}
             data-mobile-hidden={mobileEssential(item) ? undefined : 'true'}
             onClick={() => onPageChange(item)}
@@ -135,7 +143,7 @@ export function Pagination({
 
       <button
         type="button"
-        aria-label="Go to next page"
+        aria-label={nextLabel}
         disabled={atEnd}
         onClick={() => onPageChange(page + 1)}
         className={cn(
@@ -144,7 +152,7 @@ export function Pagination({
           'bui-press-hard hover:bui-bg-paper-dark disabled:bui-cursor-not-allowed disabled:bui-opacity-50 disabled:bui-shadow-none',
         )}
       >
-        <ChevronRight className="bui-reset bui-h-5 bui-w-5" aria-hidden />
+        <ChevronRight className="bui-reset bui-h-5 bui-w-5 rtl:bui-rotate-180" aria-hidden />
       </button>
     </nav>
   )

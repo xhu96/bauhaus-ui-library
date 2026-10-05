@@ -16,6 +16,8 @@ export default defineConfig({
       exclude: [
         'src/main.tsx',
         'src/App.tsx',
+        'src/BauPage.tsx',
+        'src/bau-main.tsx',
         'src/components/HeroBoard.tsx',
         '**/*.stories.tsx',
         '**/*.test.ts',
@@ -41,6 +43,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react/jsx-runtime'],
+      output: { banner: '"use client";' },
     },
     cssCodeSplit: false,
   },

@@ -2,57 +2,136 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 <Meta title="Introduction" />
 
-<div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-  <span style={{ width: 28, height: 28, background: '#1C1C1C' }} />
-  <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#E63329' }} />
-  <span style={{ width: 0, height: 0, borderLeft: '14px solid transparent', borderRight: '14px solid transparent', borderBottom: '28px solid #21409A' }} />
-  <span style={{ width: 28, height: 28, background: 'linear-gradient(#F4C20D,#F4C20D) center/10px 28px no-repeat, linear-gradient(#F4C20D,#F4C20D) center/28px 10px no-repeat' }} />
-</div>
+# Bauhaus UI — 0.2.0dev2
 
-# Bauhaus UI
+**0.2.0dev2 is unpublished. npm currently installs 0.1.1.** The workspace package version
+is `0.2.0-dev.2` on the `Dev` branch; these Storybook 10 docs describe that development
+preview. Bau and the native form improvements below are not available from the published 0.1.1 package.
 
-A bold, geometric React component library inspired by the **Bauhaus** movement: primary
-colors, hard edges, thick black borders, and a relentless grid. 30 accessible components,
-built-in light and dark theming, built with TypeScript and Tailwind.
+React and ReactDOM peers remain `^18.0.0 || ^19.0.0`, consumer Node remains `>=20`,
+and the package supplies ESM, CJS and UMD. Build tooling requires Node 20.19+ or 22.12+;
+CI builds on Node 24. React 19 does not ship upstream UMD runtimes: prefer ESM or supply
+compatible React/ReactDOM globals yourself when using the library's UMD artifact.
 
-## Install
+## Install published 0.1.1
 
 ```bash
-npm install bauhaus-ui-library
+npm install bauhaus-ui-library@0.1.1
 ```
 
-Import the stylesheet once at your app root, then use the components:
+This basic Button API works with published 0.1.1:
 
 ```tsx
+import { Button } from 'bauhaus-ui-library'
 import 'bauhaus-ui-library/styles.css'
-import { Button, Card, GeometricPattern } from 'bauhaus-ui-library'
+
+export function App() {
+  return <Button color="blue">Build with Bauhaus</Button>
+}
 ```
 
-## Theming (light / dark)
+## Install the unpublished local preview
 
-The whole library re-themes from a single `.dark` class on a root element. Surfaces
-(`paper`, `surface`) and `ink` flip; the red / blue / yellow triad stays vivid.
+From a checkout of the `Dev` branch:
 
-```js
-document.documentElement.classList.toggle('dark')
+```bash
+npm ci
+npm pack
+# In your consumer app, use your actual absolute path:
+npm install /absolute/path/to/bauhaus-ui-library-0.2.0-dev.2.tgz
 ```
 
-Use the **Theme** toggle in the toolbar above to preview any story in light or dark.
+Packing builds a local tarball; it does not publish a release. Import `styles.css` once.
+Consumers need neither Tailwind nor this site's demo stylesheet.
 
-## The component set
+Try the <a href="./?path=/docs/examples-onboarding--docs" target="_top">installation and native-form examples</a>.
+Both have interaction tests; the native form demonstrates required validation, submission,
+Switch form values, and reset using the local preview. Their checked-out source is
+`src/examples/Onboarding.tsx` and tests are `src/examples/Onboarding.test.tsx`.
 
-- **Foundations**: `Shape`, `ShapeLogo`, `GeometricPattern`, `BauhausMascot`, design tokens
-- **Core**: `Button`, `Card`
-- **Form**: `FormField`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`, `Slider`
-- **Display**: `Badge`, `Tag`, `Avatar`, `Alert`, `Progress`, `Spinner`, `Divider`, `Tooltip`
-- **Navigation**: `Tabs`, `Accordion`, `Navbar`, `Pagination`, `Breadcrumb`
-- **Overlay**: `Modal`, `Drawer`, `Toast`
+## Themes and local portals
 
-Every component shares a small, predictable API: `color` (`red` / `blue` / `yellow` / `ink`),
-`size` (`sm` / `md` / `lg`), and `variant` where it applies.
+```tsx
+<section data-bui-theme="dark">
+  <Button color="blue">Dark section</Button>
+  <div data-bui-theme="light"><Button>Nested light section</Button></div>
+</section>
+```
 
-## Links
+Legacy `.dark` remains supported. Public `--bui-*` tokens control the palette, typography,
+border width, radius, shadow offset and motion duration. Use the toolbar above to preview
+stories in either theme.
 
-- [GitHub repository](https://github.com/xhu96/bauhaus-ui-library)
-- [Live showcase](https://xhu96.github.io/bauhaus-ui-library/)
-- [npm package](https://www.npmjs.com/package/bauhaus-ui-library)
+Default body portals are SSR safe. To keep a Modal, Drawer, Tooltip or Toast inside a local
+theme, pass an actual mounted `portalContainer`. Avoid `document` during SSR render:
+
+```tsx
+import { useState } from 'react'
+import { Button, Modal } from 'bauhaus-ui-library'
+
+export function LocalTheme() {
+  const [host, setHost] = useState<HTMLDivElement | null>(null)
+  const [open, setOpen] = useState(false)
+  return (
+    <section data-bui-theme="dark">
+      <Button onClick={() => setOpen(true)}>Open</Button>
+      <Modal title="Details" open={open} onClose={() => setOpen(false)} portalContainer={host}>
+        <p>Theme-aware content</p>
+      </Modal>
+      <div ref={setHost} />
+    </section>
+  )
+}
+```
+
+Keep portal containers outside transformed or clipping ancestors; cross-document iframe
+portals are unsupported. Tooltip content is descriptive and non-interactive.
+
+## Fonts
+
+Fonts are optional and the library stylesheet makes no network font requests. Space Grotesk
+falls back to Archivo/Arial, Archivo to Helvetica Neue/Arial, and Space Mono to the system
+monospace. Self-host licensed files with `@font-face` and set `--bui-font-display`,
+`--bui-font-sans`, and `--bui-font-mono`, or use your existing application fonts. The showcase
+separately opts into Google Fonts.
+
+## Migration and support limits
+
+`Switch` now forwards a native `HTMLInputElement` ref instead of an `HTMLButtonElement`.
+Update ref types and private DOM assumptions. `Progress` forwards its ref and DOM props to
+the actual `role="progressbar"` element, not the label/layout wrapper. Native uncontrolled
+form reset restores defaults; controlled inputs require the caller to reset state.
+
+Packed fixtures test React 18.3.1 and 19.2.4 with real rendering, SSR, native forms and
+overlays. Automated tests and axe scans do not certify every browser, screen reader,
+forced-color mode or OS preference. Consult the local `docs/release-verification.md` for
+the exact executed scope and `docs/compatibility.md` for RHF, Next.js and portal examples.
+Pre-1.0 minor versions may contain documented API, DOM or ref changes.
+
+## Product examples
+
+<a href="./?path=/docs/examples-settings--docs" target="_top">Workspace Settings</a> composes a
+complete Profile/Notifications/Team flow: async load/save, field validation, retry without losing
+edits, unsaved-change confirmation, search and empty states. The standalone preview is available
+at <a href="../examples/settings/" target="_top">the Settings example</a>.
+
+The local preview adds optional Button `intent="primary|secondary|destructive"`, inherited
+`data-bui-density="compact|comfortable"`, and `keepMounted` on TabsContent/AccordionContent.
+Existing defaults stay compatible. Retained panels keep their effects running; API adapters should
+honor AbortSignal. The standalone example stores demo settings in versioned browser storage.
+
+## Component catalog
+
+- **Foundations:** Shape, ShapeLogo, GeometricPattern, BauhausMascot
+- **Core:** Button, Card
+- **Form:** FormField, Input, Textarea, Select, Checkbox, Radio, Switch, Slider
+- **Display:** Badge, Tag, Avatar, Alert, Progress, Spinner, Divider, Tooltip
+- **Navigation:** Tabs, Accordion, Navbar, Pagination, Breadcrumb
+- **Overlay:** Modal, Drawer, Toast
+
+## Navigation
+
+- <a href="../" target="_top">Preview landing page</a>
+- <a href="../bau/" target="_top">Bau preview</a>
+- [Published 0.1.1 npm package](https://www.npmjs.com/package/bauhaus-ui-library/v/0.1.1)
+- [Development source](https://github.com/xhu96/bauhaus-ui-library/tree/Dev)

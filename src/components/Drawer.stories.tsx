@@ -55,11 +55,16 @@ export const Open: Story = {
   },
 }
 
-/** No `title`: exercises the empty header placeholder and undefined aria-label branch. */
+/** A drawer without a visible title still needs an accessible name via aria-label. */
 export const NoTitle: Story = {
   args: {
     open: true,
-    children: <p className="bui-text-ink">A drawer without a header title.</p>,
+    'aria-label': 'Quick actions',
+    children: <p className="bui-text-ink">A drawer named with aria-label, without a visible header title.</p>,
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    await expect(await body.findByRole('dialog', { name: 'Quick actions' })).toBeVisible()
   },
 }
 

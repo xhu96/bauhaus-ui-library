@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Accessibility,
   ArrowRight,
@@ -8,6 +8,8 @@ import {
   Menu,
   Moon,
   PackageCheck,
+  Pause,
+  Play,
   Search,
   ShieldCheck,
   Sun,
@@ -17,8 +19,8 @@ import {
 } from 'lucide-react'
 import {
   Alert,
-  BauhausMascot,
   Button,
+  GeometricPattern,
   Input,
   Modal,
   ModalBody,
@@ -34,17 +36,22 @@ import {
   useToast,
 } from './index'
 import { copyText } from './lib/clipboard'
+import { actionStyles } from './lib/actionStyles'
+import { HeroBoard } from './components/HeroBoard'
+import { HeroDog } from './site/HeroDog'
+import { InstallDog } from './site/InstallDog'
+import { RunningDog } from './site/RunningDog'
+import { componentCatalog } from './site/catalog'
+import { applySiteTheme, readSiteTheme, type SiteTheme } from './site/theme'
 
 const PACKAGE_NAME = 'bauhaus-ui-library'
-const VERSION = '0.2.0dev'
-const INSTALL_COMMAND = `npm install ${PACKAGE_NAME}`
+const VERSION = '0.2.0dev2'
+const INSTALL_COMMAND = `npm install ${PACKAGE_NAME}@0.1.1`
 const REPO_URL = 'https://github.com/xhu96/bauhaus-ui-library'
 const NPM_URL = 'https://www.npmjs.com/package/bauhaus-ui-library'
 const STORYBOOK_URL = './storybook/'
-const CHANGELOG_URL = `${REPO_URL}/blob/0.2.0dev/CHANGELOG.md`
-const DEV_BRANCH_URL = `${REPO_URL}/tree/0.2.0dev`
-
-const componentNames = ['Button', 'Input', 'Switch', 'Modal', 'Tabs', 'Alert']
+const CHANGELOG_URL = `${REPO_URL}/blob/Dev/CHANGELOG.md`
+const DEV_BRANCH_URL = `${REPO_URL}/tree/Dev`
 
 const values = [
   {
@@ -98,32 +105,106 @@ function SectionHeading({ eyebrow, title, copy }: { eyebrow?: string; title: str
   )
 }
 
+function HeroArtwork() {
+  const [artwork, setArtwork] = useState<'mascot' | 'geometry'>('mascot')
+  const [paused, setPaused] = useState(true)
+  const [pageHidden, setPageHidden] = useState(false)
+  const switchArtwork = () => {
+    setPaused(true)
+    setArtwork((current) => (current === 'mascot' ? 'geometry' : 'mascot'))
+  }
+
+  useEffect(() => {
+    const media = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+    setPaused(media?.matches ?? false)
+    const reduceMotion = () => {
+      if (media?.matches) setPaused(true)
+    }
+    const syncVisibility = () => setPageHidden(document.hidden)
+    syncVisibility()
+    media?.addEventListener('change', reduceMotion)
+    document.addEventListener('visibilitychange', syncVisibility)
+    return () => {
+      media?.removeEventListener('change', reduceMotion)
+      document.removeEventListener('visibilitychange', syncVisibility)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (paused || pageHidden) return
+    const timer = setTimeout(() => {
+      setArtwork((current) => (current === 'mascot' ? 'geometry' : 'mascot'))
+    }, 8000)
+    return () => clearTimeout(timer)
+  }, [artwork, paused, pageHidden])
+
+  return (
+    <figure className="landing-hero-art" data-artwork={artwork} data-paused={paused || pageHidden}>
+      <div className="landing-hero-stage">
+        <div className={`landing-hero-phase ${artwork === 'mascot' ? 'is-active' : ''}`} aria-hidden="true">
+          <HeroDog />
+        </div>
+        <div
+          className={`landing-hero-phase landing-hero-phase--geometry ${artwork === 'geometry' ? 'is-active' : ''}`}
+          aria-hidden="true"
+        >
+          <HeroBoard className="landing-geometric-board" />
+        </div>
+      </div>
+      <GeometricPattern className="landing-hero-strip" rows={1} cols={14} seed={29} bordered />
+      <figcaption className="landing-hero-art-controls">
+        <span>Form in motion</span>
+        <div>
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label="Pause or resume hero animation"
+            aria-pressed={paused}
+            onClick={() => setPaused((current) => !current)}
+          >
+            {paused ? <Play aria-hidden /> : <Pause aria-hidden />}
+            {paused ? 'Resume' : 'Pause'}
+          </Button>
+          <Button variant="ghost" size="sm" aria-label="Switch hero artwork" onClick={switchArtwork}>
+            Switch artwork <ArrowRight aria-hidden />
+          </Button>
+        </div>
+      </figcaption>
+    </figure>
+  )
+}
+
 function LandingPage() {
   const { toast } = useToast()
-  const [dark, setDark] = useState(
-    () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
-  )
+  const [theme, setTheme] = useState(readSiteTheme)
+  const dark = theme === 'dark'
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [switchOn, setSwitchOn] = useState(true)
   const [tab, setTab] = useState('overview')
   const [dialogOpen, setDialogOpen] = useState(false)
+  const searchButton = useRef<HTMLButtonElement>(null)
+  const menuButton = useRef<HTMLButtonElement>(null)
+  const searchFromMobile = useRef(false)
+  const closeSearch = () => {
+    setSearchOpen(false)
+    const desktopTrigger = searchButton.current
+    const target =
+      searchFromMobile.current || (desktopTrigger && getComputedStyle(desktopTrigger).display === 'none')
+        ? menuButton.current
+        : desktopTrigger
+    target?.focus()
+  }
 
   const filteredComponents = useMemo(
-    () => componentNames.filter((name) => name.toLowerCase().includes(query.trim().toLowerCase())),
+    () => componentCatalog.filter(([name]) => name.toLowerCase().includes(query.trim().toLowerCase())),
     [query],
   )
 
-  const toggleTheme = () => {
-    const next = !dark
-    setDark(next)
-    document.documentElement.classList.toggle('dark', next)
-    try {
-      localStorage.setItem('bauhaus-theme', next ? 'dark' : 'light')
-    } catch {
-      // Theme persistence is optional.
-    }
+  const chooseTheme = (next: SiteTheme) => {
+    setTheme(next)
+    applySiteTheme(next)
   }
 
   const copySnippet = async (text: string, label: string) => {
@@ -148,6 +229,19 @@ function LandingPage() {
         </a>
 
         <nav className={`landing-nav ${mobileMenuOpen ? 'is-open' : ''}`} aria-label="Primary navigation">
+          <Button
+            variant="ghost"
+            size="sm"
+            type="button"
+            className="landing-mobile-search"
+            onClick={() => {
+              searchFromMobile.current = true
+              setSearchOpen(true)
+              setMobileMenuOpen(false)
+            }}
+          >
+            Search all components
+          </Button>
           <a href="#components" onClick={() => setMobileMenuOpen(false)}>
             Components
           </a>
@@ -167,16 +261,22 @@ function LandingPage() {
         </nav>
 
         <div className="landing-header-actions">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             type="button"
             className="landing-icon-button landing-search-button"
+            ref={searchButton}
             aria-label="Search components"
             aria-expanded={searchOpen}
-            onClick={() => setSearchOpen((open) => !open)}
+            onClick={() => {
+              searchFromMobile.current = false
+              setSearchOpen((open) => !open)
+            }}
           >
             <Search aria-hidden />
             <span>Search</span>
-          </button>
+          </Button>
           <a
             className="landing-icon-button"
             href={REPO_URL}
@@ -186,46 +286,68 @@ function LandingPage() {
           >
             <Github aria-hidden />
           </a>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             type="button"
             className="landing-theme-button"
             aria-label={dark ? 'Use light theme' : 'Use dark theme'}
             aria-pressed={dark}
-            onClick={toggleTheme}
+            onClick={() => chooseTheme(dark ? 'light' : 'dark')}
           >
             <span aria-hidden>{dark ? <Moon /> : <Sun />}</span>
-          </button>
-          <a className="landing-primary-link" href="#install">
+          </Button>
+          <a className={`${actionStyles({ color: 'red', size: 'sm' })} landing-header-start`} href="#install">
             Get started
           </a>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             type="button"
             className="landing-mobile-menu"
+            ref={menuButton}
             aria-label="Toggle navigation"
             aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen((open) => !open)}
           >
             {mobileMenuOpen ? <X aria-hidden /> : <Menu aria-hidden />}
-          </button>
+          </Button>
         </div>
       </header>
 
       {searchOpen && (
-        <div className="landing-search-panel">
-          <label htmlFor="component-search">Search the component preview</label>
+        <div
+          className="landing-search-panel"
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault()
+              closeSearch()
+            }
+          }}
+        >
+          <label htmlFor="component-search">Search all components</label>
           <div>
             <Input
               id="component-search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Try “Button” or “Tabs”"
+              placeholder="Try “Checkbox” or “Tabs”"
               autoFocus
               leftIcon={<Search aria-hidden />}
             />
-            <a href="#components" onClick={() => setSearchOpen(false)}>
-              View results
-            </a>
+            <Button variant="ghost" onClick={closeSearch}>
+              Close search
+            </Button>
           </div>
+          <p aria-live="polite">{filteredComponents.length} components found</p>
+          <ul className="landing-catalog" aria-label="Component documentation">
+            {filteredComponents.map(([name, id]) => (
+              <li key={id}>
+                <a href={`${STORYBOOK_URL}?path=/docs/${id}--docs`}>{name}</a>
+              </li>
+            ))}
+          </ul>
+          {filteredComponents.length === 0 && <p>No components match “{query}”. Try another name.</p>}
         </div>
       )}
 
@@ -235,40 +357,47 @@ function LandingPage() {
             <a className="landing-version" href={DEV_BRANCH_URL} target="_blank" rel="noreferrer">
               <span>v{VERSION}</span>
             </a>
+            <p className="landing-release-note">
+              0.2.0dev2 is unpublished. npm currently installs 0.1.1.{' '}
+              <a href={`${STORYBOOK_URL}?path=/docs/introduction--docs`}>Preview installation guide</a>
+            </p>
             <h1>
               React components
               <br />
               built with <em>intention.</em>
             </h1>
             <p className="landing-hero-lede">
-              Bauhaus UI is an accessible, TypeScript-first component library with a visual system that scales
-              from prototype to production.
+              Bauhaus UI is a TypeScript-first React component library with geometric forms, native controls,
+              and keyboard interactions.
             </p>
             <div className="landing-hero-actions">
-              <a className="landing-primary-link landing-primary-link-lg" href="#install">
+              <a className={actionStyles({ color: 'red', size: 'lg' })} href="#install">
                 Get started <ArrowRight aria-hidden />
               </a>
-              <a className="landing-secondary-link" href="#components">
+              <a className={actionStyles({ variant: 'outline', size: 'lg' })} href="#components">
                 Browse components
               </a>
             </div>
             <div className="landing-install-command">
               <code>$ {INSTALL_COMMAND}</code>
-              <button type="button" onClick={() => copySnippet(INSTALL_COMMAND, 'Install command')}>
+              <Button
+                variant="ghost"
+                size="sm"
+                type="button"
+                onClick={() => copySnippet(INSTALL_COMMAND, 'Install command')}
+              >
                 <Copy aria-hidden /> Copy
-              </button>
+              </Button>
             </div>
             <p className="landing-compatibility">
               <span>React 18 / 19</span>
-              <span>Next.js</span>
-              <span>Vite</span>
-              <span>TypeScript</span>
+              <span>Node ≥20</span>
+              <span>ESM / CJS / UMD</span>
+              <span>Storybook 10 docs</span>
             </p>
           </div>
 
-          <figure className="landing-hero-art">
-            <BauhausMascot pose="standing" direction="left" scene width="760" height="520" />
-          </figure>
+          <HeroArtwork />
         </section>
 
         <section className="landing-trust" aria-label="Library qualities">
@@ -314,31 +443,39 @@ function LandingPage() {
             <a href={STORYBOOK_URL} target="_blank" rel="noreferrer">
               Explore all components <ArrowRight aria-hidden />
             </a>
-            {query && (
-              <p className="landing-results" aria-live="polite">
-                {filteredComponents.length} preview{filteredComponents.length === 1 ? '' : 's'} match “{query}
-                ”
-              </p>
-            )}
+            <a href="./examples/settings/">
+              Try the settings example <ArrowRight aria-hidden />
+            </a>
           </div>
 
           <div className="landing-component-grid">
-            {(!query || filteredComponents.includes('Button')) && (
+            {
               <article className="landing-component-card">
                 <h3>Button</h3>
-                <Button color="blue" fullWidth className="landing-demo-button">
+                <Button
+                  color="blue"
+                  fullWidth
+                  className="landing-demo-button"
+                  onClick={() => toast({ title: 'Primary action selected', status: 'success' })}
+                >
                   Primary
                 </Button>
-                <Button variant="outline" color="ink" fullWidth className="landing-demo-button">
+                <Button
+                  variant="outline"
+                  color="ink"
+                  fullWidth
+                  className="landing-demo-button"
+                  onClick={() => toast({ title: 'Secondary action selected', status: 'info' })}
+                >
                   Secondary
                 </Button>
                 <Button disabled fullWidth className="landing-demo-button">
                   Disabled
                 </Button>
               </article>
-            )}
+            }
 
-            {(!query || filteredComponents.includes('Input')) && (
+            {
               <article className="landing-component-card">
                 <h3>Input</h3>
                 <Input
@@ -350,9 +487,8 @@ function LandingPage() {
                 <Input
                   id="landing-input-focused"
                   inputSize="sm"
-                  defaultValue="Focused"
-                  aria-label="Focused input example"
-                  className="is-demo-focused"
+                  defaultValue="Editable"
+                  aria-label="Editable input example"
                 />
                 <Input
                   id="landing-input-error"
@@ -362,9 +498,9 @@ function LandingPage() {
                   aria-label="Error input example"
                 />
               </article>
-            )}
+            }
 
-            {(!query || filteredComponents.includes('Switch')) && (
+            {
               <article className="landing-component-card">
                 <h3>Switch</h3>
                 <div className="landing-switch-row">
@@ -380,25 +516,22 @@ function LandingPage() {
                   <Switch disabled size="sm" aria-label="Disabled" />
                 </div>
               </article>
-            )}
+            }
 
-            {(!query || filteredComponents.includes('Modal')) && (
+            {
               <article className="landing-component-card">
                 <h3>Dialog</h3>
                 <div className="landing-dialog-preview">
-                  <strong>Confirm changes?</strong>
-                  <span>This action cannot be undone.</span>
-                  <div>
-                    <button type="button">Cancel</button>
-                    <button type="button" onClick={() => setDialogOpen(true)}>
-                      Confirm
-                    </button>
-                  </div>
+                  <strong>Try a confirmation dialog</strong>
+                  <span>Open it to try Cancel, Escape, and keyboard focus.</span>
+                  <Button color="blue" onClick={() => setDialogOpen(true)}>
+                    Open dialog
+                  </Button>
                 </div>
               </article>
-            )}
+            }
 
-            {(!query || filteredComponents.includes('Tabs')) && (
+            {
               <article className="landing-component-card">
                 <h3>Tabs</h3>
                 <Tabs value={tab} onValueChange={setTab}>
@@ -416,9 +549,9 @@ function LandingPage() {
                   <TabsContent value="settings">Controlled and uncontrolled modes are supported.</TabsContent>
                 </Tabs>
               </article>
-            )}
+            }
 
-            {(!query || filteredComponents.includes('Alert')) && (
+            {
               <article className="landing-component-card">
                 <h3>Alert</h3>
                 <Alert status="success" className="landing-demo-alert">
@@ -431,18 +564,7 @@ function LandingPage() {
                   Error message
                 </Alert>
               </article>
-            )}
-
-            {query && filteredComponents.length === 0 && (
-              <div className="landing-empty-state">
-                <Search aria-hidden />
-                <h3>No preview matches “{query}”</h3>
-                <p>Try Button, Input, Switch, Modal, Tabs, or Alert.</p>
-                <button type="button" onClick={() => setQuery('')}>
-                  Clear search
-                </button>
-              </div>
-            )}
+            }
           </div>
         </section>
 
@@ -486,12 +608,12 @@ function LandingPage() {
             </article>
             <article>
               <h3>Themes</h3>
-              <button type="button" onClick={() => !dark && toggleTheme()}>
+              <Button variant="outline" aria-pressed={!dark} onClick={() => chooseTheme('light')}>
                 Light <Sun aria-hidden />
-              </button>
-              <button type="button" className="is-dark" onClick={() => dark && toggleTheme()}>
+              </Button>
+              <Button variant="outline" aria-pressed={dark} onClick={() => chooseTheme('dark')}>
                 Dark <Moon aria-hidden />
-              </button>
+              </Button>
             </article>
           </div>
         </section>
@@ -536,16 +658,16 @@ function LandingPage() {
                 <i />
               </span>
               <strong>App.tsx</strong>
-              <button type="button" onClick={() => copySnippet(appCode, 'Code')}>
+              <Button color="yellow" size="sm" type="button" onClick={() => copySnippet(appCode, 'Code')}>
                 <Copy aria-hidden /> Copy
-              </button>
+              </Button>
             </div>
             <pre>
               <code>{appCode}</code>
             </pre>
           </div>
 
-          <BauhausMascot className="landing-install-mascot" pose="working" scene width="520" height="520" />
+          <InstallDog className="landing-install-mascot" />
         </section>
 
         <section className="landing-final-cta">
@@ -554,15 +676,20 @@ function LandingPage() {
             <h2>Build something timeless.</h2>
             <p>Build beautiful, accessible interfaces with Bauhaus UI.</p>
             <div>
-              <a className="landing-cta-light" href="#install">
+              <a className={actionStyles({ color: 'yellow', size: 'lg' })} href="#install">
                 Get started <ArrowRight aria-hidden />
               </a>
-              <a className="landing-cta-outline" href={REPO_URL} target="_blank" rel="noreferrer">
+              <a
+                className={actionStyles({ color: 'ink', size: 'lg' })}
+                href={REPO_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <Github aria-hidden /> View on GitHub
               </a>
             </div>
           </div>
-          <BauhausMascot pose="running" scene width="760" height="340" />
+          <RunningDog />
         </section>
       </main>
 
@@ -584,7 +711,7 @@ function LandingPage() {
             <h2>Resources</h2>
             <a href={STORYBOOK_URL}>Documentation</a>
             <a href="#install">Installation</a>
-            <a href={REPO_URL}>Examples</a>
+            <a href={`${STORYBOOK_URL}?path=/docs/examples-onboarding--docs`}>Examples</a>
             <a href={`${REPO_URL}/issues`}>Issues</a>
           </div>
           <div>

@@ -90,10 +90,10 @@ function TitlelessModalDemo() {
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open Titleless Modal</Button>
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={open} onClose={() => setOpen(false)} aria-label="Quick information">
         <ModalBody>
-          A modal with no title prop, so no bordered header is rendered and the dialog has no accessible label
-          from a title.
+          Omit the visible header when appropriate, and provide an aria-label so the dialog still has an
+          accessible name.
         </ModalBody>
         <ModalFooter>
           <Button onClick={() => setOpen(false)}>Close</Button>
@@ -105,6 +105,13 @@ function TitlelessModalDemo() {
 
 export const Titleless: Story = {
   render: () => <TitlelessModalDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = within(canvasElement.ownerDocument.body)
+    await userEvent.click(canvas.getByRole('button', { name: 'Open Titleless Modal' }))
+    await expect(await body.findByRole('dialog', { name: 'Quick information' })).toBeVisible()
+    await userEvent.click(body.getAllByRole('button', { name: 'Close' })[0])
+  },
 }
 
 function CustomHeaderModalDemo() {
@@ -112,7 +119,7 @@ function CustomHeaderModalDemo() {
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open Custom Header Modal</Button>
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={open} onClose={() => setOpen(false)} aria-label="Custom composition">
         <ModalHeader>
           <h2 className="bui-font-display bui-text-xl bui-font-bold bui-tracking-tight bui-text-ink">
             Custom composition
@@ -121,7 +128,10 @@ function CustomHeaderModalDemo() {
             Built from the exported ModalHeader sub-part.
           </p>
         </ModalHeader>
-        <ModalBody>Compose the header manually when you need more than a plain title.</ModalBody>
+        <ModalBody>
+          Compose the header manually when you need more than a plain title, and name the dialog with
+          aria-label.
+        </ModalBody>
         <ModalFooter>
           <Button onClick={() => setOpen(false)}>Close</Button>
         </ModalFooter>
@@ -132,6 +142,12 @@ function CustomHeaderModalDemo() {
 
 export const CustomHeader: Story = {
   render: () => <CustomHeaderModalDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = within(canvasElement.ownerDocument.body)
+    await userEvent.click(canvas.getByRole('button', { name: 'Open Custom Header Modal' }))
+    await expect(await body.findByRole('dialog', { name: 'Custom composition' })).toBeVisible()
+  },
 }
 
 function NonDismissableModalDemo() {

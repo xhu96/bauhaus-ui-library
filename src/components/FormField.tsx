@@ -1,4 +1,11 @@
-import { type ReactNode, useId } from 'react'
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type InputHTMLAttributes,
+  type ReactNode,
+  useId,
+} from 'react'
 import { cn } from '@/lib/utils'
 import { FormFieldContext } from './FormFieldContext'
 
@@ -13,8 +20,11 @@ export interface FormFieldProps {
 }
 
 /**
- * Pairs a label, hint, and error message with any form control. Keep the
- * control itself label-free and let FormField handle the labeling pattern.
+ * Labels one control (or one RadioGroup). Use a single immediate child for
+ * automatic ID ownership; direct native input/select/textarea children also
+ * receive missing semantics. For arbitrary nested/native composition, supply
+ * htmlFor matching the control's ID. Multiple controls need separate fields
+ * or an explicitly labelled group; arbitrary child trees are never cloned.
  */
 export function FormField({
   label,
@@ -26,14 +36,42 @@ export function FormField({
   children,
 }: FormFieldProps) {
   const supportId = useId()
-  const controlId = htmlFor ?? `${supportId}-control`
+  const childArray = Children.toArray(children)
+  const singleChild =
+    childArray.length === 1 && isValidElement<InputHTMLAttributes<HTMLInputElement>>(childArray[0])
+      ? childArray[0]
+      : null
+  const controlId = htmlFor ?? singleChild?.props.id ?? `${supportId}-control`
   const labelId = label ? `${controlId}-label` : undefined
   const errorId = error ? `${supportId}-error` : undefined
   const hintId = hint ? `${supportId}-hint` : undefined
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
+  const nativeChild =
+    singleChild &&
+    typeof singleChild.type === 'string' &&
+    ['input', 'select', 'textarea'].includes(singleChild.type)
+  const childProps = singleChild?.props
+  const supportsRequired =
+    singleChild?.type !== 'input' ||
+    !['button', 'color', 'hidden', 'image', 'range', 'reset', 'submit'].includes(childProps?.type ?? 'text')
+  const nativeRequired = childProps?.required ?? (required && supportsRequired ? true : undefined)
+  const content = nativeChild
+    ? cloneElement(singleChild, {
+        id: childProps?.id ?? controlId,
+        required: nativeRequired,
+        'aria-labelledby':
+          childProps?.['aria-labelledby'] ?? (childProps?.['aria-label'] ? undefined : labelId),
+        'aria-describedby':
+          [childProps?.['aria-describedby'], describedBy].filter(Boolean).join(' ') || undefined,
+        'aria-required': childProps?.['aria-required'] ?? nativeRequired,
+        'aria-invalid': childProps?.['aria-invalid'] ?? (Boolean(error) || undefined),
+      })
+    : children
 
   return (
-    <FormFieldContext.Provider value={{ controlId, describedBy, labelId, invalid: Boolean(error), required }}>
+    <FormFieldContext.Provider
+      value={singleChild ? { controlId, describedBy, labelId, invalid: Boolean(error), required } : null}
+    >
       <div className={cn('bui-reset', 'bui-flex bui-flex-col bui-gap-1.5', className)}>
         {label && (
           <label
@@ -49,7 +87,7 @@ export function FormField({
             )}
           </label>
         )}
-        {children}
+        {content}
         {hint && (
           <p id={hintId} className="bui-reset bui-m-0 bui-text-sm bui-text-ink-muted">
             {hint}

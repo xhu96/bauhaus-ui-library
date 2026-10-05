@@ -7,7 +7,7 @@ Thanks for your interest in improving Bauhaus UI! This guide covers the basics.
 ```bash
 git clone https://github.com/xhu96/bauhaus-ui-library.git
 cd bauhaus-ui-library
-nvm use        # Node 20 (see .nvmrc)
+nvm use        # Node 24 (see .nvmrc)
 npm install
 npm run dev    # showcase at http://localhost:5173
 npm run storybook
@@ -15,16 +15,33 @@ npm run storybook
 
 ## Before opening a pull request
 
-Run the full local gate (the same checks CI runs):
+Run these checks in order; building the library first provides the artifact used by hydration tests:
 
 ```bash
-npm run lint        # ESLint
-npm run typecheck   # tsc --noEmit
-npm test            # Vitest
-npm run build:lib   # library build + type declarations
+npm run format:check
+npm run lint
+npm run typecheck
+npm run typecheck:browser
+npm run build:lib
+npm test
+npm run api:check
+npm run test:pages
+npm run build
+npm run build-storybook
+npm run test:catalog
+npx playwright install chromium firefox webkit
+npm run test:showcase
+npm audit
+npm audit --omit=dev
 ```
 
 `npm run format` applies Prettier across the codebase.
+
+Also run `npm run package:smoke -- --retain` to build installed tarball consumers. Copy the printed
+`RETAINED_FIXTURES` path into `CONSUMER_FIXTURES=/absolute/printed/path npm run test:browser`.
+CI runs these package checks on React 18/19 and checks the consumer Node matrix separately.
+See [release verification](docs/release-verification.md) for the complete scope and evidence.
+Intentional public API additions require `npm run api:update` and a review of the generated report.
 
 ## Conventions
 

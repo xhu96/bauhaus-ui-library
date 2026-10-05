@@ -29,11 +29,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   return (
     <textarea
       ref={ref}
+      data-bui-control="textarea"
       id={id ?? semantics.controlId}
       disabled={disabled}
       required={required ?? (semantics.required || undefined)}
       aria-describedby={semantics.describedBy}
-      aria-required={ariaRequired ?? (semantics.required || undefined)}
+      aria-labelledby={props['aria-labelledby'] ?? (props['aria-label'] ? undefined : semantics.labelId)}
+      aria-required={ariaRequired ?? required ?? (semantics.required || undefined)}
       aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
       className={cn(
         'bui-reset',

@@ -11,14 +11,14 @@ describe('Switch', () => {
     render(<Switch aria-label="Notifications" onCheckedChange={handleCheckedChange} />)
 
     const toggle = screen.getByRole('switch', { name: 'Notifications' })
-    expect(toggle).toHaveAttribute('aria-checked', 'false')
+    expect(toggle).not.toBeChecked()
 
     await user.click(toggle)
-    expect(toggle).toHaveAttribute('aria-checked', 'true')
+    expect(toggle).toBeChecked()
     expect(handleCheckedChange).toHaveBeenCalledWith(true)
 
     await user.click(toggle)
-    expect(toggle).toHaveAttribute('aria-checked', 'false')
+    expect(toggle).not.toBeChecked()
     expect(handleCheckedChange).toHaveBeenCalledWith(false)
   })
 
@@ -30,10 +30,10 @@ describe('Switch', () => {
     toggle.focus()
 
     await user.keyboard(' ')
-    expect(toggle).toHaveAttribute('aria-checked', 'true')
+    expect(toggle).toBeChecked()
 
     await user.keyboard('{Enter}')
-    expect(toggle).toHaveAttribute('aria-checked', 'false')
+    expect(toggle).not.toBeChecked()
   })
 
   it('respects disabled state', async () => {

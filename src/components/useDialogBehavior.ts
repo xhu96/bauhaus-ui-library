@@ -1,125 +1,71 @@
 import { useEffect, useRef, type RefObject } from 'react'
+import { isFocusable, tabbable } from 'tabbable'
+import { activeDialog, registerDialog } from './dialogLayers'
 
-const FOCUSABLE_SELECTOR = [
-  'button:not([disabled])',
-  'a[href]',
-  'input:not([disabled])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  'summary',
-  '[contenteditable="true"]',
-  '[tabindex]:not([tabindex="-1"])',
-].join(',')
-
-let openDialogCount = 0
-let previousBodyOverflow = ''
-const dialogStack: HTMLElement[] = []
-const originalInertState = new Map<HTMLElement, boolean>()
-
-function bodyChildContaining(element: HTMLElement): HTMLElement | null {
-  let current: HTMLElement | null = element
-  while (current?.parentElement && current.parentElement !== document.body) {
-    current = current.parentElement
-  }
-  return current?.parentElement === document.body ? current : null
-}
-
-function applyBackgroundInert() {
-  const topPanel = dialogStack[dialogStack.length - 1]
-  const activePortal = topPanel ? bodyChildContaining(topPanel) : null
-
-  Array.from(document.body.children).forEach((child) => {
-    if (!(child instanceof HTMLElement)) return
-    if (!originalInertState.has(child)) {
-      originalInertState.set(child, child.hasAttribute('inert'))
-    }
-
-    if (child === activePortal) {
-      if (originalInertState.get(child)) child.setAttribute('inert', '')
-      else child.removeAttribute('inert')
-    } else {
-      child.setAttribute('inert', '')
-    }
-  })
-}
-
-function restoreBackgroundInert() {
-  for (const [element, wasInert] of originalInertState) {
-    if (!element.isConnected) continue
-    if (wasInert) element.setAttribute('inert', '')
-    else element.removeAttribute('inert')
-  }
-  originalInertState.clear()
-}
-
-export function useDialogBehavior(open: boolean, panelRef: RefObject<HTMLElement>, onClose: () => void) {
+export function useDialogBehavior(
+  open: boolean,
+  panelRef: RefObject<HTMLElement>,
+  onClose: () => void,
+  portalContainer?: HTMLElement | null,
+) {
   const onCloseRef = useRef(onClose)
   onCloseRef.current = onClose
 
   useEffect(() => {
     if (!open || !panelRef.current) return
-
     const panel = panelRef.current
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const unregister = registerDialog(panel)
+    const focusFirst = () => (tabbable(panel)[0] ?? panel).focus({ preventScroll: true })
+    focusFirst()
 
-    if (openDialogCount === 0) {
-      previousBodyOverflow = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
+    const onFocusIn = (event: FocusEvent) => {
+      if (activeDialog() === panel && !panel.contains(event.target as Node)) focusFirst()
     }
-    openDialogCount++
-    dialogStack.push(panel)
-    applyBackgroundInert()
-
-    const focusable = () => Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
-    ;(focusable()[0] ?? panel).focus()
-
     const onKeyDown = (event: KeyboardEvent) => {
-      if (dialogStack[dialogStack.length - 1] !== panel) return
-
+      if (activeDialog() !== panel || event.defaultPrevented) return
       if (event.key === 'Escape') {
         event.preventDefault()
         onCloseRef.current()
-        return
-      }
-
-      if (event.key !== 'Tab') return
-
-      const items = focusable()
-      if (items.length === 0) {
+      } else if (event.key === 'Tab') {
+        const items = tabbable(panel)
+        const index = items.indexOf(document.activeElement as HTMLElement)
+        // Own every step: native Tab settings may skip buttons inside a dialog.
         event.preventDefault()
-        panel.focus()
-        return
-      }
-
-      const first = items[0]
-      const last = items[items.length - 1]
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
+        const nextIndex =
+          index < 0
+            ? event.shiftKey
+              ? items.length - 1
+              : 0
+            : (index + (event.shiftKey ? -1 : 1) + items.length) % items.length
+        ;(items[nextIndex] ?? panel).focus()
       }
     }
-
     document.addEventListener('keydown', onKeyDown)
-
+    document.addEventListener('focusin', onFocusIn)
     return () => {
+      const wasActive = activeDialog() === panel
       document.removeEventListener('keydown', onKeyDown)
-      const index = dialogStack.indexOf(panel)
-      const wasTopmost = index === dialogStack.length - 1
-      if (index !== -1) dialogStack.splice(index, 1)
-
-      openDialogCount = Math.max(0, openDialogCount - 1)
-      if (openDialogCount === 0) {
-        document.body.style.overflow = previousBodyOverflow
-        restoreBackgroundInert()
+      document.removeEventListener('focusin', onFocusIn)
+      unregister()
+      if (!wasActive) return
+      const parent = activeDialog()
+      if (
+        previousFocus?.isConnected &&
+        isFocusable(previousFocus) &&
+        (!parent || parent.contains(previousFocus))
+      ) {
+        previousFocus.focus({ preventScroll: true })
+      } else if (parent) {
+        ;(tabbable(parent)[0] ?? parent).focus({ preventScroll: true })
       } else {
-        applyBackgroundInert()
+        // Removed trigger: restore a stable document focus without adding a tab stop.
+        const oldTabIndex = document.body.getAttribute('tabindex')
+        document.body.tabIndex = -1
+        document.body.focus({ preventScroll: true })
+        if (oldTabIndex === null) document.body.removeAttribute('tabindex')
+        else document.body.setAttribute('tabindex', oldTabIndex)
       }
-
-      if (wasTopmost) previousFocus?.focus()
     }
-  }, [open, panelRef])
+  }, [open, panelRef, portalContainer])
 }

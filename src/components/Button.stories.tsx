@@ -2,6 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn, within, userEvent, expect } from 'storybook/test'
 import { ArrowRight, Download, Plus } from 'lucide-react'
 import { Button } from './Button'
+import { FormField } from './FormField'
+import { Input } from './Input'
+import { Select } from './Select'
+import { Textarea } from './Textarea'
 
 const meta = {
   title: 'Core/Button',
@@ -12,6 +16,7 @@ const meta = {
       control: 'select',
       options: ['solid', 'outline', 'ghost'],
     },
+    intent: { control: 'select', options: [undefined, 'primary', 'secondary', 'destructive'] },
     color: {
       control: 'select',
       options: ['red', 'blue', 'yellow', 'ink'],
@@ -191,4 +196,81 @@ export const Clickable: Story = {
     await userEvent.click(button)
     await expect(args.onClick).toHaveBeenCalledTimes(1)
   },
+}
+
+export const ActionHierarchy: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Opt into intent for product actions: primary is filled blue, secondary is a quiet ink outline, destructive is accessible red. Intent takes precedence over color and variant; omit it to preserve the original visual API.',
+      },
+    },
+  },
+  render: () => (
+    <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-4">
+      <Button intent="primary">Save changes</Button>
+      <Button intent="secondary">Cancel</Button>
+      <Button intent="destructive">Delete project</Button>
+    </div>
+  ),
+}
+
+function DensityExample({ density }: { density: 'compact' | 'comfortable' }) {
+  return (
+    <div data-bui-density={density} className="bui-flex bui-max-w-md bui-flex-col bui-gap-4">
+      <div className="bui-flex bui-flex-wrap bui-items-center bui-gap-3">
+        <Button intent="secondary" size="sm">
+          Small action
+        </Button>
+        <Button intent="primary" size="md">
+          Medium action
+        </Button>
+        <Button intent="secondary" size="lg">
+          Large action
+        </Button>
+      </div>
+      <FormField label="Project name">
+        <Input defaultValue="Bauhaus studio" />
+      </FormField>
+      <FormField label="Visibility">
+        <Select
+          options={[
+            { label: 'Private', value: 'private' },
+            { label: 'Public', value: 'public' },
+          ]}
+        />
+      </FormField>
+      <FormField label="Description">
+        <Textarea defaultValue="A considered space for creative work." />
+      </FormField>
+      <div data-bui-density="comfortable">
+        <Button intent="primary">Comfortable nested action</Button>
+      </div>
+    </div>
+  )
+}
+
+export const CompactDensity: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'data-bui-density="compact" is an opt-in inherited scope: single-line controls use 32/36/44px for sm/md/lg. Textareas keep their rows and minimum height. A nested comfortable scope restores the original sizing.',
+      },
+    },
+  },
+  render: () => <DensityExample density="compact" />,
+}
+
+export const ComfortableDensity: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Comfortable single-line controls use the existing 36/44/56px sm/md/lg heights. Controls outside any density scope retain the original visual behavior.',
+      },
+    },
+  },
+  render: () => <DensityExample density="comfortable" />,
 }

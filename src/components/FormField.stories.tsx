@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { within, expect } from 'storybook/test'
 import { useId, useState } from 'react'
 import { FormField } from './FormField'
 import { Input } from './Input'
@@ -99,10 +100,16 @@ export const NoLabel: Story = {
     const id = useId()
     return (
       <div className="bui-w-80">
-        <FormField hint="No label rendered above this control." htmlFor={id}>
-          <Input id={id} placeholder="Unlabeled field" />
+        <FormField hint="A control without a visible label still needs an accessible name." htmlFor={id}>
+          <Input id={id} aria-label="Search projects" placeholder="Search projects" />
         </FormField>
       </div>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('textbox', { name: 'Search projects' })).toHaveAccessibleDescription(
+      'A control without a visible label still needs an accessible name.',
     )
   },
 }

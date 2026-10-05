@@ -1,8 +1,32 @@
-/* Bauhaus UI design tokens.
-   Surfaces and ink are stored as space-separated RGB channels so Tailwind can apply
-   alpha (e.g. bg-ink/10) and so a single `.dark` class re-themes the whole library.
-   The primary triad is fixed in both themes. */
+/* Bauhaus UI public tokens. Colors use space-separated RGB channels for alpha.
+   Override after this stylesheet on :root or the desired theme scope.
+   Fonts, border width, radius, shadow offset and motion duration feed existing
+   prefixed utilities. Circle radii and deliberate decorative palettes stay fixed. */
 :root {
+  --bui-font-sans: Archivo, 'Helvetica Neue', Arial, sans-serif;
+  --bui-font-display: 'Space Grotesk', Archivo, Arial, sans-serif;
+  --bui-font-mono: 'Space Mono', ui-monospace, monospace;
+  --bui-border-width: 3px;
+  --bui-radius: 0px;
+  --bui-shadow-offset: 4px;
+  --bui-motion-duration: 100ms;
+
+  /* Fill colors are independent of foreground/focus semantics. */
+  --bui-red: 230 51 41;
+  --bui-red-dark: 184 30 22;
+  --bui-red-light: 245 169 163;
+  --bui-blue: 33 64 154;
+  --bui-blue-dark: 21 44 112;
+  --bui-blue-light: 157 176 224;
+  --bui-yellow: 244 194 13;
+  --bui-yellow-dark: 201 154 0;
+  --bui-yellow-light: 251 227 137;
+}
+
+/* Explicit scopes allow either theme to nest inside the other. An explicit
+   light attribute wins over a legacy .dark on the same element. */
+:root,
+[data-bui-theme='light'] {
   --bui-paper: 243 239 230; /* #F3EFE6 page */
   --bui-paper-dark: 231 225 211; /* #E7E1D3 */
   --bui-surface: 255 255 255; /* card / control surface */
@@ -10,15 +34,14 @@
   --bui-ink-soft: 58 58 56; /* #3A3A38 */
   --bui-ink-muted: 107 106 102; /* #6B6A66 */
 
-  /* Primary triad (fixed, exposed for convenience). */
-  --bui-red: 230 51 41; /* #E63329 */
-  --bui-blue: 33 64 154; /* #21409A */
-  --bui-yellow: 244 194 13; /* #F4C20D */
   --bui-red-ink: 184 30 22; /* #B81E16, 5.66:1 on paper */
+  --bui-blue-ink: 33 64 154;
   --bui-yellow-ink: 107 80 0; /* #6B5000, 6.60:1 on paper */
+  --bui-focus: 33 64 154;
 }
 
-.dark {
+.dark:not([data-bui-theme='light']),
+[data-bui-theme='dark'] {
   --bui-paper: 22 20 18; /* near-black warm */
   --bui-paper-dark: 47 43 38;
   --bui-surface: 38 35 31; /* raised dark surface */
@@ -26,5 +49,25 @@
   --bui-ink-soft: 214 209 198;
   --bui-ink-muted: 158 153 143;
   --bui-red-ink: 255 122 112; /* #FF7A70, 7.24:1 on dark paper */
+  --bui-blue-ink: 157 176 224;
   --bui-yellow-ink: 244 194 13; /* #F4C20D, 11.00:1 on dark paper */
+  --bui-focus: 157 176 224;
+}
+
+/* Opt-in action intent aliases. Override these RGB channels in a custom theme.
+   Rebind on theme scopes so secondary ink follows nested light/dark surfaces.
+   Red-dark keeps white destructive-action text legible in either theme. */
+:root,
+[data-bui-theme='light'],
+.dark:not([data-bui-theme='light']),
+[data-bui-theme='dark'] {
+  --bui-action-primary-fill: var(--bui-blue);
+  --bui-action-primary-hover: var(--bui-blue-dark);
+  --bui-action-primary-foreground: 255 255 255;
+  --bui-action-secondary-foreground: var(--bui-ink);
+  --bui-action-secondary-hover: var(--bui-ink);
+  --bui-action-secondary-hover-foreground: var(--bui-paper);
+  --bui-action-destructive-fill: var(--bui-red-dark);
+  --bui-action-destructive-hover: var(--bui-red-dark);
+  --bui-action-destructive-foreground: 255 255 255;
 }

@@ -1,11 +1,11 @@
 :root {
-  --bau-paper: #f8f2e6;
-  --bau-surface: #fffaf0;
-  --bau-ink: #111111;
-  --bau-red: #e63329;
-  --bau-blue: #21409a;
-  --bau-yellow: #f4c20d;
-  --bau-line: rgba(17, 17, 17, 0.72);
+  --bau-paper: rgb(var(--bui-paper));
+  --bau-surface: rgb(var(--bui-surface));
+  --bau-ink: rgb(var(--bui-ink));
+  --bau-red: rgb(var(--bui-red));
+  --bau-blue: rgb(var(--bui-blue));
+  --bau-yellow: rgb(var(--bui-yellow));
+  --bau-line: rgb(var(--bui-ink) / 0.72);
 }
 
 * {
@@ -24,6 +24,7 @@ html {
 }
 
 .bau-page {
+  --bui-mascot-background: var(--bau-paper);
   width: min(100%, 1440px);
   min-height: 100vh;
   margin: 0 auto;
@@ -46,9 +47,8 @@ html {
 .bau-page h2,
 .bau-page dt,
 .bau-page figcaption,
-.bau-page button,
-.bau-wordmark,
-.bau-back {
+.bau-page button:not(.bui-reset),
+.bau-wordmark {
   font-family: 'Space Grotesk', Archivo, sans-serif;
 }
 
@@ -77,7 +77,7 @@ html {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   border-bottom: 1px solid var(--bau-ink);
-  background: rgba(248, 242, 230, 0.96);
+  background: var(--bau-paper);
   padding: 0 2rem;
   backdrop-filter: blur(12px);
 }
@@ -113,31 +113,12 @@ html {
 }
 
 .bau-back {
-  display: inline-flex;
-  min-height: 46px;
-  align-items: center;
-  gap: 0.6rem;
   justify-self: end;
-  border: 3px solid var(--bau-ink);
-  background: var(--bau-ink);
-  box-shadow: 4px 4px 0 var(--bau-blue);
-  color: var(--bau-paper);
-  padding: 0.6rem 1rem;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  text-transform: uppercase;
 }
 
 .bau-back svg {
   width: 16px;
   height: 16px;
-}
-
-.bau-back:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 6px 6px 0 var(--bau-blue);
 }
 
 .bau-hero {
@@ -175,6 +156,16 @@ html {
   min-width: 0;
 }
 
+.bau-hero-art,
+.bau-proportion,
+.bau-anatomy-figure,
+.bau-expression-rail,
+.bau-pose-art {
+  --bui-mascot-background: #f3efe6;
+  background: #f3efe6;
+  color: #1c1c1c;
+}
+
 .bau-hero-art svg {
   display: block;
   width: 100%;
@@ -206,10 +197,10 @@ html {
 }
 
 .bau-proportion {
-  position: relative;
-  border-left: 1px dashed var(--bau-line);
-  border-bottom: 1px dashed var(--bau-line);
-  padding: 0.5rem 0 1.7rem 1rem;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 0.5rem;
+  text-align: center;
 }
 
 .bau-proportion svg,
@@ -219,23 +210,11 @@ html {
   height: auto;
 }
 
-.bau-measure-y,
-.bau-measure-x {
-  position: absolute;
+.bau-proportion-caption {
   font-family: 'Space Mono', monospace;
   font-size: 0.7rem;
   font-weight: 700;
-}
-
-.bau-measure-y {
-  top: 42%;
-  left: -0.8rem;
-  transform: rotate(-90deg);
-}
-
-.bau-measure-x {
-  right: 42%;
-  bottom: 0.25rem;
+  text-transform: uppercase;
 }
 
 .bau-anatomy-figure {
@@ -248,7 +227,7 @@ html {
   bottom: 8%;
   left: 5%;
   height: 2px;
-  background: var(--bau-ink);
+  background: #1c1c1c;
   content: '';
 }
 
@@ -272,7 +251,7 @@ html {
 }
 
 .bau-anatomy-list dd {
-  color: #4a4741;
+  color: rgb(var(--bui-ink-soft));
   font-size: 0.72rem;
   line-height: 1.45;
 }
@@ -280,15 +259,15 @@ html {
 .bau-expression-rail {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  border-top: 1px solid var(--bau-line);
-  border-bottom: 1px solid var(--bau-line);
+  border-top: 1px solid rgb(28 28 28 / 0.25);
+  border-bottom: 1px solid rgb(28 28 28 / 0.25);
 }
 
 .bau-expression-rail figure {
   display: grid;
   min-width: 0;
   grid-template-rows: 1fr auto;
-  border-right: 1px solid var(--bau-line);
+  border-right: 1px solid rgb(28 28 28 / 0.25);
   padding: 1rem 0.6rem 0.9rem;
   text-align: center;
 }
@@ -320,7 +299,8 @@ html {
   display: grid;
   min-width: 0;
   min-height: 360px;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(200px, 1fr) auto;
+  gap: 1rem;
   align-items: center;
   border: 0;
   border-right: 1px solid var(--bau-ink);
@@ -338,11 +318,12 @@ html {
 
 .bau-pose-grid > button:hover,
 .bau-pose-grid > button.is-active {
-  background: #fffaf0;
+  --bui-mascot-background: var(--bau-surface);
+  background: var(--bau-surface);
   box-shadow: inset 0 -8px 0 var(--bau-yellow);
 }
 
-.bau-pose-grid > button > span {
+.bau-pose-grid > button > span:not(.bau-pose-art) {
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -352,7 +333,53 @@ html {
 .bau-pose-grid svg {
   display: block;
   width: 100%;
+  height: 100%;
   max-height: 260px;
+}
+
+.bau-pose-art {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bau-pose-art > svg {
+  width: 120%;
+  max-width: none;
+}
+
+.bau-pose-grid [data-pose='working'] .bau-pose-art > svg {
+  width: 100%;
+}
+
+.bau-pose-grid [data-pose='working'] .bau-pose-art {
+  background: var(--bau-blue);
+}
+
+.bau-pose-grid [data-pose='running'] .bau-pose-art {
+  background: var(--bau-red);
+}
+
+@media (min-width: 901px) and (max-width: 1100px) {
+  .bau-anatomy-grid {
+    grid-template-columns: minmax(180px, 0.6fr) minmax(320px, 1.4fr);
+  }
+
+  .bau-anatomy-list {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bau-anatomy-list > div:nth-child(odd) {
+    border-right: 1px solid var(--bau-line);
+    padding-right: 1rem;
+  }
+
+  .bau-anatomy-list > div:nth-child(even) {
+    padding-left: 1rem;
+  }
 }
 
 .bau-pose-grid small {
@@ -376,6 +403,10 @@ html {
   font-size: 1.2rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.bau-api > div {
+  min-width: 0;
 }
 
 .bau-api code {
@@ -482,7 +513,7 @@ html {
   }
 
   .bau-api {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .bau-api-controls {
@@ -604,4 +635,19 @@ html {
   .bau-footer > a {
     justify-self: start;
   }
+}
+
+.bau-release-note {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--bau-ink);
+  font-size: 0.875rem;
+}
+.bau-release-note a,
+.bau-release-note a:visited {
+  color: var(--bau-ink);
+  text-decoration: underline;
+}
+.bau-page :where(a, button):not(.bui-reset):focus-visible {
+  outline: 3px solid rgb(var(--bui-focus));
+  outline-offset: 3px;
 }

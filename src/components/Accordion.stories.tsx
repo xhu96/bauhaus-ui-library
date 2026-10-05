@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { within, userEvent, expect } from 'storybook/test'
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './Accordion'
+import { FormField } from './FormField'
+import { Input } from './Input'
 
 const meta = {
   title: 'Navigation/Accordion',
@@ -61,6 +63,37 @@ export const Multiple: Story = {
       </AccordionItem>
     </Accordion>
   ),
+}
+
+/**
+ * `AccordionContent keepMounted` preserves the draft when collapsed. Hidden
+ * children remain mounted and their React effects keep running. By default,
+ * collapsed content unmounts and local state resets when reopened.
+ */
+export const RetainedFormState: Story = {
+  render: () => (
+    <Accordion defaultValue="profile" className="bui-w-full bui-max-w-md">
+      <AccordionItem value="profile">
+        <AccordionTrigger>Profile</AccordionTrigger>
+        <AccordionContent keepMounted>
+          <FormField label="Display name" hint="Collapse and reopen: your draft stays here.">
+            <Input defaultValue="Walter Gropius" />
+          </FormField>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const trigger = canvas.getByRole('button', { name: 'Profile' })
+    const name = canvas.getByRole('textbox', { name: 'Display name' })
+    await userEvent.clear(name)
+    await userEvent.type(name, 'Anni Albers')
+    await userEvent.click(trigger)
+    await expect(canvas.queryByRole('textbox')).not.toBeInTheDocument()
+    await userEvent.click(trigger)
+    await expect(canvas.getByRole('textbox', { name: 'Display name' })).toHaveValue('Anni Albers')
+  },
 }
 
 /**

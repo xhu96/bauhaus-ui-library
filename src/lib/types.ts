@@ -26,7 +26,7 @@ export const solidHover: Record<BauhausColor, string> = {
 /** Foreground/accent text color per palette name. */
 export const textColor: Record<BauhausColor, string> = {
   red: 'bui-text-bred-ink',
-  blue: 'bui-text-bblue',
+  blue: 'bui-text-bblue-ink',
   yellow: 'bui-text-byellow-ink',
   ink: 'bui-text-ink',
 }

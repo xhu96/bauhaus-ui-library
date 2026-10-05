@@ -1,0 +1,78 @@
+name: Shared release verification
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run typecheck:browser
+      - run: npm run build:lib
+      - run: npm test
+      - run: npm run api:check
+      - run: npm run test:pages
+      - run: npm audit && npm audit --omit=dev
+      - name: Fresh package consumers and Next Server Component
+        run: |
+          set -o pipefail
+          npm run package:smoke -- --retain | tee smoke.log
+          echo "CONSUMER_FIXTURES=$(sed -n 's/^RETAINED_FIXTURES=//p' smoke.log)" >> "$GITHUB_ENV"
+      - name: Install CI browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Packed consumer browser regressions
+        run: npm run test:browser
+      - name: Build site and Storybook once
+        run: npm run build && npm run build-storybook
+      - name: Require built documentation discovery
+        run: npm run test:catalog
+      - name: Product examples and copyable stories across browser engines
+        run: npm run test:showcase
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-build-${{ github.sha }}
+          path: |
+            dist/
+            dist-site/
+            storybook-static/
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failures-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+
+  consumer-node:
+    needs: verify
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20.0.0, 20.19.5, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: verified-build-${{ github.sha }}
+      - name: Consumers use built tarball without installing the library build toolchain
+        run: npm run package:smoke -- --runtime-only

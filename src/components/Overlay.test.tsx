@@ -1,10 +1,18 @@
 import { useState } from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { Button } from './Button'
 import { Drawer } from './Drawer'
 import { Modal, ModalBody, ModalFooter } from './Modal'
+
+// Focus sequencing scaffold only: jsdom does not calculate element rectangles.
+beforeEach(() => {
+  vi.spyOn(Element.prototype, 'getClientRects').mockReturnValue([
+    new DOMRect(0, 0, 100, 20),
+  ] as unknown as DOMRectList)
+})
+afterEach(() => vi.restoreAllMocks())
 
 function ModalHarness() {
   const [open, setOpen] = useState(false)
@@ -38,6 +46,51 @@ function DrawerHarness() {
 }
 
 describe('overlay focus behavior', () => {
+  it.each([
+    ['Modal', Modal],
+    ['Drawer', Drawer],
+  ] as const)(
+    'owns forward and reverse middle Tab traversal in %s independently of native tab preferences',
+    (_name, Dialog) => {
+      render(
+        <Dialog open onClose={() => {}} title="Traversal">
+          <input aria-label="First field" />
+          <button disabled>Unavailable action</button>
+          <button>Middle action</button>
+          <input aria-label="Last field" />
+        </Dialog>,
+      )
+      const first = screen.getByRole('textbox', { name: 'First field' })
+      const middle = screen.getByRole('button', { name: 'Middle action' })
+      const last = screen.getByRole('textbox', { name: 'Last field' })
+      middle.focus()
+
+      // Dispatch only keydown: userEvent.tab would supply its own native order
+      // and conceal the dependence on Safari/macOS keyboard preferences.
+      expect(fireEvent.keyDown(middle, { key: 'Tab' })).toBe(false)
+      expect(last).toHaveFocus()
+      expect(fireEvent.keyDown(last, { key: 'Tab', shiftKey: true })).toBe(false)
+      expect(middle).toHaveFocus()
+      expect(fireEvent.keyDown(middle, { key: 'Tab', shiftKey: true })).toBe(false)
+      expect(first).toHaveFocus()
+      expect(fireEvent.keyDown(first, { key: 'Tab' })).toBe(false)
+      expect(middle).toHaveFocus()
+    },
+  )
+
+  it('lets an editor consume Tab without changing focus', () => {
+    render(
+      <Modal open onClose={() => {}} title="Editor">
+        <textarea aria-label="Editor" onKeyDown={(event) => event.preventDefault()} />
+        <button>Save</button>
+      </Modal>,
+    )
+    const editor = screen.getByRole('textbox', { name: 'Editor' })
+    editor.focus()
+    fireEvent.keyDown(editor, { key: 'Tab' })
+    expect(editor).toHaveFocus()
+  })
+
   it('traps focus in the Modal and restores the trigger after Escape', async () => {
     const user = userEvent.setup()
     render(<ModalHarness />)
@@ -77,14 +130,14 @@ describe('overlay focus behavior', () => {
     expect(screen.getByRole('dialog', { name: 'Untitled confirmation' })).toBeInTheDocument()
   })
 
-  it('uses the left-side animation class for a left Drawer', () => {
+  it('positions a left Drawer without transforming its fixed-position descendants', () => {
     render(
       <Drawer open onClose={() => {}} side="left" title="Filters">
         Body
       </Drawer>,
     )
 
-    expect(screen.getByRole('dialog', { name: 'Filters' })).toHaveClass('bui-animate-slide-in-left')
+    expect(screen.getByRole('dialog', { name: 'Filters' })).toHaveClass('bui-left-0', 'bui-animate-fade-in')
   })
 
   it('keeps body scroll locked and root inert when stacked dialogs are open', async () => {

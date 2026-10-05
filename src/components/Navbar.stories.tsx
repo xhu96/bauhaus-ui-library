@@ -119,3 +119,38 @@ export const BrandWithIcon: Story = {
     </Navbar>
   ),
 }
+
+/** At phone widths the brand keeps its space and translated links wrap onto a new row. */
+export const ResponsiveTranslations: Story = {
+  render: () => (
+    <div style={{ width: 390, maxWidth: '100%' }}>
+      <Navbar aria-label="Navigazione principale">
+        <NavbarBrand>Studio Bauhaus</NavbarBrand>
+        <NavbarContent justify="start">
+          <NavbarLink href="#overview" active>
+            Panoramica del progetto
+          </NavbarLink>
+          <NavbarLink href="#team">Gestione collaboratori</NavbarLink>
+          <NavbarLink href="#settings">Impostazioni e preferenze</NavbarLink>
+        </NavbarContent>
+      </Navbar>
+    </div>
+  ),
+}
+
+/** User-provided workspace names and long unbroken labels stay inside a phone-width bar. */
+export const LongUnbrokenLabels: Story = {
+  render: () => (
+    <div style={{ width: 320, maxWidth: '100%' }}>
+      <Navbar aria-label="Workspace navigation">
+        <NavbarBrand>InternationalBauhausDesignAndArchitectureWorkspace</NavbarBrand>
+        <NavbarContent justify="start">
+          <NavbarLink href="#workspace" active>
+            WorkspaceAdministrationAndPreferences
+          </NavbarLink>
+          <NavbarLink href="#access">MemberPermissionsAndAccessManagement</NavbarLink>
+        </NavbarContent>
+      </Navbar>
+    </div>
+  ),
+}

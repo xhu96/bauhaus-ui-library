@@ -1,186 +1,134 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const projectRoot = resolve(import.meta.dirname, '..')
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const args = process.argv.slice(2)
+const retain = args.includes('--retain') || args.includes('--serve')
 const temporaryRoot = mkdtempSync(join(tmpdir(), 'bauhaus-ui-smoke-'))
-const packageDirectory = join(temporaryRoot, 'package')
-const fixtureDirectory = join(temporaryRoot, 'consumer')
-
-function run(command, args, cwd = projectRoot) {
-  execFileSync(command, args, { cwd, stdio: 'inherit' })
+const versions = (process.env.REACT_MAJORS || '18,19').split(',')
+function run(command, argv, cwd = root) {
+  execFileSync(command, argv, {
+    cwd,
+    stdio: 'inherit',
+    env: { ...process.env, NEXT_TELEMETRY_DISABLED: '1' },
+  })
+}
+function json(path, value) {
+  writeFileSync(path, JSON.stringify(value, null, 2))
 }
 
 try {
+  const packageDirectory = join(temporaryRoot, 'package')
   mkdirSync(packageDirectory)
-  mkdirSync(fixtureDirectory)
-
-  const packOutput = execFileSync(
-    'npm',
-    ['pack', '--json', '--ignore-scripts', '--pack-destination', packageDirectory],
-    { cwd: projectRoot, encoding: 'utf8' },
+  const [{ filename, files }] = JSON.parse(
+    execFileSync('npm', ['pack', '--json', '--ignore-scripts', '--pack-destination', packageDirectory], {
+      cwd: root,
+      encoding: 'utf8',
+    }),
   )
-  const [{ filename, files }] = JSON.parse(packOutput)
   const tarball = join(packageDirectory, filename)
-
+  const allowed = new Set([
+    'dist/bauhaus-ui.js',
+    'dist/bauhaus-ui.cjs',
+    'dist/bauhaus-ui.umd.cjs',
+    'dist/index.d.ts',
+    'dist/index.d.cts',
+    'dist/style.css',
+  ])
+  for (const path of allowed)
+    if (!path.endsWith('.d.cts'))
+      assert(
+        files.some((file) => file.path === path),
+        `Missing ${path}`,
+      )
+  for (const { path } of files)
+    assert(!path.startsWith('dist/') || allowed.has(path), `Unexpected package artifact ${path}`)
   assert(
-    files.some(({ path }) => path === 'dist/bauhaus-ui.js'),
-    'ESM bundle is missing from the tarball',
-  )
-  assert(
-    files.some(({ path }) => path === 'dist/bauhaus-ui.cjs'),
-    'CJS bundle is missing from the tarball',
-  )
-  assert(
-    files.some(({ path }) => path === 'dist/bauhaus-ui.umd.cjs'),
-    'UMD browser bundle is missing from the tarball',
-  )
-  assert(
-    files.some(({ path }) => path === 'dist/index.d.ts'),
-    'Type declarations are missing from the tarball',
-  )
-  assert(
-    files.some(({ path }) => path === 'dist/style.css'),
-    'Distributed CSS is missing from the tarball',
+    !files.some(({ path }) => /dist-site|storybook-static|src\/|tests\//.test(path)),
+    'Site/source leakage',
   )
 
-  writeFileSync(
-    join(fixtureDirectory, 'package.json'),
-    JSON.stringify({ name: 'bauhaus-ui-consumer-smoke', private: true, type: 'module' }, null, 2),
-  )
-
-  run(
-    'npm',
-    [
-      'install',
-      '--ignore-scripts',
-      '--no-audit',
-      '--no-fund',
-      '--save-exact',
-      tarball,
-      'react@18.3.1',
-      'react-dom@18.3.1',
-      'typescript@5.9.3',
-      '@types/react@18.3.3',
-      '@types/react-dom@18.3.0',
-    ],
-    fixtureDirectory,
-  )
-
-  writeFileSync(
-    join(fixtureDirectory, 'esm-smoke.mjs'),
-    `import React from 'react'
-import { renderToString } from 'react-dom/server'
-import { BauhausMascot, Button, Modal } from 'bauhaus-ui-library'
-
-const button = renderToString(React.createElement(Button, null, 'Smoke'))
-const mascot = renderToString(
-  React.createElement(BauhausMascot, { pose: 'running', label: 'Bauhaus dog' }),
-)
-const modal = renderToString(
-  React.createElement(Modal, { open: true, title: 'Smoke modal', onClose() {} }, 'Body'),
-)
-
-if (!button.includes('Smoke')) throw new Error('ESM Button render failed')
-if (!mascot.includes('data-bui-mascot="running"')) throw new Error('ESM BauhausMascot render failed')
-if (modal !== '') throw new Error('An initially-open Modal must remain SSR-safe')
-if (!import.meta.resolve('bauhaus-ui-library/styles.css').endsWith('/dist/style.css')) {
-  throw new Error('CSS export resolution failed')
-}
-`,
-  )
-
-  writeFileSync(
-    join(fixtureDirectory, 'cjs-smoke.cjs'),
-    `const library = require('bauhaus-ui-library')
-if (typeof library.Button !== 'object' && typeof library.Button !== 'function') {
-  throw new Error('CJS Button export is missing')
-}
-if (!require.resolve('bauhaus-ui-library/styles.css').endsWith('/dist/style.css')) {
-  throw new Error('CJS CSS export resolution failed')
-}
-`,
-  )
-
-  writeFileSync(
-    join(fixtureDirectory, 'umd-smoke.mjs'),
-    `import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { runInNewContext } from 'node:vm'
-import React from 'react'
-import * as ReactDOM from 'react-dom'
-
-const umdPath = fileURLToPath(import.meta.resolve('bauhaus-ui-library/umd'))
-const umdSource = readFileSync(umdPath, 'utf8')
-const browserGlobals = { React, ReactDOM }
-
-runInNewContext(umdSource, browserGlobals)
-
-if (typeof browserGlobals.BauhausUI?.Button !== 'object' &&
-    typeof browserGlobals.BauhausUI?.Button !== 'function') {
-  throw new Error('UMD browser-global Button export is missing')
-}
-if (typeof browserGlobals.BauhausUI?.BauhausMascot !== 'function') {
-  throw new Error('UMD browser-global BauhausMascot export is missing')
-}
-if (/jsxRuntime/.test(umdSource)) {
-  throw new Error('UMD bundle must not require a separate jsxRuntime browser global')
-}
-`,
-  )
-
-  writeFileSync(
-    join(fixtureDirectory, 'consumer.tsx'),
-    `import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button } from 'bauhaus-ui-library'
-
-export function Consumer() {
-  return (
-    <Accordion type="single" value="one" onValueChange={(value) => value.toUpperCase()}>
-      <AccordionItem value="one">
-        <AccordionTrigger>One</AccordionTrigger>
-        <AccordionContent><Button>Typed consumer</Button></AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  )
-}
-`,
-  )
-
-  writeFileSync(
-    join(fixtureDirectory, 'tsconfig.json'),
-    JSON.stringify(
-      {
-        compilerOptions: {
-          strict: true,
-          noEmit: true,
-          jsx: 'react-jsx',
-          module: 'NodeNext',
-          moduleResolution: 'NodeNext',
-          target: 'ES2022',
-        },
-        include: ['consumer.tsx'],
+  for (const major of versions) {
+    assert(['18', '19'].includes(major))
+    const fixture = join(temporaryRoot, `react${major}`)
+    mkdirSync(fixture)
+    cpSync(join(root, 'tests/consumer'), fixture, { recursive: true })
+    json(join(fixture, 'package.json'), {
+      name: `packed-consumer-react${major}`,
+      private: true,
+      type: 'module',
+    })
+    const react = major === '18' ? '18.3.1' : '19.2.4'
+    run(
+      'npm',
+      [
+        'install',
+        '--ignore-scripts',
+        '--no-audit',
+        '--no-fund',
+        '--save-exact',
+        tarball,
+        `react@${react}`,
+        `react-dom@${react}`,
+        `@types/react@${major}`,
+        `@types/react-dom@${major}`,
+        'ts55@npm:typescript@5.5.3',
+        'ts59@npm:typescript@5.9.3',
+        'esbuild@0.25.12',
+        'react-hook-form@7.88.0',
+        'axe-core@4.13.0',
+      ],
+      fixture,
+    )
+    if (!args.includes('--next-only') && !args.includes('--types-only'))
+      run(process.execPath, ['runtime.mjs'], fixture)
+    json(join(fixture, 'tsconfig.json'), {
+      compilerOptions: {
+        strict: true,
+        noEmit: true,
+        jsx: 'react-jsx',
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        target: 'ES2022',
       },
-      null,
-      2,
-    ),
-  )
-
-  run('node', ['esm-smoke.mjs'], fixtureDirectory)
-  run('node', ['cjs-smoke.cjs'], fixtureDirectory)
-  run('node', ['umd-smoke.mjs'], fixtureDirectory)
-  run(resolve(fixtureDirectory, 'node_modules/.bin/tsc'), ['--project', 'tsconfig.json'], fixtureDirectory)
-
-  const css = readFileSync(
-    resolve(fixtureDirectory, 'node_modules/bauhaus-ui-library/dist/style.css'),
-    'utf8',
-  )
-  assert.match(css, /\.bui-flex\{/)
-  assert.doesNotMatch(css, /(^|})\.flex(?=[,{])/)
-  assert.doesNotMatch(css, /(^|})\.container(?=[,{])/)
-
-  console.log('Package smoke test passed: ESM, CJS, UMD, SSR, CSS, exports, and declarations.')
+      include: ['consumer.tsx', 'consumer.cts'],
+    })
+    if (!args.includes('--next-only')) {
+      for (const compiler of ['ts55', 'ts59'])
+        run(process.execPath, [`node_modules/${compiler}/bin/tsc`, '-p', 'tsconfig.json'], fixture)
+      assert(
+        files.some((file) => file.path === 'dist/index.d.cts'),
+        'Missing CJS declarations',
+      )
+    }
+    const css = readFileSync(join(fixture, 'node_modules/bauhaus-ui-library/dist/style.css'), 'utf8')
+    assert.match(css, /\.bui-flex\{/)
+    assert.doesNotMatch(css, /(^|})\.(flex|container)(?=[,{])/)
+    if (!args.includes('--runtime-only') && !args.includes('--next-only') && !args.includes('--types-only'))
+      run(process.execPath, ['build-browser.mjs'], fixture)
+    if (major === '19' && !args.includes('--skip-next') && !args.includes('--runtime-only')) {
+      run(
+        'npm',
+        ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--save-exact', 'next@16.3.5'],
+        fixture,
+      )
+      run(
+        process.execPath,
+        ['../node_modules/next/dist/bin/next', 'build', '--webpack'],
+        join(fixture, 'next'),
+      )
+      assert.match(readFileSync(join(fixture, 'next/out/index.html'), 'utf8'), /Direct client entry/)
+    }
+  }
+  console.log(`PASS: packed React ${versions.join('/')} ESM/CJS/UMD, SSR, TS5.5/5.9, CSS`)
+  if (retain) console.log(`RETAINED_FIXTURES=${temporaryRoot}`)
+  if (args.includes('--serve'))
+    run(process.execPath, [join(root, 'scripts/serve-consumers.mjs'), temporaryRoot])
 } finally {
-  rmSync(temporaryRoot, { recursive: true, force: true })
+  if (!retain) rmSync(temporaryRoot, { recursive: true, force: true })
+  else console.log(`Retained for inspection: ${temporaryRoot}`)
 }

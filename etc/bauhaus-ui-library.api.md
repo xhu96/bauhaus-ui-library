@@ -29,7 +29,12 @@ export interface AccordionBaseProps extends Omit<HTMLAttributes<HTMLDivElement>,
 }
 
 // @public
-export function AccordionContent(input: HTMLAttributes<HTMLDivElement>): JSX_2.Element | null;
+export function AccordionContent(input: AccordionContentProps): JSX_2.Element | null;
+
+// @public (undocumented)
+export interface AccordionContentProps extends HTMLAttributes<HTMLDivElement> {
+    keepMounted?: boolean;
+}
 
 // @public
 export function AccordionItem(input: AccordionItemProps): JSX_2.Element;
@@ -77,6 +82,7 @@ export const Alert: ForwardRefExoticComponent<AlertProps & RefAttributes<HTMLDiv
 
 // @public (undocumented)
 export interface AlertProps extends HTMLAttributes<HTMLDivElement> {
+    dismissLabel?: string;
     icon?: ReactNode;
     onClose?: () => void;
     // (undocumented)
@@ -171,6 +177,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     color?: BauhausColor;
     // (undocumented)
     fullWidth?: boolean;
+    intent?: 'primary' | 'secondary' | 'destructive';
     // (undocumented)
     isLoading?: boolean;
     // (undocumented)
@@ -248,8 +255,10 @@ export interface DrawerProps {
     'aria-label'?: string;
     // (undocumented)
     children?: ReactNode;
+    closeLabel?: string;
     onClose: () => void;
     open: boolean;
+    portalContainer?: HTMLElement | null;
     side?: 'left' | 'right';
     title?: string;
     width?: number;
@@ -282,10 +291,8 @@ export function GeometricPattern(input: GeometricPatternProps): JSX_2.Element;
 // @public (undocumented)
 export interface GeometricPatternProps extends HTMLAttributes<HTMLDivElement> {
     bordered?: boolean;
-    // (undocumented)
     cols?: number;
     palette?: ColorKey[];
-    // (undocumented)
     rows?: number;
     seed?: number;
     surfaces?: ColorKey[];
@@ -326,9 +333,11 @@ export interface ModalProps {
     'aria-label'?: string;
     // (undocumented)
     children?: ReactNode;
+    closeLabel?: string;
     closeOnBackdrop?: boolean;
     onClose: () => void;
     open: boolean;
+    portalContainer?: HTMLElement | null;
     size?: Size;
     title?: string;
 }
@@ -375,12 +384,20 @@ export function Pagination(input: PaginationProps): JSX_2.Element | null;
 // @public (undocumented)
 export interface PaginationProps {
     // (undocumented)
+    'aria-label'?: string;
+    // (undocumented)
     className?: string;
     color?: BauhausColor;
     count: number;
     // (undocumented)
+    getPageLabel?: (page: number) => string;
+    // (undocumented)
+    nextLabel?: string;
+    // (undocumented)
     onPageChange: (page: number) => void;
     page: number;
+    // (undocumented)
+    previousLabel?: string;
     siblingCount?: number;
 }
 
@@ -399,7 +416,7 @@ export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 // @public
-export function Radio(input: RadioProps): JSX_2.Element;
+export const Radio: ForwardRefExoticComponent<RadioProps & RefAttributes<HTMLInputElement>>;
 
 // @public
 export function RadioGroup(input: RadioGroupProps): JSX_2.Element;
@@ -431,11 +448,13 @@ export interface RadioGroupProps {
     // (undocumented)
     orientation?: 'horizontal' | 'vertical';
     // (undocumented)
+    required?: boolean;
+    // (undocumented)
     value?: string;
 }
 
 // @public (undocumented)
-export interface RadioProps {
+export interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'checked' | 'defaultChecked' | 'color'> {
     // (undocumented)
     className?: string;
     // (undocumented)
@@ -537,10 +556,10 @@ export interface SpinnerProps extends Omit<SVGProps<SVGSVGElement>, 'color'> {
 export type Status = 'info' | 'success' | 'warning' | 'danger';
 
 // @public
-export function Switch(input: SwitchProps): JSX_2.Element;
+export const Switch: ForwardRefExoticComponent<SwitchProps & RefAttributes<HTMLInputElement>>;
 
 // @public (undocumented)
-export interface SwitchProps {
+export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'color'> {
     // (undocumented)
     'aria-describedby'?: string;
     // (undocumented)
@@ -552,13 +571,9 @@ export interface SwitchProps {
     // (undocumented)
     'aria-required'?: boolean | 'true' | 'false';
     // (undocumented)
-    checked?: boolean;
-    // (undocumented)
     className?: string;
     // (undocumented)
     color?: BauhausColor;
-    // (undocumented)
-    defaultChecked?: boolean;
     // (undocumented)
     disabled?: boolean;
     // (undocumented)
@@ -579,6 +594,7 @@ export function TabsContent(input: TabsContentProps): JSX_2.Element | null;
 export interface TabsContentProps extends HTMLAttributes<HTMLDivElement> {
     // (undocumented)
     children: ReactNode;
+    keepMounted?: boolean;
     // (undocumented)
     value: string;
 }
@@ -593,6 +609,7 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
     defaultValue?: string;
     // (undocumented)
     onValueChange?: (value: string) => void;
+    orientation?: 'horizontal' | 'vertical';
     value?: string;
 }
 
@@ -618,6 +635,7 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
     color?: BauhausColor;
     dot?: boolean;
     onRemove?: () => void;
+    removeLabel?: string;
 }
 
 // @public
@@ -655,6 +673,9 @@ export interface ToastOptions {
 export function ToastProvider(input: {
     children: ReactNode;
     position?: 'top-right' | 'bottom-right';
+    maxToasts?: number;
+    dismissLabel?: string;
+    portalContainer?: HTMLElement | null;
 }): JSX_2.Element;
 
 // @public (undocumented)
@@ -667,9 +688,9 @@ export function Tooltip(input: TooltipProps): JSX_2.Element;
 export interface TooltipProps {
     // (undocumented)
     children: ReactNode;
-    // (undocumented)
     content: ReactNode;
     delay?: number;
+    portalContainer?: HTMLElement | null;
     // (undocumented)
     side?: Side;
 }

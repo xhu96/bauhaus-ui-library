@@ -1,8 +1,15 @@
 dist
+dist-site
+pages-output
+pages-output.previous-*
+.pages-staging-*
+playwright-report
+test-results
 storybook-static
 node_modules
 coverage
 .worktrees
+.superpowers
 package-lock.json
 *.svg
 *.mdx

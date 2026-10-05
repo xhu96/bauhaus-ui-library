@@ -182,13 +182,27 @@ export function AccordionTrigger({
   )
 }
 
+export interface AccordionContentProps extends HTMLAttributes<HTMLDivElement> {
+  /** Preserve local state while collapsed. Hidden children remain mounted; effects keep running. Defaults to false. */
+  keepMounted?: boolean
+}
+
 /**
- * Region revealed when its item is open.
+ * Region revealed when its item is open. Collapsed regions unmount by default;
+ * `keepMounted` preserves inputs and local state while hiding the region.
  */
-export function AccordionContent({ className, children, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function AccordionContent({
+  keepMounted = false,
+  className,
+  children,
+  hidden,
+  style,
+  ...props
+}: AccordionContentProps) {
   const { isOpen } = useAccordionContext('AccordionContent')
   const { value, triggerId, contentId } = useAccordionItemContext('AccordionContent')
-  if (!isOpen(value)) return null
+  const open = isOpen(value)
+  if (!open && !keepMounted) return null
 
   return (
     <div
@@ -196,9 +210,12 @@ export function AccordionContent({ className, children, ...props }: HTMLAttribut
       role="region"
       id={contentId}
       aria-labelledby={triggerId}
+      hidden={!open || hidden}
+      style={open ? style : { ...style, display: 'none' }}
       className={cn(
         'bui-reset',
-        'bui-animate-fade-in bui-border-t-3 bui-border-ink bui-px-4 bui-py-3 bui-text-ink',
+        'bui-border-t-3 bui-border-ink bui-px-4 bui-py-3 bui-text-ink',
+        open && 'bui-animate-fade-in',
         className,
       )}
     >

@@ -1,13 +1,26 @@
-import { createContext, useContext, useId, useState, type ReactNode } from 'react'
+import {
+  createContext,
+  forwardRef,
+  useContext,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type InputHTMLAttributes,
+  type ReactNode,
+} from 'react'
 import { cn } from '@/lib/utils'
 import { type BauhausColor } from '@/lib/types'
 import { useFormFieldSemantics } from './FormFieldContext'
+import { useFormReset } from '@/lib/useFormReset'
 
 interface RadioGroupContextValue {
   name: string
   value: string | undefined
   onChange: (v: string) => void
   required: boolean
+  resetValue: string | undefined
+  reset: () => void
 }
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null)
@@ -18,6 +31,7 @@ export interface RadioGroupProps {
   defaultValue?: string
   onValueChange?: (v: string) => void
   name?: string
+  required?: boolean
   orientation?: 'horizontal' | 'vertical'
   className?: string
   children: ReactNode
@@ -30,7 +44,10 @@ export interface RadioGroupProps {
 
 /**
  * Groups Radio controls, sharing name/value/onChange via context. Supports
- * controlled (`value`) and uncontrolled (`defaultValue`) usage.
+ * controlled (`value`) and uncontrolled (`defaultValue`) usage. Native form
+ * reset restores defaultValue when uncontrolled; controlled value remains
+ * caller-owned. Reset does not notify onValueChange. Individual inputs expose
+ * native props/refs, while the group owns their checked state.
  */
 export function RadioGroup({
   id,
@@ -38,6 +55,7 @@ export function RadioGroup({
   defaultValue,
   onValueChange,
   name,
+  required,
   orientation = 'vertical',
   className,
   children,
@@ -62,7 +80,16 @@ export function RadioGroup({
 
   return (
     <RadioGroupContext.Provider
-      value={{ name: name ?? autoName, value: current, onChange, required: Boolean(semantics.required) }}
+      value={{
+        name: name ?? autoName,
+        value: current,
+        onChange,
+        required: required ?? semantics.required,
+        resetValue: isControlled ? value : defaultValue,
+        reset: () => {
+          if (!isControlled) setInternal(defaultValue)
+        },
+      }}
     >
       <div
         id={id ?? semantics.controlId}
@@ -70,7 +97,7 @@ export function RadioGroup({
         aria-label={ariaLabel}
         aria-labelledby={computedLabelledBy}
         aria-describedby={semantics.describedBy}
-        aria-required={ariaRequired ?? (semantics.required || undefined)}
+        aria-required={ariaRequired ?? required ?? (semantics.required || undefined)}
         aria-invalid={ariaInvalid ?? (semantics.invalid || undefined)}
         className={cn(
           'bui-reset',
@@ -93,7 +120,10 @@ const dotColor: Record<BauhausColor, string> = {
   ink: 'bui-bg-ink',
 }
 
-export interface RadioProps {
+export interface RadioProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'value' | 'checked' | 'defaultChecked' | 'color'
+> {
   value: string
   label?: string
   color?: BauhausColor
@@ -105,8 +135,17 @@ export interface RadioProps {
  * A single circular radio option. Must be rendered inside a RadioGroup. Uses a
  * native radio input under the hood for full keyboard accessibility.
  */
-export function Radio({ value, label, color = 'ink', disabled, className }: RadioProps) {
+export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
+  { value, label, color = 'ink', disabled, className, required, onChange, ...props },
+  ref,
+) {
   const ctx = useContext(RadioGroupContext)
+  const inputRef = useRef<HTMLInputElement>(null)
+  useImperativeHandle(ref, () => inputRef.current!)
+  useFormReset(inputRef, () => {
+    ctx?.reset()
+    if (inputRef.current) inputRef.current.checked = ctx?.resetValue === value
+  })
   if (!ctx) throw new Error('Radio must be used within a RadioGroup')
   const checked = ctx.value === value
 
@@ -121,21 +160,26 @@ export function Radio({ value, label, color = 'ink', disabled, className }: Radi
     >
       <span className="bui-reset bui-relative bui-inline-flex bui-h-6 bui-w-6 bui-shrink-0">
         <input
+          {...props}
+          ref={inputRef}
           type="radio"
-          name={ctx.name}
+          name={props.name ?? ctx.name}
           value={value}
           checked={checked}
           disabled={disabled}
-          required={ctx.required}
-          onChange={() => ctx.onChange(value)}
-          className="bui-reset peer bui-absolute bui-inset-0 bui-h-full bui-w-full bui-cursor-pointer bui-opacity-0 disabled:bui-cursor-not-allowed"
+          required={required ?? ctx.required}
+          onChange={(event) => {
+            onChange?.(event)
+            if (!event.defaultPrevented && event.target.checked) ctx.onChange(value)
+          }}
+          className="bui-reset bui-peer bui-absolute bui-inset-0 bui-h-full bui-w-full bui-cursor-pointer bui-opacity-0 disabled:bui-cursor-not-allowed"
         />
         <span
           aria-hidden
           className={cn(
             'bui-reset',
             'bui-pointer-events-none bui-flex bui-h-6 bui-w-6 bui-items-center bui-justify-center bui-rounded-full bui-border-3 bui-border-ink bui-bg-surface',
-            'peer-focus-visible:bui-outline peer-focus-visible:outline-3 peer-focus-visible:bui-outline-offset-2 peer-focus-visible:bui-outline-bblue',
+            'peer-focus-visible:bui-outline peer-focus-visible:bui-outline-[3px] peer-focus-visible:bui-outline-offset-2 peer-focus-visible:bui-outline-focus',
           )}
         >
           <span
@@ -151,4 +195,4 @@ export function Radio({ value, label, color = 'ink', disabled, className }: Radi
       {label && <span className="bui-reset bui-font-sans bui-text-base bui-text-ink">{label}</span>}
     </label>
   )
-}
+})

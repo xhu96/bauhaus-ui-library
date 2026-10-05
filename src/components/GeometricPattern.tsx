@@ -27,7 +27,9 @@ const TILE_BAR_WIDTH = 16
 const TILE_BAR_START = TILE_MID - TILE_BAR_WIDTH / 2
 
 export interface GeometricPatternProps extends HTMLAttributes<HTMLDivElement> {
+  /** Floored, nonnegative dimension. Nonfinite values render no cells. Total output is capped at 4096 cells. */
   rows?: number
+  /** Floored and capped at 4096 columns; rows are trimmed to the 4096-cell budget. */
   cols?: number
   /** Shape colors drawn on each tile. */
   palette?: ColorKey[]
@@ -133,33 +135,36 @@ export function GeometricPattern({
   style,
   ...props
 }: GeometricPatternProps) {
+  const safeRows = Number.isFinite(rows) ? Math.max(0, Math.min(4096, Math.floor(rows))) : 0
+  const safeCols = Number.isFinite(cols) ? Math.max(0, Math.min(4096, Math.floor(cols))) : 0
+  const cellCount = Math.min(4096, safeRows * safeCols)
   const cells = useMemo(() => {
+    const foregrounds: ColorKey[] = palette.length ? palette : ['blue', 'red', 'yellow', 'ink']
+    const backgrounds: ColorKey[] = surfaces.length ? surfaces : ['paper', 'white']
     const rand = mulberry32(seed * 2654435761)
     const pick = <T,>(arr: T[]) => arr[Math.floor(rand() * arr.length)]
     const out: { bg: string; fg: string; motif: Motif; rot: number }[] = []
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const bgKey = rand() < 0.72 ? pick(surfaces) : pick(palette)
-        let fgKey = pick(palette)
-        let guard = 0
-        while (fgKey === bgKey && guard++ < 6) fgKey = pick([...palette, ...surfaces])
-        out.push({
-          bg: COLORS[bgKey],
-          fg: COLORS[fgKey],
-          motif: pick(MOTIFS),
-          rot: pick([0, 90, 180, 270]),
-        })
-      }
+    for (let i = 0; i < cellCount; i++) {
+      const bgKey = rand() < 0.72 ? pick(backgrounds) : pick(foregrounds)
+      let fgKey = pick(foregrounds)
+      let guard = 0
+      while (fgKey === bgKey && guard++ < 6) fgKey = pick([...foregrounds, ...backgrounds])
+      out.push({
+        bg: COLORS[bgKey],
+        fg: COLORS[fgKey],
+        motif: pick(MOTIFS),
+        rot: pick([0, 90, 180, 270]),
+      })
     }
     return out
-  }, [rows, cols, palette, surfaces, seed])
+  }, [cellCount, palette, surfaces, seed])
 
   // A real CSS grid of square tiles: always pixel-aligned, never cropped or
   // distorted, at any container width. Each tile is its own square SVG.
   return (
     <div
       className={cn('bui-reset', 'bui-grid bui-w-full', className)}
-      style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, ...style }}
+      style={{ gridTemplateColumns: safeCols ? `repeat(${safeCols}, 1fr)` : 'none', ...style }}
       aria-hidden="true"
       {...props}
     >

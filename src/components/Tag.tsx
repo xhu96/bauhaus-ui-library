@@ -7,6 +7,8 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   color?: BauhausColor
   /** When provided, renders an accessible remove (X) button. */
   onRemove?: () => void
+  /** Translated remove button label. Defaults to Remove. */
+  removeLabel?: string
   /** Show a leading colored square. */
   dot?: boolean
 }
@@ -16,7 +18,7 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
  * and an optional accessible remove button.
  */
 export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
-  { color = 'ink', onRemove, dot = false, className, children, ...props },
+  { color = 'ink', onRemove, removeLabel = 'Remove', dot = false, className, children, ...props },
   ref,
 ) {
   return (
@@ -41,11 +43,11 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
       {onRemove && (
         <button
           type="button"
-          aria-label="Remove"
+          aria-label={removeLabel}
           onClick={onRemove}
           className={cn(
             'bui-reset',
-            'bui-press -bui-mr-1 bui-ml-0.5 bui-inline-flex bui-h-8 bui-w-8 bui-shrink-0 bui-items-center bui-justify-center bui-border bui-border-ink',
+            'bui-press -bui-me-1 bui-ms-0.5 bui-inline-flex bui-h-8 bui-w-8 bui-shrink-0 bui-items-center bui-justify-center bui-border bui-border-ink',
             solidColor[color],
             'hover:bui-opacity-80',
           )}

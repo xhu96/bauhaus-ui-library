@@ -4,13 +4,19 @@ import { fileURLToPath, URL } from 'node:url'
 import { resolve } from 'node:path'
 
 // Compatibility build for direct <script> usage. React and ReactDOM remain peer globals,
-// while react/jsx-runtime is bundled so consumers do not need a non-standard third global.
+// using classic JSX against the external React runtime (including supplied React19 globals).
 export default defineConfig({
   publicDir: false,
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
   },
-  plugins: [react()],
+  plugins: [react({ jsxRuntime: 'classic' })],
+  esbuild: {
+    jsx: 'transform',
+    jsxFactory: 'React.createElement',
+    jsxFragment: 'React.Fragment',
+    jsxInject: "import * as React from 'react'",
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

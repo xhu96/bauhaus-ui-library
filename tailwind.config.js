@@ -3,6 +3,7 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   prefix: 'bui-',
   darkMode: 'class',
+  corePlugins: { preflight: false },
   theme: {
     extend: {
       colors: {
@@ -13,6 +14,7 @@ export default {
         },
         // Card / control surface (formerly literal white).
         surface: 'rgb(var(--bui-surface) / <alpha-value>)',
+        focus: 'rgb(var(--bui-focus) / <alpha-value>)',
         ink: {
           DEFAULT: 'rgb(var(--bui-ink) / <alpha-value>)',
           soft: 'rgb(var(--bui-ink-soft) / <alpha-value>)',
@@ -23,49 +25,59 @@ export default {
         chalk: '#F3EFE6',
         // Bauhaus primaries — each with a darker (hover/active) and lighter (tint) step.
         bred: {
-          DEFAULT: '#E63329',
-          dark: '#B81E16',
-          light: '#F5A9A3',
+          DEFAULT: 'rgb(var(--bui-red) / <alpha-value>)',
+          dark: 'rgb(var(--bui-red-dark) / <alpha-value>)',
+          light: 'rgb(var(--bui-red-light) / <alpha-value>)',
           ink: 'rgb(var(--bui-red-ink) / <alpha-value>)',
         },
         bblue: {
-          DEFAULT: '#21409A',
-          dark: '#152C70',
-          light: '#9DB0E0',
+          DEFAULT: 'rgb(var(--bui-blue) / <alpha-value>)',
+          dark: 'rgb(var(--bui-blue-dark) / <alpha-value>)',
+          light: 'rgb(var(--bui-blue-light) / <alpha-value>)',
+          ink: 'rgb(var(--bui-blue-ink) / <alpha-value>)',
         },
         byellow: {
-          DEFAULT: '#F4C20D',
-          dark: '#C99A00',
-          light: '#FBE389',
+          DEFAULT: 'rgb(var(--bui-yellow) / <alpha-value>)',
+          dark: 'rgb(var(--bui-yellow-dark) / <alpha-value>)',
+          light: 'rgb(var(--bui-yellow-light) / <alpha-value>)',
           ink: 'rgb(var(--bui-yellow-ink) / <alpha-value>)',
         },
       },
       fontFamily: {
-        sans: ['Archivo', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        display: ['"Space Grotesk"', 'Archivo', 'Arial', 'sans-serif'],
-        mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
+        sans: ['var(--bui-font-sans)'],
+        display: ['var(--bui-font-display)'],
+        mono: ['var(--bui-font-mono)'],
       },
       borderRadius: {
-        none: '0',
-        sm: '2px',
-        DEFAULT: '2px',
-        md: '4px',
-        lg: '6px',
+        none: 'var(--bui-radius)',
+        sm: 'calc(var(--bui-radius) + 2px)',
+        DEFAULT: 'calc(var(--bui-radius) + 2px)',
+        md: 'calc(var(--bui-radius) + 4px)',
+        lg: 'calc(var(--bui-radius) + 6px)',
         full: '9999px',
       },
       borderWidth: {
         DEFAULT: '1px',
-        3: '3px',
+        3: 'var(--bui-border-width)',
       },
       boxShadow: {
-        hard: '4px 4px 0 0 rgb(var(--bui-ink))',
-        'hard-sm': '2px 2px 0 0 rgb(var(--bui-ink))',
-        'hard-lg': '6px 6px 0 0 rgb(var(--bui-ink))',
+        hard: 'var(--bui-shadow-offset) var(--bui-shadow-offset) 0 0 rgb(var(--bui-ink))',
+        'hard-sm':
+          'calc(var(--bui-shadow-offset) * 0.5) calc(var(--bui-shadow-offset) * 0.5) 0 0 rgb(var(--bui-ink))',
+        'hard-lg':
+          'calc(var(--bui-shadow-offset) * 1.5) calc(var(--bui-shadow-offset) * 1.5) 0 0 rgb(var(--bui-ink))',
         'hard-red': '4px 4px 0 0 #E63329',
         'hard-blue': '4px 4px 0 0 #21409A',
         // Fixed ink (never flips) — for framing the fixed-colour graphic blocks.
         'hard-coal': '4px 4px 0 0 #1C1C1C',
         'hard-coal-lg': '6px 6px 0 0 #1C1C1C',
+      },
+      transitionDuration: {
+        DEFAULT: 'calc(var(--bui-motion-duration) * 1.5)',
+        100: 'var(--bui-motion-duration)',
+        150: 'calc(var(--bui-motion-duration) * 1.5)',
+        200: 'calc(var(--bui-motion-duration) * 2)',
+        300: 'calc(var(--bui-motion-duration) * 3)',
       },
       keyframes: {
         'spin-slow': {
@@ -98,13 +110,14 @@ export default {
         },
       },
       animation: {
-        'spin-slow': 'spin-slow 6s linear infinite',
-        'pop-in': 'pop-in 0.18s ease-out',
-        'slide-in-right': 'slide-in-right 0.22s ease-out',
-        'slide-in-left': 'slide-in-left 0.22s ease-out',
-        'fade-in': 'fade-in 0.18s ease-out',
-        marquee: 'marquee 18s linear infinite',
-        indeterminate: 'indeterminate 1.2s ease-in-out infinite',
+        spin: 'spin calc(var(--bui-motion-duration) * 10) linear infinite',
+        'spin-slow': 'spin-slow calc(var(--bui-motion-duration) * 60) linear infinite',
+        'pop-in': 'pop-in calc(var(--bui-motion-duration) * 1.8) ease-out',
+        'slide-in-right': 'slide-in-right calc(var(--bui-motion-duration) * 2.2) ease-out',
+        'slide-in-left': 'slide-in-left calc(var(--bui-motion-duration) * 2.2) ease-out',
+        'fade-in': 'fade-in calc(var(--bui-motion-duration) * 1.8) ease-out',
+        marquee: 'marquee calc(var(--bui-motion-duration) * 180) linear infinite',
+        indeterminate: 'indeterminate calc(var(--bui-motion-duration) * 12) ease-in-out infinite',
       },
     },
   },

@@ -79,11 +79,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       )}
       <input
         ref={ref}
+        data-bui-control="input"
+        data-bui-size={inputSize}
         id={id ?? semantics.controlId}
         disabled={disabled}
         required={required ?? (semantics.required && derivesRequired ? true : undefined)}
         aria-describedby={semantics.describedBy}
-        aria-required={ariaRequired ?? (semantics.required && derivesRequired ? true : undefined)}
+        aria-labelledby={props['aria-labelledby'] ?? (props['aria-label'] ? undefined : semantics.labelId)}
+        aria-required={ariaRequired ?? required ?? (semantics.required && derivesRequired ? true : undefined)}
         aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
         className={cn(
           'bui-reset',

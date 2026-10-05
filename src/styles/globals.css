@@ -1,4 +1,5 @@
 @import './tokens.css';
+@import './density.css';
 
 @tailwind components;
 
@@ -11,13 +12,49 @@
   border-width: 0;
   border-style: solid;
   border-color: currentColor;
+  border-radius: var(--bui-radius);
+
+  /* With Preflight disabled, initialize each owned element and pseudo-element. */
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-ring-inset: ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: rgb(var(--bui-surface));
+  --tw-ring-color: rgb(var(--bui-focus));
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  /* Invalid by default: utilities choose their configured color fallback and
+     cannot inherit a host application's shadow color. */
+  --tw-shadow-color: initial;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-content: '';
 }
 
 @tailwind utilities;
 
 /* Focus ring: geometric, high-contrast, matches the Bauhaus look. */
 :where(.bui-press, .bui-reset):focus-visible {
-  outline: 3px solid rgb(var(--bui-blue));
+  outline: 3px solid rgb(var(--bui-focus));
   outline-offset: 2px;
 }
 
@@ -60,15 +97,14 @@
 
 /* Reduced-motion: only targets Bauhaus library animations and transitions, not consumer elements. */
 @media (prefers-reduced-motion: reduce) {
-  [class*='bui-animate-pop'],
-  [class*='bui-animate-fade'],
-  [class*='bui-animate-slide'],
-  [class*='bui-animate-spin-slow'],
-  [class*='bui-animate-marquee'],
-  [class*='bui-animate-indeterminate'],
-  .bui-press {
+  .bui-reset,
+  .bui-reset::before,
+  .bui-reset::after {
+    animation: none !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
   }
 }

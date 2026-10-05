@@ -7,6 +7,7 @@ import {
   type BauhausMascotExpression,
   type BauhausMascotPose,
 } from './index'
+import { actionStyles } from './lib/actionStyles'
 
 const STORYBOOK_URL = '../storybook/'
 const REPO_URL = 'https://github.com/xhu96/bauhaus-ui-library'
@@ -20,14 +21,20 @@ const expressions: { expression: BauhausMascotExpression; label: string }[] = [
   { expression: 'calm', label: 'Calm' },
 ]
 
-const poses: { pose: BauhausMascotPose; label: string; description: string }[] = [
-  { pose: 'standing', label: 'Standing', description: 'Ready to build.' },
-  { pose: 'working', label: 'Working', description: 'Focused on the system.' },
-  { pose: 'running', label: 'Running', description: 'Moving ideas forward.' },
+const poses: {
+  pose: BauhausMascotPose
+  expression: BauhausMascotExpression
+  label: string
+  description: string
+}[] = [
+  { pose: 'standing', expression: 'happy', label: 'Standing', description: 'Ready to build.' },
+  { pose: 'working', expression: 'happy', label: 'Working', description: 'Building alongside you.' },
+  { pose: 'running', expression: 'focused', label: 'Running', description: 'Moving ideas forward.' },
 ]
 
 export default function BauPage() {
   const [activePose, setActivePose] = useState<BauhausMascotPose>('standing')
+  const activeExpression = poses.find(({ pose }) => pose === activePose)!.expression
 
   return (
     <div className="bau-page">
@@ -46,12 +53,16 @@ export default function BauPage() {
             Bau
           </a>
         </nav>
-        <a className="bau-back" href="../">
+        <a className={`${actionStyles({ size: 'sm' })} bau-back`} href="../">
           <ArrowLeft aria-hidden /> Back to library
         </a>
       </header>
 
       <main id="bau-main">
+        <p className="bau-release-note">
+          0.2.0dev2 is unpublished. npm currently installs 0.1.1, which does not include Bau.{' '}
+          <a href={`${STORYBOOK_URL}?path=/docs/introduction--docs`}>Install the local preview</a>
+        </p>
         <section className="bau-hero" id="top">
           <div className="bau-hero-copy">
             <h1>BAU</h1>
@@ -59,49 +70,48 @@ export default function BauPage() {
             <p>Curious. Clever. Constructive.</p>
           </div>
           <div className="bau-hero-art">
-            <BauhausMascot pose="standing" label="Bau standing" />
+            <BauhausMascot pose="standing" expression="happy" direction="left" label="Bau standing" />
           </div>
         </section>
 
         <section className="bau-anatomy" aria-labelledby="bau-anatomy-title">
-          <h2 id="bau-anatomy-title">Anatomy &amp; proportions</h2>
+          <h2 id="bau-anatomy-title">Geometric anatomy</h2>
           <div className="bau-anatomy-grid">
             <div className="bau-proportion">
-              <span className="bau-measure-y">1.0u</span>
-              <BauhausMascot pose="standing" />
-              <span className="bau-measure-x">1.45u</span>
+              <BauhausMascot variant="portrait" expression="happy" />
+              <span className="bau-proportion-caption">One shared head</span>
             </div>
             <div className="bau-anatomy-figure">
-              <BauhausMascot pose="standing" label="Bau anatomy diagram" />
+              <BauhausMascot pose="standing" expression="happy" label="Bau anatomy diagram" />
             </div>
             <dl className="bau-anatomy-list">
               <div>
                 <dt>Head</dt>
-                <dd>Red circle · 1.0u</dd>
+                <dd>Red circle · yellow quarter-disc</dd>
               </div>
               <div>
                 <dt>Ears</dt>
-                <dd>Black semicircle · blue square</dd>
+                <dd>Black block · blue quarter-disc</dd>
               </div>
               <div>
-                <dt>Chest</dt>
-                <dd>Blue quarter-circle</dd>
+                <dt>Shoulder</dt>
+                <dd>Red half-disc · yellow and blue quarters</dd>
               </div>
               <div>
-                <dt>Bridge</dt>
-                <dd>Short blue rectangle</dd>
+                <dt>Torso</dt>
+                <dd>Blue rectangle · black diagonal wedge</dd>
               </div>
               <div>
                 <dt>Haunch</dt>
-                <dd>Blue quarter-circle</dd>
+                <dd>Split circle · angular overlaps</dd>
               </div>
               <div>
                 <dt>Legs &amp; paws</dt>
-                <dd>Yellow rectangles · black semicircles</dd>
+                <dd>Yellow segments · black feet</dd>
               </div>
               <div>
                 <dt>Tail</dt>
-                <dd>Yellow triangle</dd>
+                <dd>Yellow quarter-ring · black tip</dd>
               </div>
               <div>
                 <dt>Collar &amp; tag</dt>
@@ -116,7 +126,7 @@ export default function BauPage() {
           <div className="bau-expression-rail">
             {expressions.map(({ expression, label }) => (
               <figure key={expression}>
-                <BauhausMascot variant="portrait" expression={expression} />
+                <BauhausMascot variant="portrait" expression={expression} label={`Bau — ${label}`} />
                 <figcaption>{label}</figcaption>
               </figure>
             ))}
@@ -126,16 +136,19 @@ export default function BauPage() {
         <section className="bau-poses" aria-labelledby="bau-poses-title">
           <h2 id="bau-poses-title">Pose gallery</h2>
           <div className="bau-pose-grid">
-            {poses.map(({ pose, label, description }) => (
+            {poses.map(({ pose, expression, label, description }) => (
               <button
                 key={pose}
                 type="button"
                 className={activePose === pose ? 'is-active' : undefined}
+                data-pose={pose}
                 aria-pressed={activePose === pose}
                 onClick={() => setActivePose(pose)}
               >
                 <span>{label}</span>
-                <BauhausMascot pose={pose} />
+                <span className="bau-pose-art">
+                  <BauhausMascot pose={pose} expression={expression} scene={pose !== 'standing'} />
+                </span>
                 <small>{description}</small>
               </button>
             ))}
@@ -148,6 +161,8 @@ export default function BauPage() {
             <code>
               {'<BauhausMascot pose="'}
               <strong>{activePose}</strong>
+              {'" expression="'}
+              <strong>{activeExpression}</strong>
               {'" />'}
             </code>
           </div>

@@ -2,15 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script src="/site-theme.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Bauhaus UI v0.2.0dev — React components built with intention</title>
+    <title>Bauhaus UI v0.2.0dev2 — React components built with intention</title>
     <meta
       name="description"
       content="Accessible, TypeScript-first React components built on a bold Bauhaus design system."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Bauhaus UI v0.2.0dev — React components built with intention" />
+    <meta property="og:title" content="Bauhaus UI v0.2.0dev2 — React components built with intention" />
     <meta
       property="og:description"
       content="Accessible, TypeScript-first React components built on a bold Bauhaus design system."
@@ -27,15 +28,6 @@
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script>
-      // Set the theme before paint to avoid a flash of the wrong theme.
-      try {
-        var t = localStorage.getItem('bauhaus-theme')
-        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark')
-        }
-      } catch (e) {}
-    </script>
   </head>
   <body>
     <div id="root"></div>

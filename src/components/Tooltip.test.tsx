@@ -4,6 +4,138 @@ import { Tooltip } from './Tooltip'
 import { Button } from './Button'
 
 describe('Tooltip', () => {
+  it('moves the accessible description between focused controls and preserves caller descriptions', () => {
+    const { unmount } = render(
+      <Tooltip content="Shared help" delay={0}>
+        <button aria-describedby="first-help">First action</button>
+        <button aria-describedby="second-help">Second action</button>
+      </Tooltip>,
+    )
+    const first = screen.getByRole('button', { name: 'First action' })
+    const second = screen.getByRole('button', { name: 'Second action' })
+
+    fireEvent.focus(first)
+    act(() => vi.advanceTimersByTime(0))
+    const tooltip = screen.getByRole('tooltip')
+    expect(first).toHaveAttribute('aria-describedby', `first-help ${tooltip.id}`)
+    expect(second).toHaveAttribute('aria-describedby', 'second-help')
+
+    fireEvent.blur(first, { relatedTarget: second })
+    fireEvent.focus(second, { relatedTarget: first })
+    expect(first).toHaveAttribute('aria-describedby', 'first-help')
+    expect(second).toHaveAttribute('aria-describedby', `second-help ${tooltip.id}`)
+    expect(screen.getByRole('tooltip')).toBe(tooltip)
+
+    fireEvent.keyDown(second, { key: 'Escape' })
+    expect(second).toHaveAttribute('aria-describedby', 'second-help')
+
+    fireEvent.blur(second)
+    act(() => vi.advanceTimersByTime(0))
+    fireEvent.focus(second)
+    act(() => vi.advanceTimersByTime(0))
+    second.setAttribute('aria-describedby', `second-help added-help ${screen.getByRole('tooltip').id}`)
+    unmount()
+    expect(second).toHaveAttribute('aria-describedby', 'second-help added-help')
+  })
+
+  it.each(['hover-to-focus', 'focus-to-hover'] as const)(
+    'preserves the pending opening delay during a %s handoff',
+    (handoff) => {
+      render(
+        <Tooltip content="Pending help" delay={150}>
+          <button>Help</button>
+        </Tooltip>,
+      )
+      const button = screen.getByRole('button')
+      const trigger = button.parentElement!
+      if (handoff === 'hover-to-focus') {
+        fireEvent.mouseEnter(trigger)
+        fireEvent.focus(button)
+        fireEvent.mouseLeave(trigger)
+      } else {
+        fireEvent.focus(button)
+        fireEvent.mouseEnter(trigger)
+        fireEvent.blur(button)
+      }
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+      act(() => vi.advanceTimersByTime(149))
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+      act(() => vi.advanceTimersByTime(1))
+      expect(screen.getByRole('tooltip')).toHaveTextContent('Pending help')
+    },
+  )
+
+  it('flips and clamps coordinates at a viewport edge in a supplied portal host', () => {
+    const host = document.createElement('div')
+    host.setAttribute('data-bui-theme', 'dark')
+    document.body.append(host)
+    const geometry = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (
+      this: Element,
+    ) {
+      return this.getAttribute('role') === 'tooltip' ? new DOMRect(0, 0, 120, 30) : new DOMRect(1, 1, 20, 20)
+    })
+    render(
+      <Tooltip content="Info" delay={0} portalContainer={host}>
+        <button>Help</button>
+      </Tooltip>,
+    )
+    fireEvent.focus(screen.getByRole('button'))
+    act(() => vi.advanceTimersByTime(0))
+    const tip = screen.getByRole('tooltip')
+    expect(tip.parentElement).toBe(host)
+    expect(tip.style.left).toBe('8px')
+    expect(tip.style.top).toBe('29px')
+    geometry.mockRestore()
+  })
+
+  it('keeps a focused tooltip open across pointer exit and dismissed until focus is renewed', () => {
+    render(
+      <Tooltip content="Info" delay={0}>
+        <button>Help</button>
+      </Tooltip>,
+    )
+    const button = screen.getByRole('button')
+    fireEvent.focus(button)
+    act(() => vi.advanceTimersByTime(0))
+    fireEvent.mouseEnter(button.parentElement!)
+    fireEvent.mouseLeave(button.parentElement!)
+    act(() => vi.advanceTimersByTime(200))
+    expect(screen.getByRole('tooltip')).toBeInTheDocument()
+    fireEvent.keyDown(button, { key: 'Escape' })
+    fireEvent.mouseEnter(button.parentElement!)
+    act(() => vi.advanceTimersByTime(200))
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+    fireEvent.mouseLeave(button.parentElement!)
+    fireEvent.blur(button)
+    act(() => vi.advanceTimersByTime(0))
+    fireEvent.focus(button)
+    act(() => vi.advanceTimersByTime(0))
+    expect(screen.getByRole('tooltip')).toBeInTheDocument()
+  })
+  it('dismisses with Escape until the next activation and allows hover handoff', () => {
+    render(
+      <Tooltip content="Details" delay={100}>
+        <button>Help</button>
+      </Tooltip>,
+    )
+    const trigger = screen.getByRole('button').parentElement!
+    fireEvent.mouseEnter(trigger)
+    act(() => vi.advanceTimersByTime(100))
+    const tooltip = screen.getByRole('tooltip')
+    expect(tooltip.parentElement).toBe(document.body)
+    fireEvent.mouseLeave(trigger)
+    fireEvent.mouseEnter(tooltip)
+    act(() => vi.advanceTimersByTime(200))
+    expect(screen.getByRole('tooltip')).toBeInTheDocument()
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(200))
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+    fireEvent.mouseLeave(tooltip)
+    fireEvent.mouseEnter(trigger)
+    act(() => vi.advanceTimersByTime(100))
+    expect(screen.getByRole('tooltip')).toBeInTheDocument()
+  })
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -33,6 +165,7 @@ describe('Tooltip', () => {
     expect(tooltip).toHaveTextContent('Helpful information')
 
     fireEvent.mouseLeave(trigger)
+    act(() => vi.advanceTimersByTime(150))
 
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
   })

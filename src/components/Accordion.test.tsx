@@ -3,8 +3,99 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './Accordion'
+import { expectProviderError } from '../test/expectProviderError'
 
 describe('Accordion', () => {
+  it('preserves uncontrolled inputs and local state when a retained region is collapsed', async () => {
+    const user = userEvent.setup()
+    function Draft() {
+      const [count, setCount] = useState(0)
+      return (
+        <>
+          <input aria-label="Display name" defaultValue="Alice" />
+          <button onClick={() => setCount(count + 1)}>Edits: {count}</button>
+        </>
+      )
+    }
+    render(
+      <Accordion defaultValue="profile">
+        <AccordionItem value="profile">
+          <AccordionTrigger>Profile</AccordionTrigger>
+          <AccordionContent keepMounted>
+            <Draft />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    )
+    const input = screen.getByRole('textbox', { name: 'Display name' })
+    await user.clear(input)
+    await user.type(input, 'Anni')
+    await user.click(screen.getByRole('button', { name: 'Edits: 0' }))
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+
+    expect(input).toBeInTheDocument()
+    expect(input).not.toBeVisible()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+    expect(screen.getByRole('textbox', { name: 'Display name' })).toBe(input)
+    expect(input).toHaveValue('Anni')
+    expect(screen.getByRole('button', { name: 'Edits: 1' })).toBeVisible()
+  })
+
+  it('keeps a collapsed retained region hidden and out of keyboard navigation despite caller display props', async () => {
+    const user = userEvent.setup()
+    render(
+      <>
+        <Accordion>
+          <AccordionItem value="profile">
+            <AccordionTrigger>Profile</AccordionTrigger>
+            <AccordionContent keepMounted hidden={false} className="bui-flex" style={{ display: 'flex' }}>
+              <input aria-label="Display name" />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        <button>After accordion</button>
+      </>,
+    )
+    const region = screen.getByRole('region', { hidden: true })
+    expect(region).toHaveAttribute('hidden')
+    expect(region).toHaveStyle({ display: 'none' })
+    expect(region).not.toHaveClass('bui-animate-fade-in')
+    expect(screen.queryByRole('region')).not.toBeInTheDocument()
+
+    screen.getByRole('button', { name: 'Profile' }).focus()
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'After accordion' })).toHaveFocus()
+
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+    expect(region).not.toHaveAttribute('hidden')
+    expect(region).toHaveStyle({ display: 'flex' })
+    expect(screen.getByRole('textbox', { name: 'Display name' })).toBeVisible()
+  })
+
+  it('still unmounts collapsed regions and resets their uncontrolled state by default', async () => {
+    const user = userEvent.setup()
+    render(
+      <Accordion defaultValue="profile">
+        <AccordionItem value="profile">
+          <AccordionTrigger>Profile</AccordionTrigger>
+          <AccordionContent>
+            <input aria-label="Name" defaultValue="Alice" />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    )
+    const input = screen.getByRole('textbox', { name: 'Name' })
+    await user.type(input, ' Smith')
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+    expect(input).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+    expect(screen.getByRole('textbox', { name: 'Name' })).not.toBe(input)
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Alice')
+  })
+
   it('toggles single item open and closed', async () => {
     const user = userEvent.setup()
     render(
@@ -120,11 +211,11 @@ describe('Accordion', () => {
   })
 
   it('throws helpful error if AccordionTrigger is used outside Accordion', () => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
-    expect(() => {
-      render(<AccordionTrigger>Orphan</AccordionTrigger>)
-    }).toThrow('<AccordionTrigger> must be used inside an <Accordion> provider.')
-    consoleError.mockRestore()
+    expectProviderError(
+      () => render(<AccordionTrigger>Orphan</AccordionTrigger>),
+      '<AccordionTrigger> must be used inside an <Accordion> provider.',
+      'AccordionTrigger',
+    )
   })
 
   it('protects structural props from being overridden by caller', async () => {

@@ -9,10 +9,12 @@ export default defineConfig(({ command }) => ({
   base: command === 'build' ? './' : '/',
   plugins: [react()],
   build: {
+    outDir: 'dist-site',
     rollupOptions: {
       input: {
         main: resolvePath(fileURLToPath(new URL('.', import.meta.url)), 'index.html'),
         bau: resolvePath(fileURLToPath(new URL('.', import.meta.url)), 'bau/index.html'),
+        settings: resolvePath(fileURLToPath(new URL('.', import.meta.url)), 'examples/settings/index.html'),
       },
     },
   },

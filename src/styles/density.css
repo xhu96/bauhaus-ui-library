@@ -1,0 +1,49 @@
+/* Density is explicit and inherited. Unscoped controls retain their existing
+   utility sizes; a nearer comfortable/compact scope resets every density value. */
+[data-bui-density='compact'] {
+  --bui-control-height-sm: 2rem;
+  --bui-control-height-md: 2.25rem;
+  --bui-control-height-lg: 2.75rem;
+  --bui-textarea-padding-y: 0.5rem;
+}
+
+[data-bui-density='comfortable'] {
+  --bui-control-height-sm: 2.25rem;
+  --bui-control-height-md: 2.75rem;
+  --bui-control-height-lg: 3.5rem;
+  --bui-textarea-padding-y: 0.75rem;
+}
+
+:where([data-bui-density='compact'], [data-bui-density='comfortable'])
+  :is(
+    [data-bui-control='button'],
+    [data-bui-control='input'],
+    [data-bui-control='select']
+  )[data-bui-size='sm'] {
+  height: var(--bui-control-height-sm);
+}
+
+:where([data-bui-density='compact'], [data-bui-density='comfortable'])
+  :is(
+    [data-bui-control='button'],
+    [data-bui-control='input'],
+    [data-bui-control='select']
+  )[data-bui-size='md'] {
+  height: var(--bui-control-height-md);
+}
+
+:where([data-bui-density='compact'], [data-bui-density='comfortable'])
+  :is(
+    [data-bui-control='button'],
+    [data-bui-control='input'],
+    [data-bui-control='select']
+  )[data-bui-size='lg'] {
+  height: var(--bui-control-height-lg);
+}
+
+/* Multiline fields keep rows, minimum height and resizing; density only trims
+   their padding rather than forcing a textarea into a single-line height. */
+:is([data-bui-density='compact'], [data-bui-density='comfortable']) [data-bui-control='textarea'] {
+  padding-top: var(--bui-textarea-padding-y);
+  padding-bottom: var(--bui-textarea-padding-y);
+}

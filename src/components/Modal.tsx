@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -14,6 +14,10 @@ export interface ModalProps {
   title?: string
   /** Accessible name used when no visible title is rendered. */
   'aria-label'?: string
+  /** Translated close button label. Defaults to Close. */
+  closeLabel?: string
+  /** Same-document themed portal host. Keep it outside transformed or clipping ancestors. */
+  portalContainer?: HTMLElement | null
   /** Controls the panel max-width. */
   size?: Size
   /** Close when the backdrop is clicked. Defaults to true. */
@@ -36,15 +40,22 @@ export function Modal({
   onClose,
   title,
   'aria-label': ariaLabel,
+  closeLabel = 'Close',
+  portalContainer,
   size = 'md',
   closeOnBackdrop = true,
   children,
 }: ModalProps) {
   const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
 
   useEffect(() => setMounted(true), [])
-  useDialogBehavior(mounted && open, panelRef, onClose)
+  useDialogBehavior(mounted && open, panelRef, onClose, portalContainer)
+  useEffect(() => {
+    if (import.meta.env.DEV && open && !title?.trim() && !ariaLabel?.trim())
+      console.warn('Modal requires a title or aria-label for an accessible name.')
+  }, [open, title, ariaLabel])
 
   if (!open || !mounted) return null
 
@@ -59,25 +70,30 @@ export function Modal({
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title ?? ariaLabel}
+        aria-labelledby={title ? titleId : undefined}
+        aria-label={ariaLabel}
         tabIndex={-1}
+        style={{ maxHeight: 'calc(100dvh - 2rem)' }}
         className={cn(
           'bui-reset',
-          'bui-relative bui-w-full bui-border-3 bui-border-ink bui-bg-surface bui-shadow-hard-lg bui-outline-none bui-animate-pop-in',
+          'bui-relative bui-w-full bui-overflow-y-auto bui-border-3 bui-border-ink bui-bg-surface bui-text-ink bui-shadow-hard-lg bui-outline-none bui-animate-fade-in',
           sizes[size],
         )}
       >
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close"
-          className="bui-reset bui-press bui-absolute bui-right-2 bui-top-2 bui-inline-flex bui-h-11 bui-w-11 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
+          aria-label={closeLabel}
+          className="bui-reset bui-press bui-sticky bui-top-2 bui-z-10 bui-ms-auto bui-me-2 bui-mt-2 bui-flex bui-h-11 bui-w-11 bui-shrink-0 bui-items-center bui-justify-center bui-border-3 bui-border-ink bui-bg-surface bui-text-ink hover:bui-bg-ink hover:bui-text-paper"
         >
           <X className="bui-reset bui-h-4 bui-w-4" aria-hidden />
         </button>
         {title && (
           <ModalHeader>
-            <h2 className="bui-reset bui-m-0 bui-font-display bui-text-xl bui-font-bold bui-tracking-tight bui-text-ink">
+            <h2
+              id={titleId}
+              className="bui-reset bui-m-0 bui-font-display bui-text-xl bui-font-bold bui-tracking-tight bui-text-ink"
+            >
               {title}
             </h2>
           </ModalHeader>
@@ -85,7 +101,7 @@ export function Modal({
         {children}
       </div>
     </div>,
-    document.body,
+    portalContainer ?? document.body,
   )
 }
 
@@ -93,7 +109,7 @@ export function Modal({
 export function ModalHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('bui-reset', 'bui-border-b-3 bui-border-ink bui-p-5 bui-pr-14', className)}
+      className={cn('bui-reset', 'bui-border-b-3 bui-border-ink bui-p-5 bui-pe-14', className)}
       {...props}
     />
   )

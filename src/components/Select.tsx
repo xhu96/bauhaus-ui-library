@@ -55,11 +55,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     <div className="bui-reset bui-relative bui-inline-flex bui-w-full bui-items-center">
       <select
         ref={ref}
+        data-bui-control="select"
+        data-bui-size={selectSize}
         id={id ?? semantics.controlId}
         disabled={disabled}
         required={required ?? (semantics.required || undefined)}
         aria-describedby={semantics.describedBy}
-        aria-required={ariaRequired ?? (semantics.required || undefined)}
+        aria-labelledby={props['aria-labelledby'] ?? (props['aria-label'] ? undefined : semantics.labelId)}
+        aria-required={ariaRequired ?? required ?? (semantics.required || undefined)}
         aria-invalid={ariaInvalid ?? (error || semantics.invalid || undefined)}
         className={cn(
           'bui-reset',

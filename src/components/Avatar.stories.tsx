@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { within, expect } from 'storybook/test'
 import { Avatar } from './Avatar'
 
 const meta = {
@@ -89,10 +90,15 @@ export const CircleImage: Story = {
   },
 }
 
-/** Failing src: the component has no onError fallback, so a broken URL leaves an empty bordered tile. */
+/** Failed image requests fall back to accessible initials. Changing src retries automatically. */
 export const BrokenImage: Story = {
   args: {
-    src: 'https://example.invalid/missing.png',
+    src: 'data:image/png;base64,broken',
     name: 'Missing image',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(await canvas.findByText('MI')).toBeVisible()
+    await expect(canvas.getByRole('img', { name: 'Missing image' })).toHaveTextContent('MI')
   },
 }

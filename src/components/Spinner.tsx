@@ -1,6 +1,6 @@
 import { type SVGProps } from 'react'
 import { cn } from '@/lib/utils'
-import { hex, type BauhausColor, type Size } from '@/lib/types'
+import { textColor, type BauhausColor, type Size } from '@/lib/types'
 
 export interface SpinnerProps extends Omit<SVGProps<SVGSVGElement>, 'color'> {
   size?: Size | number
@@ -31,7 +31,6 @@ export function Spinner({
   ...props
 }: SpinnerProps) {
   const px = typeof size === 'number' ? size : sizePx[size]
-  const c = color === 'ink' ? 'currentColor' : hex[color]
 
   return (
     <span
@@ -46,7 +45,7 @@ export function Spinner({
         viewBox="0 0 100 100"
         className={cn(
           'bui-reset bui-inline-block bui-shrink-0 bui-origin-center bui-animate-spin',
-          color === 'ink' && 'bui-text-ink',
+          textColor[color],
           className,
         )}
         style={{ transformBox: 'fill-box', ...style }}
@@ -54,11 +53,12 @@ export function Spinner({
         {...props}
       >
         <circle
+          className="bui-reset"
           cx="50"
           cy="50"
           r="38"
           fill="none"
-          stroke={c}
+          stroke="currentColor"
           strokeWidth="14"
           strokeLinecap="square"
           pathLength="100"

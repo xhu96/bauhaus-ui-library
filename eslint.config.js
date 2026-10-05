@@ -5,7 +5,21 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist', 'storybook-static', 'node_modules', '.worktrees', 'coverage'] },
+  {
+    ignores: [
+      'dist',
+      'dist-site',
+      'pages-output',
+      'pages-output.previous-*',
+      '.pages-staging-*',
+      'storybook-static',
+      'node_modules',
+      '.worktrees',
+      'coverage',
+      'playwright-report',
+      'test-results',
+    ],
+  },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

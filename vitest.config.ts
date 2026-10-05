@@ -18,6 +18,12 @@ export default defineConfig({
     css: true,
     // Never scan nested git worktrees (they carry their own node_modules → a
     // second React copy that breaks hook-based tests).
-    exclude: [...configDefaults.exclude, '**/.worktrees/**'],
+    exclude: [
+      ...configDefaults.exclude,
+      '**/.worktrees/**',
+      'tests/browser/**',
+      'tests/consumer/**',
+      'tests/pages/**',
+    ],
   },
 })

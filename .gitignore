@@ -1,5 +1,11 @@
 node_modules
 dist
+dist-site
+pages-output
+pages-output.previous-*
+.pages-staging-*
+playwright-report
+test-results
 dist-ssr
 storybook-static
 *.local
